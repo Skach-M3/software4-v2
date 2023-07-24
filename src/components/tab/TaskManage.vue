@@ -4,7 +4,7 @@
     <div id="top_buttons">
       <div id="load_state">
         <span>涉及病种：</span>
-        <el-select v-model="value1" placeholder="请选择">
+        <el-select v-model="disease" placeholder="请选择">
           <el-option
             v-for="item in options_up"
             :key="item.value"
@@ -16,8 +16,8 @@
       </div>
 
       <div id="data_source">
-        <span>创建人：</span>
-        <el-select v-model="value2" placeholder="请选择">
+        <span>任务负责人：</span>
+        <el-select v-model="principal" placeholder="请选择">
           <el-option
             v-for="item in options_source"
             :key="item.value"
@@ -30,7 +30,7 @@
       <el-button @click="clearFilter">清除</el-button>
 
       <div id="top_right_buttons">
-        <el-button type="primary" @click="importData">导入数据表</el-button>
+        <el-button type="primary" @click="importData">新建任务</el-button>
       </div>
 
     </div>
@@ -50,11 +50,11 @@
         stripe
         :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
       >
-        <el-table-column label="数据表" prop="tableName"> </el-table-column>
+        <el-table-column label="任务ID" prop="tableName"> </el-table-column>
         <el-table-column label="涉及病种" prop="tableOrigin"> </el-table-column>
-        <el-table-column label="样本个数" prop="tableStatus"> </el-table-column>
-        <el-table-column label="字段个数" prop="tableSize"> </el-table-column>
-        <el-table-column label="创建人" prop="tablePeople"> </el-table-column>
+        <el-table-column label="负责人" prop="tableStatus"> </el-table-column>
+        <el-table-column label="使用数据" prop="dataset"> </el-table-column>
+        <el-table-column label="使用模型" prop="tableSize"> </el-table-column>
         <el-table-column label="创建时间" prop="tableDate"> </el-table-column>
         <el-table-column align="center">
           <template slot="header">
@@ -67,51 +67,7 @@
       </el-table>
     </div>
 
-      <!--===============================     导入数据表单   ===================================================================-->
-      <el-dialog id="importDataTable" title="导入数据表" :visible.sync="dialogFormVisible" width="40%">
-          <el-form :model="dialogForm" ref="dialogFormRef" :rules="dialogForm.rules" label-width="110px">
-              <el-form-item label="数据表名称" prop="tableName">
-                  <el-input v-model="dialogForm.tableName" placeholder="请输入数据表名称"></el-input>
-              </el-form-item>
-              <el-form-item label="特征个数" prop="featuresNum">
-                  <el-input-number v-model="dialogForm.featuresNum" :min=1 :step=1 @change="generateFields"></el-input-number>
-              </el-form-item>
-              <el-form-item id="features" v-for="(field, index) in dialogForm.fields" :key="index" :label="'特征' + (index + 1)" :prop="'field' + index">
-                  <el-input v-model="field.name" :placeholder="'请输入特证' + (index + 1) + '名称'"></el-input>
-                  <el-select v-model="field.type" placeholder="请选择特征类型">
-                      <el-option label="人口学特征" value="people"></el-option>
-                      <el-option label="社会学特征" value="social"></el-option>
-                      <el-option label="生理学特征" value="medical"></el-option>
-                  </el-select>
-              </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-              <el-button @click="dialogFormVisible = false">取消</el-button>
-              <el-button @click="resetForm()">重置</el-button>
-              <el-button type="primary" @click="submitTable" >下一步</el-button>
-          </div>
-<!--          选择数据表单       -->
-          <el-dialog width="30%" title="选择本地数据表" :visible.sync="selectVisible" append-to-body>
-              <el-upload
-                      class="upload"
-                      ref="upload"
-                      action="/diabete/upload"
-                      :on-preview="handlePreview"
-                      :on-remove="handleRemove"
-                      
-                      :auto-upload="false"
-                      accept=".csv"
-                      :limit = 1
-                      :on-success="uploadSuccess"
-                      :on-error="handleError"
-                      :before-upload="beforeUpload"
-                      >
-                  <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                  <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
-                  <div slot="tip" class="el-upload__tip">只能上传csv文件</div>
-              </el-upload>
-          </el-dialog>
-      </el-dialog>
+    
   </div>
 </template>
 
@@ -141,7 +97,7 @@ export default {
           label: "上传失败",
         },
       ],
-      value1: "",
+      disease: "",
       options_source: [//数据来源选项
         {
           value: "CSV",
@@ -179,8 +135,15 @@ export default {
               ]
           }
       },
-      value2: "",
-      tableData: [],
+      principal: "",
+      tableData: [{
+        tableName: "心脏病克利夫兰数据集研究",
+        tableOrigin: "心脏病",
+        tableStatus: "刘医生",
+        dataset:"心脏病克利夫兰数据集",
+        tableSize: "SF-DRMB",
+        tableDate: "2023.6.18"
+      }],
       dialogFormVisible: false,
       selectVisible: false,
       search: "",
@@ -214,7 +177,7 @@ export default {
           
     },
     importData() {
-        this.dialogFormVisible = true;
+        this.$router.push("/DisFactor");
     },
     generateFields() {
         const numFields = parseInt(this.dialogForm.featuresNum)

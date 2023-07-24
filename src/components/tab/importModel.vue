@@ -12,7 +12,7 @@
             </el-steps>
         </div>
         
-<!--el-form的:model，el-form-item的prop只和验证相关-->
+<!--el-form-item的prop只和验证相关-->
 
 <!--======================================     基本信息表单      ======================================================-->
         <el-form class="form" :model="basicInfoForm.formData" :rules="basicInfoForm.rules" ref="basicInfoForm" label-position="top" v-show="basicInfoForm.isShow">

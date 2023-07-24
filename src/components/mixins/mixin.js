@@ -10,3 +10,14 @@ export const tabSwitch = {
         }
     }
 }
+
+export const resetForm = {
+  methods: {
+    resetForm(formName) {
+      // 不加if判断会报错找不到resetFields，因为form用的v-if，不显示时找不到DOM结构
+      if (this.$refs[formName]) {
+        this.$refs[formName].resetFields();
+      }
+    }
+  },
+};

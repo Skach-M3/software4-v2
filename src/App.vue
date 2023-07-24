@@ -7,15 +7,30 @@
     <router-view v-if="isRouterAlive"/>
   </div>
 </template>
+
 <script>
+import { mapActions } from 'vuex';
 export default {
   data () {
     return {
       isRouterAlive: true
     }
   },
+
+  created() {
+    this.init();
+  },
+
+  methods:{
+    ...mapActions(["getDataList"]),
+    init() {
+      //获取所有数据表信息
+      this.getDataList();
+    }
+  }
 }
 </script>
+
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
