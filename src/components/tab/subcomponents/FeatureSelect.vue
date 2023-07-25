@@ -48,9 +48,6 @@
         <h3>社会学特征</h3>
       </div>
     </div>
-    
-    
-  </div>
 
 </template>
 

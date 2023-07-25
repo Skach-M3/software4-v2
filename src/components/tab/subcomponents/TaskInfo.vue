@@ -25,7 +25,7 @@
           <el-radio
             v-for="(dis, index) in disOptions"
             :key="index"
-            :label="dis.value"
+            :label="dis.name"
             class="disGroup-item"
             border
             :disabled="dis.disable"
@@ -44,13 +44,18 @@
 <script>
 import { disOptions } from "@/components/tab/constData.js";
 import { resetForm } from "@/components/mixins/mixin.js";
-import { mapGetters, mapMutations } from "vuex";
-import { getRequest, postRequest } from "@/api/user.js";
+import { mapGetters, mapMutations, mapState } from "vuex";
 export default {
   name: "TaskInfo",
   mixins: [resetForm],
   computed: {
     ...mapGetters(["dataDisList"]),
+    ...mapState("disFactor", [
+      "taskName",
+      "principal",
+      "participants",
+      "disease",
+    ]),
   },
   data() {
     return {
@@ -72,14 +77,21 @@ export default {
     ...mapMutations("disFactor", ["ChangeStep", "ChangeTaskInfo"]),
 
     init() {
-      let isInit = false;
-      for (const item of this.dataDisList) {
-        let index = this.disOptions.findIndex(({ name }) => name === item);
-        if (index != -1) {
-          this.disOptions[index].disable = false;
-          if (!isInit) {
-            this.taskInfoForm.disease = this.disOptions[index].value;
-            isInit = true;
+      //和vuex内数据同步
+      this.taskInfoForm.taskName = this.taskName;
+      this.taskInfoForm.principal = this.principal;
+      this.taskInfoForm.participants = this.participants;
+      this.taskInfoForm.disease = this.disease;
+      if (!this.disease) {
+        let isInit = false;//是否设置默认选择第一个可选病
+        for (const item of this.dataDisList) {
+          let index = this.disOptions.findIndex(({ name }) => name === item);
+          if (index != -1) {
+            this.disOptions[index].disable = false;
+            if (!isInit) {
+              this.taskInfoForm.disease = this.disOptions[index].name;
+              isInit = true;
+            }
           }
         }
       }
@@ -87,13 +99,6 @@ export default {
 
     next() {
       this.ChangeTaskInfo(this.taskInfoForm);
-      getRequest(
-        `/tTableManager/tablename?disease=${this.taskInfoForm.disease}`
-      )
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => console.log(err));
       this.ChangeStep(2);
     },
   },

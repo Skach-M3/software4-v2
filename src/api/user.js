@@ -1,10 +1,10 @@
 import request from "@/utils/request";
 
-export function getRequest(url, params) {
+export function getRequest(url, paramObj) {
   return request({
     method: "get",
     url,
-    params
+    params: paramObj
   });
 }
 

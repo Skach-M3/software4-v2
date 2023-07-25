@@ -22,6 +22,17 @@ export default new Vuex.Store({
       });
       return newArray;
     },
+
+    dataCreatorList(state) {
+      let newArray = [];
+      state.dataList.forEach(({ creator }) => {
+        if (newArray.indexOf(creator) === -1) {
+          //去重
+          newArray.push(creator);
+        }
+      });
+      return newArray;
+    }
   },
 
   actions: {
