@@ -8,8 +8,14 @@ export default {
     disease: "",
     dataset: "",
     use_features: [],
-    know_features: [],
-    result: {},
+    known_features: [],
+    target_feature: "",
+    SF_DRMB: {
+      K_OR: 0.15,
+      K_and_PC: 0.3,
+      K_and_SP: 0.75
+    },
+    result: [],
   },
   getters: {},
   actions: {},

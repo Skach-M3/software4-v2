@@ -1,6 +1,6 @@
 export let disOptions = [
   {
-    name: "肺癌向淋巴结转移",
+    name: "胃癌向淋巴结转移",
     value: 1,
     disable: true,
   },

@@ -1,97 +1,245 @@
 <template>
-  <div>
+  <div class="Box">
     <div>
       <div>
-        <span class="featureTitle">参与运算的特征：</span>
-        <el-checkbox v-model="checkAll" @change="handleCheckAllChange" border size="small">全选</el-checkbox>
-        <h3>人口学特征</h3>
-        <div style="margin: 15px 0;"></div>
-        <el-checkbox-group v-model="selectedFeatures" @change="handleCheckedCitiesChange">
-          <el-checkbox v-for="item in peopleFeatures" :label="item.name" :key="item.name" border>{{item.name}}</el-checkbox>
+        <div class="top">
+          <span class="lineStyle">▍</span
+          ><span class="featureTitle">参与运算的特征：</span>
+          <el-checkbox
+            v-model="checkAll_1"
+            @change="
+              (val) => {
+                this.computeFeatures = val ? this.allFeatures : [];
+              }
+            "
+            border
+            size="small"
+            >全选</el-checkbox
+          >
+        </div>
+
+        <h3 class="featureSubTitle">人口学特征</h3>
+        <el-checkbox-group v-model="computeFeatures" @change="changeBox_1()">
+          <el-checkbox
+            v-for="item in peopleFeatures"
+            :label="item"
+            :key="item"
+            border
+            >{{ item }}</el-checkbox
+          >
         </el-checkbox-group>
       </div>
 
       <div>
-        <h3>生理学特征</h3>
-        <div style="margin: 15px 0;"></div>
-        <el-checkbox-group v-model="selectedFeatures" @change="handleCheckedCitiesChange">
-          <el-checkbox v-for="item in medicalFeatures" :label="item.name" :key="item.name" border>{{item.name}}</el-checkbox>
+        <h3 class="featureSubTitle">生理学特征</h3>
+        <el-checkbox-group v-model="computeFeatures" @change="changeBox_1()">
+          <el-checkbox
+            v-for="item in physiologicalFeatures"
+            :label="item"
+            :key="item"
+            border
+            >{{ item }}</el-checkbox
+          >
         </el-checkbox-group>
       </div>
 
       <div>
-        <h3>社会学特征</h3>
+        <h3 class="featureSubTitle">社会学特征</h3>
+        <el-checkbox-group v-model="computeFeatures" @change="changeBox_1()">
+          <el-checkbox
+            v-for="item in socialFeatures"
+            :label="item"
+            :key="item"
+            border
+            >{{ item }}</el-checkbox
+          >
+        </el-checkbox-group>
       </div>
     </div>
 
     <el-divider></el-divider>
 
     <div>
-        <span class="featureTitle">已知相关特征：</span>
-        <el-checkbox v-model="checkAll" @change="handleCheckAllChange" border size="small">全选</el-checkbox>
-        <h3>人口学特征</h3>
-        <div style="margin: 15px 0;"></div>
-        <el-checkbox-group v-model="selectedFeatures" @change="handleCheckedCitiesChange">
-          <el-checkbox v-for="item in peopleFeatures" :label="item.name" :key="item.name" border>{{item.name}}</el-checkbox>
-        </el-checkbox-group>
+      <div class="top">
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">已知相关特征：</span>
+        <el-checkbox
+          v-model="checkAll_2"
+          @change="
+            (val) => {
+              this.knownFeatures = val ? this.allFeatures : [];
+            }
+          "
+          border
+          size="small"
+          >全选</el-checkbox
+        >
       </div>
 
-      <div>
-        <h3>生理学特征</h3>
-        <div style="margin: 15px 0;"></div>
-        <el-checkbox-group v-model="selectedFeatures" @change="handleCheckedCitiesChange">
-          <el-checkbox v-for="item in medicalFeatures" :label="item.name" :key="item.name" border>{{item.name}}</el-checkbox>
-        </el-checkbox-group>
-      </div>
-
-      <div>
-        <h3>社会学特征</h3>
-      </div>
+      <h3 class="featureSubTitle">人口学特征</h3>
+      <el-checkbox-group v-model="knownFeatures" @change="changeBox_2()">
+        <el-checkbox
+          v-for="item in peopleFeatures"
+          :label="item"
+          :key="item"
+          border
+          >{{ item }}</el-checkbox
+        >
+      </el-checkbox-group>
     </div>
 
+    <div>
+      <h3 class="featureSubTitle">生理学特征</h3>
+      <el-checkbox-group v-model="knownFeatures" @change="changeBox_2()">
+        <el-checkbox
+          v-for="item in physiologicalFeatures"
+          :label="item"
+          :key="item"
+          border
+          >{{ item }}</el-checkbox
+        >
+      </el-checkbox-group>
+    </div>
+
+    <div>
+      <h3 class="featureSubTitle">社会学特征</h3>
+      <el-checkbox-group v-model="knownFeatures" @change="changeBox_2()">
+        <el-checkbox
+          v-for="item in socialFeatures"
+          :label="item"
+          :key="item"
+          border
+          >{{ item }}</el-checkbox
+        >
+      </el-checkbox-group>
+    </div>
+
+    <div class="buttonGroup">
+      <el-button type="primary" @click="next()" round>确认</el-button>
+    </div>
+  </div>
 </template>
 
 <script>
-import {Features} from "@/components/tab/constData.js"
+import { getRequest } from "@/api/user.js";
+import { mapMutations, mapState } from "vuex";
+import disFactor from '@/store/disFactor';
 export default {
-  name:"FeatureSelect",
-  computed:{
-    allFeatures(){
-      let features = [];
-      Features.peopleFeatures.forEach(item =>{
-        features.push(item.name);
-      })
-      Features.medcialFeatures.forEach(item =>{
-        features.push(item.name);
-      })
-      return features;
-    }
+  name: "FeatureSelect",
+  computed: {
+    ...mapState("disFactor", ["dataset"]),
   },
-  data(){
+  data() {
     return {
-      peopleFeatures : Features.peopleFeatures,
-      medicalFeatures: Features.medcialFeatures,
-      checkAll: false,
-      selectedFeatures: [],
-    }
+      allFeatures: [],
+      peopleFeatures: [],
+      physiologicalFeatures: [],
+      socialFeatures: [],
+      checkAll_1: false,
+      checkAll_2: false,
+      computeFeatures: [],
+      knownFeatures: [],
+      targetFeature: "",
+    };
   },
-  methods: {
-    handleCheckAllChange(val) {
 
-      this.selectedFeatures = val ? this.allFeatures : [];
+  created() {
+    this.init();
+  },
+
+  methods: {
+    ...mapMutations("disFactor", ["ChangeTaskInfo", "ChangeStep"]),
+    init() {
+      getRequest("/tTableManager/tablemanager", {
+        tableName: this.dataset,
+      }).then((res) => {
+        res.forEach((item) => {
+          if (item) {
+            if (item.is_demography == 1) {
+              this.allFeatures.push(item.field_name);
+              this.peopleFeatures.push(item.field_name);
+            } else if (item.is_physiological == 1) {
+              this.allFeatures.push(item.field_name);
+              this.physiologicalFeatures.push(item.field_name);
+            } else if (item.is_sociology == 1) {
+              this.allFeatures.push(item.field_name);
+              this.socialFeatures.push(item.field_name);
+            } else if (item.is_zoo_information == 1) {
+              this.targetFeature = item.field_name;
+            }
+          }
+        });
+      });
     },
-    handleCheckedCitiesChange(value) {
-      // let checkedCount = value.length;
-      // this.checkAll = checkedCount === this.cities.length;
-    }
-  }
-}
+
+    changeBox_1() {
+      if (this.computeFeatures.length === this.allFeatures.length) {
+        this.checkAll_1 = true;
+      } else {
+        this.checkAll_1 = false;
+      }
+    },
+
+    changeBox_2() {
+      if (this.knownFeatures.length === this.allFeatures.length) {
+        this.checkAll_2 = true;
+      } else {
+        this.checkAll_2 = false;
+      }
+    },
+
+    next() {
+      if (this.targetFeature.length < 1) {
+        alert("该数据没有目标列，请重新选择数据表");
+        return;
+      }
+      if (this.computeFeatures.length < 5) {
+        alert("请选择至少5个特征参与运算");
+        return;
+      }
+      this.ChangeTaskInfo({
+        use_features: this.computeFeatures,
+        known_features: this.knownFeatures,
+        target_feature: this.targetFeature,
+      });
+      this.ChangeStep(4);
+    },
+  },
+};
 </script>
 
 <style scoped>
-.featureTitle{
+.Box {
+  margin-left: 25vh;
+}
+
+.featureTitle {
   font-size: 30px;
   margin-right: 30px;
   margin-bottom: 20px;
+}
+
+.featureSubTitle {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.el-checkbox--small {
+  padding-bottom: 10px;
+}
+
+.el-checkbox-group .el-checkbox {
+  width: 120px;
+}
+
+.lineStyle {
+  color: rgb(100, 172, 231);
+  font-weight: 100;
+  font-size: 25px;
+}
+
+.buttonGroup {
+  margin-top: 20px;
 }
 </style>

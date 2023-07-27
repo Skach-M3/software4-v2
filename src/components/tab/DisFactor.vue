@@ -29,9 +29,6 @@
 
       <el-main v-if="step == 4" class="mainBox">
         <AlgorithmSelectVue></AlgorithmSelectVue>
-        <el-button type="primary" @click="submitTask()" round
-          >提交运算</el-button
-        >
       </el-main>
 
       <el-main v-if="step == 5" class="mainBox">

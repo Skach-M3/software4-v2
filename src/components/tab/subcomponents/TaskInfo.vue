@@ -7,16 +7,32 @@
       class="form"
       label-position="top"
     >
-      <el-form-item label="任务名称" prop="taskName" class="inputBox">
+      <el-form-item prop="taskName" class="inputBox shortItem">
+        <template slot="label">
+          <span class="lineStyle">▍</span>
+          <span>任务名称</span>
+        </template>
         <el-input v-model="taskInfoForm.taskName"></el-input>
       </el-form-item>
-      <el-form-item label="任务负责人" prop="principal" class="inputBox">
+      <el-form-item prop="principal" class="inputBox shortItem">
+        <template slot="label">
+          <span class="lineStyle">▍</span>
+          <span>任务负责人</span>
+        </template>
         <el-input v-model="taskInfoForm.principal"></el-input>
       </el-form-item>
-      <el-form-item label="参与人员" prop="participants" class="inputBox">
+      <el-form-item prop="participants" class="inputBox shortItem">
+        <template slot="label">
+          <span class="lineStyle">▍</span>
+          <span>参与人员</span>
+        </template>
         <el-input v-model="taskInfoForm.participants"></el-input>
       </el-form-item>
-      <el-form-item label="研究病种" prop="disease">
+      <el-form-item prop="disease">
+        <template slot="label">
+          <span class="lineStyle">▍</span>
+          <span>研究病种</span>
+        </template>
         <el-radio-group
           id="disGroup"
           v-model="taskInfoForm.disease"
@@ -69,7 +85,7 @@ export default {
     };
   },
 
-  created() {
+  mounted() {
     this.init();
   },
 
@@ -83,7 +99,7 @@ export default {
       this.taskInfoForm.participants = this.participants;
       this.taskInfoForm.disease = this.disease;
       if (!this.disease) {
-        let isInit = false;//是否设置默认选择第一个可选病
+        let isInit = false; //是否已经设置默认选择第一个可选病
         for (const item of this.dataDisList) {
           let index = this.disOptions.findIndex(({ name }) => name === item);
           if (index != -1) {
@@ -98,6 +114,10 @@ export default {
     },
 
     next() {
+      if (this.taskInfoForm.taskName.length < 1 || this.taskInfoForm.principal.length < 1) {
+        alert("请填写任务名称和负责人");
+        return;
+      }
       this.ChangeTaskInfo(this.taskInfoForm);
       this.ChangeStep(2);
     },
@@ -109,14 +129,29 @@ export default {
 /* #mainBox{
   overflow: auto;
 } */
-
+.form {
+  width: 80vh;
+  margin: auto;
+}
 .form .inputBox {
+  width: 25%;
+}
+.form .shortItem {
+  display: inline-block;
+  margin-right: 12vh;
+}
+.form .inputBox:last-child {
   width: 50%;
 }
+
+.lineStyle {
+  color: rgb(100, 172, 231);
+}
+
 #disGroup {
   width: 70%;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(4, 1fr);
 }
 .disGroup-item {
   width: 180px;

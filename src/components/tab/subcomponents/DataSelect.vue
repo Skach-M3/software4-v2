@@ -5,15 +5,15 @@
         :body-style="{ padding: '0px' }"
         v-for="(item, index) in list"
         :key="index"
-        :shadow="chosenData === item.id ? 'always' : 'hover'"
+        :shadow="chosenData === item.table_name ? 'always' : 'hover'"
         style="width: 200px"
-        @click.native="chosenData = item.id"
+        @click.native="chosenData = item.table_name"
       >
         <img src="@/assets/dataset.png" class="image" object-fit="contain" />
         <div style="padding: 14px">
           <span>{{ item.table_name }}</span>
           <div class="bottom clearfix">
-            <el-button type="text" class="button" @click="ChangeStep(3)"
+            <el-button type="text" class="button" @click="next(item.table_name)"
               >确认</el-button
             >
             <el-button
@@ -93,17 +93,14 @@ export default {
   },
 
   methods: {
-    ...mapMutations("disFactor", ["ChangeStep"]),
+    ...mapMutations("disFactor", ["ChangeStep", "ChangeTaskInfo"]),
 
     init() {
-      console.log(this.disease);
-
       for (const item of this.dataList) {
         if (item.disease === this.disease) {
           this.list.push(item);
         }
       }
-      console.log(this.list);
       this.dataTotal = this.list.length;
     },
 
@@ -112,7 +109,6 @@ export default {
       getRequest("/DataTable/getInfoByTableName", {
         tableName: tablename,
       }).then((res) => {
-        console.log("数据表详细信息👆");
         this.patientTable = res.data;
         this.getData_loading = false;
         this.dataTableVision = true;
@@ -138,6 +134,11 @@ export default {
     //     this.dataTotal = res.total;
     //   });
     // },
+    next(name) {
+      this.chosenData = name;
+      this.ChangeStep(3);
+      this.ChangeTaskInfo({ dataset: this.chosenData });
+    },
   },
 };
 </script>

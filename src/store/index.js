@@ -32,7 +32,7 @@ export default new Vuex.Store({
         }
       });
       return newArray;
-    }
+    },
   },
 
   actions: {
@@ -41,7 +41,10 @@ export default new Vuex.Store({
         .then((res) => {
           context.commit("SetDataList", res);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          alert("数据获取错误，请联系管理员。");
+          console.log(err);
+        });
     },
   },
   mutations: {
