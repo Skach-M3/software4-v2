@@ -129,7 +129,7 @@ export default {
         {
           title: "疾病危险因素挖掘",
           img: require("../../assets/singlePredict.png"),
-          router: "/Predict",
+          router: "/DisFactor",
         },
         {
           title: "危险因素相关因素挖掘",

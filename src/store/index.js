@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import disFactor from "./disFactor";
+import taskModule from "./taskModule";
 import { getRequest } from "@/api/user";
 // import storage from "../utils/storage";
 Vue.use(Vuex);
@@ -19,7 +19,7 @@ export default new Vuex.Store({
           //去重
           newArray.push(disease);
         }
-      });
+      })
       return newArray;
     },
 
@@ -53,6 +53,8 @@ export default new Vuex.Store({
     },
   },
   modules: {
-    disFactor,
+    disFactor: taskModule,
+    factFactor: taskModule,
+    factDiease: taskModule
   },
 });

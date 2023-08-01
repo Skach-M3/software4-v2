@@ -122,13 +122,17 @@
 
 <script>
 import { getRequest } from "@/api/user.js";
-import { mapMutations, mapState } from "vuex";
-import disFactor from '@/store/disFactor';
+import vuex_mixin from '@/components/mixins/vuex_mixin';
 export default {
   name: "FeatureSelect",
-  computed: {
-    ...mapState("disFactor", ["dataset"]),
+  props: {
+    moduleName: {
+      type: String,
+      default: "disFactor",
+    },
   },
+  mixins:[vuex_mixin],
+  computed: {},
   data() {
     return {
       allFeatures: [],
@@ -139,7 +143,7 @@ export default {
       checkAll_2: false,
       computeFeatures: [],
       knownFeatures: [],
-      targetFeature: "",
+      targetFeature: [],
     };
   },
 
@@ -148,10 +152,10 @@ export default {
   },
 
   methods: {
-    ...mapMutations("disFactor", ["ChangeTaskInfo", "ChangeStep"]),
     init() {
+      console.log(this.m_dataset);
       getRequest("/tTableManager/tablemanager", {
-        tableName: this.dataset,
+        tableName: this.m_dataset,
       }).then((res) => {
         res.forEach((item) => {
           if (item) {
@@ -165,10 +169,15 @@ export default {
               this.allFeatures.push(item.field_name);
               this.socialFeatures.push(item.field_name);
             } else if (item.is_zoo_information == 1) {
-              this.targetFeature = item.field_name;
+              this.targetFeature.push(item.field_name);
             }
           }
         });
+        // 同步vuex里的数据
+        this.computeFeatures = this.m_use_features;
+        this.knownFeatures = this.m_known_features;
+        this.changeBox_1();
+        this.changeBox_2();
       });
     },
 
@@ -197,12 +206,12 @@ export default {
         alert("请选择至少5个特征参与运算");
         return;
       }
-      this.ChangeTaskInfo({
+      this.m_changeTaskInfo({
         use_features: this.computeFeatures,
         known_features: this.knownFeatures,
         target_feature: this.targetFeature,
       });
-      this.ChangeStep(4);
+      this.m_changeStep(4);
     },
   },
 };

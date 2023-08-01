@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="loading" element-loading-text="拼命运算中">
     <el-container>
       <el-tabs id="modelList" v-model="model" tab-position="left">
         <el-tab-pane label="SF-DRMB">
@@ -17,7 +17,7 @@
               label-position="top"
               ref="SF_DRMB_ref"
             >
-              <el-form-item>
+              <el-form-item prop="K_OR">
                 <template slot="label">
                   <span class="paramTitle">K_OR</span>
                   <el-popover placement="right" trigger="hover">
@@ -30,13 +30,13 @@
                     ></el-icon>
                   </el-popover>
                 </template>
-                <el-input v-model="SF_DRMB_form.K_OR"></el-input>
+                <el-input v-model.number="SF_DRMB_form.K_OR"></el-input>
                 <span class="valueRange">(取值范围为 0 - 1 )</span>
               </el-form-item>
 
-              <el-form-item>
+              <el-form-item prop="K_and_PC">
                 <template slot="label">
-                  <span class="paramTitle">K_and_pc</span>
+                  <span class="paramTitle">K_and_PC</span>
                   <el-popover placement="right" trigger="hover">
                     <div>
                       K_and_pc参数用于控制剔除父子假阳性特征数，值越大计算越复杂，计算时间更长，结果不一定更好
@@ -47,13 +47,13 @@
                     ></el-icon>
                   </el-popover>
                 </template>
-                <el-input v-model="SF_DRMB_form.K_and_PC"></el-input>
+                <el-input v-model.number="SF_DRMB_form.K_and_PC"></el-input>
                 <span class="valueRange">(取值范围为 0.15 - 0.3 )</span>
               </el-form-item>
 
-              <el-form-item>
+              <el-form-item prop="K_and_SP">
                 <template slot="label">
-                  <span class="paramTitle">K_and_sp</span>
+                  <span class="paramTitle">K_and_SP</span>
                   <el-popover placement="right" trigger="hover">
                     <div>
                       K_and_sp参数用于控制剔除配偶假阳性特征数，值越大计算越复杂，计算时间更长，结果不一定更好
@@ -64,23 +64,52 @@
                     ></el-icon>
                   </el-popover>
                 </template>
-                <el-input v-model="SF_DRMB_form.K_and_SP"></el-input>
+                <el-input v-model.number="SF_DRMB_form.K_and_SP"></el-input>
                 <span class="valueRange">(取值范围为 0.4 - 0.8 )</span>
+              </el-form-item>
+              <el-form-item>
+                <div class="buttonBox">
+                  <el-button round @click="backStep()">上一步</el-button>
+                  <el-button round @click="resetForm('SF_DRMB_ref')"
+                    >恢复默认</el-button
+                  >
+                  <el-button
+                    type="primary"
+                    round
+                    @click="submit('/runtime_bus/submit')"
+                    >提交运算</el-button
+                  >
+                </div>
               </el-form-item>
             </el-form>
           </div>
         </el-tab-pane>
 
-        <el-tab-pane label="FP-Growth" :disabled="true">FP-Growth</el-tab-pane>
+        <el-tab-pane label="IAMB">
+          <div class="titleBox">IAMB</div>
+          <div class="introBox">
+            <p>模型说明：</p>
+            <p>
+              IAMB是一种因果特征选择算法，可用于挖掘疾病和危险因素之间存在的因果关系。
+            </p>
+          </div>
+          <div class="buttonBox">
+            <el-button round @click="backStep()">上一步</el-button>
+            <el-button
+              type="primary"
+              round
+              @click="submit('/runtime_bus/submit_Task2')"
+              >提交运算</el-button
+            >
+          </div>
+          <div class="paramBox"></div>
+        </el-tab-pane>
+
         <el-tab-pane label="SSP-Tree" :disabled="true">SSP-Tree</el-tab-pane>
+        <el-tab-pane label="FP-Growth" :disabled="true">FP-Growth</el-tab-pane>
         <el-tab-pane label="Logistic Regression" :disabled="true"
           >Logistic Regression</el-tab-pane
         >
-        <div class="buttonBox">
-          <el-button round @click="backStep()">上一步</el-button>
-          <el-button round @click="resetForm('SF_DRMB_ref')"></el-button>
-          <el-button type="primary" round @click="submit()">提交运算</el-button>
-        </div>
       </el-tabs>
     </el-container>
   </div>
@@ -88,62 +117,67 @@
 
 <script>
 import { postRequest } from "@/api/user";
-import { mapMutations, mapState } from "vuex";
 import { resetForm } from "@/components/mixins/mixin.js";
+import vuex_mixin from "@/components/mixins/vuex_mixin";
 export default {
   name: "AlgorithmSelect",
-  mixins:[resetForm],
-  computed: {
-    ...mapState("disFactor", [
-      "step",
-      "dataset",
-      "target_feature",
-      "use_features",
-      "SF_DRMB",
-    ]),
+  mixins: [resetForm, vuex_mixin],
+  props: {
+    moduleName: {
+      type: String,
+      default: "disFactor",
+    },
   },
+  computed: {},
   data() {
     return {
       model: "",
+      loading: false,
       SF_DRMB_form: {
-        K_OR: 0.15,
-        K_and_PC: 0.3,
-        K_and_SP: 0.75,
+        K_OR: 0,
+        K_and_PC: 0,
+        K_and_SP: 0,
       },
       res: "",
     };
   },
 
+  created() {
+    this.init();
+  },
+
   methods: {
-    ...mapMutations("disFactor", ["ChangeStep", "ChangeTaskInfo"]),
-    
-    init(){
-      this.SF_DRMB_form = this.SF_DRMB;
+    init() {
+      this.SF_DRMB_form = this.m_SF_DRMB;
     },
 
     backStep() {
-      this.ChangeStep(this.step - 1);
+      console.log(this.m_step);
+      this.m_changeStep(this.m_step - 1);
     },
 
-    submit() {
-      this.ChangeTaskInfo(this.SF_DRMB_form);
+    submit(url) {
+      this.loading = true;
+      this.m_SF_DRMB_update(this.SF_DRMB_form);
       let payload = {
-        tablename: this.dataset,
-        targetcolumn: this.target_feature,
-        fea: this.use_features,
-        K_OR: this.SF_DRMB.K_OR,
-        K_and_pc: this.SF_DRMB.K_and_PC,
-        K_and_sp: this.SF_DRMB.K_and_SP,
+        tablename: this.m_dataset,
+        targetcolumn: this.m_target_feature,
+        fea: this.m_use_features,
+        K_OR: this.m_SF_DRMB.K_OR,
+        K_and_pc: this.m_SF_DRMB.K_and_PC,
+        K_and_sp: this.m_SF_DRMB.K_and_SP,
+        knowledge: this.m_known_features,
       };
-      postRequest("/runtime_bus/submit", payload)
+      postRequest(url, payload)
         .then((res) => {
           console.log(res);
-          this.ChangeTaskInfo({ result: res });
-          this.ChangeStep(this.step + 1);
+          this.m_changeTaskInfo({ result: res });
+          this.loading = false;
+          this.m_changeStep(this.m_step + 1);
         })
         .catch((err) => {
-          alert("请求超时");
-          console.log(err);
+          this.loading = false;
+          this.$message(`发生错误：${err}`);
         });
     },
   },
@@ -210,8 +244,8 @@ export default {
 }
 
 .buttonBox {
-  margin-top: 200px;
-  width: 22vh;
-  margin: auto;
+  width: 35vh;
+  margin-top: 70px;
+  margin-right: auto;
 }
 </style>

@@ -16,31 +16,30 @@
       <el-divider></el-divider>
 
       <el-main v-if="step == 1" class="mainBox">
-        <TaskInfoVue></TaskInfoVue>
+        <TaskInfoVue :moduleName="moduleName"></TaskInfoVue>
       </el-main>
 
       <el-main v-if="step == 2" class="mainBox">
-        <DataSelectVue></DataSelectVue>
+        <DataSelectVue :moduleName="moduleName"></DataSelectVue>
       </el-main>
 
       <el-main v-if="step == 3" class="mainBox">
-        <FeatureSelectVue></FeatureSelectVue>
+        <FeatureSelectVue :moduleName="moduleName"></FeatureSelectVue>
       </el-main>
 
       <el-main v-if="step == 4" class="mainBox">
-        <AlgorithmSelectVue></AlgorithmSelectVue>
+        <AlgorithmSelectVue :moduleName="moduleName"></AlgorithmSelectVue>
       </el-main>
 
       <el-main v-if="step == 5" class="mainBox">
-        <ResultVue></ResultVue>
-        <el-button type="primary" @click="next()" round>完成</el-button>
+        <ResultVue :moduleName="moduleName"></ResultVue>
       </el-main>
     </el-container>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from "vuex";
 import AlgorithmSelectVue from "./subcomponents/AlgorithmSelect.vue";
 import DataSelectVue from "./subcomponents/DataSelect.vue";
 import FeatureSelectVue from "./subcomponents/FeatureSelect.vue";
@@ -55,12 +54,12 @@ export default {
     AlgorithmSelectVue,
     ResultVue,
   },
-  computed:{
-    ...mapState("disFactor",["step"]),
+  computed: {
+    ...mapState("disFactor", ["step"]),
   },
   data() {
     return {
-      // step: 1,
+      moduleName: "disFactor",
     };
   },
 

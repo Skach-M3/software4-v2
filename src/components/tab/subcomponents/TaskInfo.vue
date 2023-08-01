@@ -60,19 +60,19 @@
 <script>
 import { disOptions } from "@/components/tab/constData.js";
 import { resetForm } from "@/components/mixins/mixin.js";
-import { mapGetters, mapMutations, mapState } from "vuex";
+import vuex_mixin from "@/components/mixins/vuex_mixin";
+
 export default {
   name: "TaskInfo",
-  mixins: [resetForm],
-  computed: {
-    ...mapGetters(["dataDisList"]),
-    ...mapState("disFactor", [
-      "taskName",
-      "principal",
-      "participants",
-      "disease",
-    ]),
+  mixins: [resetForm, vuex_mixin],
+  props: {
+    moduleName: {
+      type: String,
+      default: "disFactor",
+    },
   },
+  watch: {},
+  computed: {},
   data() {
     return {
       disOptions: disOptions,
@@ -85,22 +85,27 @@ export default {
     };
   },
 
-  mounted() {
+  // TODO:初始化两遍，还可把数据放到localStorage里解决这个问题
+  created() {
     this.init();
+    this.$watch("m_dataDisList", () => {
+      this.init();
+      this.$message("数据更新成功");
+    });
   },
 
   methods: {
-    ...mapMutations("disFactor", ["ChangeStep", "ChangeTaskInfo"]),
-
+    // ...mapMutations("disFactor",["ChangeStep","ChangeTaskInfo"]),
     init() {
       //和vuex内数据同步
-      this.taskInfoForm.taskName = this.taskName;
-      this.taskInfoForm.principal = this.principal;
-      this.taskInfoForm.participants = this.participants;
-      this.taskInfoForm.disease = this.disease;
-      if (!this.disease) {
+      console.log("当前模块名👉", this.moduleName);
+      this.taskInfoForm.taskName = this.m_taskName;
+      this.taskInfoForm.principal = this.m_principal;
+      this.taskInfoForm.participants = this.m_participants;
+      this.taskInfoForm.disease = this.m_disease;
+      if (this.m_disease.length < 1) {
         let isInit = false; //是否已经设置默认选择第一个可选病
-        for (const item of this.dataDisList) {
+        for (const item of this.m_dataDisList) {
           let index = this.disOptions.findIndex(({ name }) => name === item);
           if (index != -1) {
             this.disOptions[index].disable = false;
@@ -114,12 +119,15 @@ export default {
     },
 
     next() {
-      if (this.taskInfoForm.taskName.length < 1 || this.taskInfoForm.principal.length < 1) {
-        alert("请填写任务名称和负责人");
+      if (
+        this.taskInfoForm.taskName.length < 1 ||
+        this.taskInfoForm.principal.length < 1
+      ) {
+        this.$message("请填写任务名称和负责人");
         return;
       }
-      this.ChangeTaskInfo(this.taskInfoForm);
-      this.ChangeStep(2);
+      this.m_changeTaskInfo(this.taskInfoForm);
+      this.m_changeStep(2);
     },
   },
 };

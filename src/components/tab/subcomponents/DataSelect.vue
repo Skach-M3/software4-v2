@@ -6,7 +6,7 @@
         v-for="(item, index) in list"
         :key="index"
         :shadow="chosenData === item.table_name ? 'always' : 'hover'"
-        style="width: 200px"
+        style="width: 210px"
         @click.native="chosenData = item.table_name"
       >
         <img src="@/assets/dataset.png" class="image" object-fit="contain" />
@@ -62,18 +62,21 @@
   </div>
 </template>
 
-// TODO:数据预览卡顿， 需要做虚拟列表，动态渲染
-
 <script>
-import { getRequest, postRequest } from "@/api/user.js";
-import { mapMutations, mapState } from "vuex";
+// TODO:大数据预览卡顿， 需要做虚拟列表，动态渲染
+import { getRequest } from "@/api/user.js";
+import vuex_mixin from "@/components/mixins/vuex_mixin";
+
 export default {
   name: "DataSelect",
-
-  computed: {
-    ...mapState(["dataList"]),
-    ...mapState("disFactor", ["disease"]),
+  mixins: [vuex_mixin],
+  props: {
+    moduleName: {
+      type: String,
+      default: "disFactor",
+    },
   },
+  computed: {},
 
   data() {
     return {
@@ -93,11 +96,9 @@ export default {
   },
 
   methods: {
-    ...mapMutations("disFactor", ["ChangeStep", "ChangeTaskInfo"]),
-
     init() {
-      for (const item of this.dataList) {
-        if (item.disease === this.disease) {
+      for (const item of this.m_dataList) {
+        if (item.disease === this.m_disease) {
           this.list.push(item);
         }
       }
@@ -136,8 +137,8 @@ export default {
     // },
     next(name) {
       this.chosenData = name;
-      this.ChangeStep(3);
-      this.ChangeTaskInfo({ dataset: this.chosenData });
+      this.m_changeStep(3);
+      this.m_changeTaskInfo({ dataset: this.chosenData });
     },
   },
 };
@@ -154,7 +155,8 @@ export default {
 
 .bottom {
   margin-top: 13px;
-  line-height: 12px;
+  padding-bottom: 10px;
+  line-height: 15px;
 }
 #dataList .button {
   padding: 0;
