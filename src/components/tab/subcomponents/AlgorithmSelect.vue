@@ -2,7 +2,11 @@
   <div v-loading="loading" element-loading-text="拼命运算中">
     <el-container>
       <el-tabs id="modelList" v-model="model" tab-position="left">
-        <el-tab-pane label="SF-DRMB">
+        <el-tab-pane
+          label="SF-DRMB"
+          :disabled="moduleName === 'f_Factor'"
+          name="SF-DRMB"
+        >
           <div class="titleBox">SF-DRMB</div>
           <div class="introBox">
             <p>模型说明：</p>
@@ -67,25 +71,23 @@
                 <el-input v-model.number="SF_DRMB_form.K_and_SP"></el-input>
                 <span class="valueRange">(取值范围为 0.4 - 0.8 )</span>
               </el-form-item>
-              <el-form-item>
-                <div class="buttonBox">
-                  <el-button round @click="backStep()">上一步</el-button>
-                  <el-button round @click="resetForm('SF_DRMB_ref')"
-                    >恢复默认</el-button
-                  >
-                  <el-button
-                    type="primary"
-                    round
-                    @click="submit('/runtime_bus/submit')"
-                    >提交运算</el-button
-                  >
-                </div>
-              </el-form-item>
             </el-form>
+            <div class="buttonBox">
+              <el-button round @click="backStep()">上一步</el-button>
+              <el-button round @click="resetForm('SF_DRMB_ref')"
+                >恢复默认</el-button
+              >
+              <el-button
+                type="primary"
+                round
+                @click="submit('/runtime_bus/submit')"
+                >提交运算</el-button
+              >
+            </div>
           </div>
         </el-tab-pane>
 
-        <el-tab-pane label="IAMB">
+        <el-tab-pane label="IAMB" name="IAMB">
           <div class="titleBox">IAMB</div>
           <div class="introBox">
             <p>模型说明：</p>
@@ -149,10 +151,14 @@ export default {
   methods: {
     init() {
       this.SF_DRMB_form = this.m_SF_DRMB;
+      if (this.moduleName === "f_Factor") {
+        this.model = "IAMB";
+      } else {
+        this.model = "SF-DRMB";
+      }
     },
 
     backStep() {
-      console.log(this.m_step);
       this.m_changeStep(this.m_step - 1);
     },
 
@@ -171,7 +177,7 @@ export default {
       postRequest(url, payload)
         .then((res) => {
           console.log(res);
-          this.m_changeTaskInfo({ result: res });
+          this.m_changeTaskInfo({ algorithm: this.model, result: res });
           this.loading = false;
           this.m_changeStep(this.m_step + 1);
         })
@@ -247,5 +253,6 @@ export default {
   width: 35vh;
   margin-top: 70px;
   margin-right: auto;
+  margin-left: auto;
 }
 </style>

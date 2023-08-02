@@ -55,11 +55,11 @@ export default {
     ResultVue,
   },
   computed: {
-    ...mapState("disFactor", ["step"]),
+    ...mapState("f_Factor", ["step"]),
   },
   data() {
     return {
-      moduleName: "disFactor",
+      moduleName: "f_Factor",
     };
   },
 

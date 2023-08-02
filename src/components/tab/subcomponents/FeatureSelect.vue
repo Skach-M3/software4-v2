@@ -1,23 +1,84 @@
 <template>
   <div class="Box">
-    <div>
+    <!-- ------------------------------------选择目标特征 ------------------------------->
+    <div v-if="moduleName !== 'disFactor'">
+      <div class="top">
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">选择目标特征：</span>
+        <!-- <el-checkbox
+          v-model="checkAll_target"
+          @change="
+            (val) => {
+              this.targetFeature = val ? this.allFeatures : [];
+            }
+          "
+          border
+          size="small"
+          >全选</el-checkbox
+        > -->
+      </div>
       <div>
-        <div class="top">
-          <span class="lineStyle">▍</span
-          ><span class="featureTitle">参与运算的特征：</span>
+        <h3 class="featureSubTitle">人口学特征</h3>
+        <el-checkbox-group v-model="targetFeature" @change="changeBox_target()">
           <el-checkbox
-            v-model="checkAll_1"
-            @change="
-              (val) => {
-                this.computeFeatures = val ? this.allFeatures : [];
-              }
-            "
+            v-for="item in peopleFeatures"
+            :label="item"
+            :key="item"
             border
-            size="small"
-            >全选</el-checkbox
+            >{{ item }}</el-checkbox
           >
-        </div>
+        </el-checkbox-group>
+      </div>
 
+      <div>
+        <h3 class="featureSubTitle">生理学特征</h3>
+        <el-checkbox-group v-model="targetFeature" @change="changeBox_target()">
+          <el-checkbox
+            v-for="item in physiologicalFeatures"
+            :label="item"
+            :key="item"
+            border
+            >{{ item }}</el-checkbox
+          >
+        </el-checkbox-group>
+      </div>
+
+      <div>
+        <h3 class="featureSubTitle">社会学特征</h3>
+        <el-checkbox-group v-model="targetFeature" @change="changeBox_target()">
+          <el-checkbox
+            v-for="item in socialFeatures"
+            :label="item"
+            :key="item"
+            border
+            >{{ item }}</el-checkbox
+          >
+        </el-checkbox-group>
+      </div>
+      <el-divider></el-divider>
+    </div>
+
+    
+
+    <!-- ------------------------------------- 参与运算特征 ---------------------------->
+    <div>
+      <div class="top">
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">参与运算的特征：</span>
+        <el-checkbox
+          v-model="checkAll_1"
+          @change="
+            (val) => {
+              this.computeFeatures = val ? this.allFeatures : [];
+            }
+          "
+          border
+          size="small"
+          >全选</el-checkbox
+        >
+      </div>
+
+      <div>
         <h3 class="featureSubTitle">人口学特征</h3>
         <el-checkbox-group v-model="computeFeatures" @change="changeBox_1()">
           <el-checkbox
@@ -59,6 +120,7 @@
 
     <el-divider></el-divider>
 
+    <!-- --------------------------------------------- 已知特征 ----------------------------->
     <div>
       <div class="top">
         <span class="lineStyle">▍</span
@@ -115,6 +177,7 @@
     </div>
 
     <div class="buttonGroup">
+      <el-button @click="backStep()" round>上一步</el-button>
       <el-button type="primary" @click="next()" round>确认</el-button>
     </div>
   </div>
@@ -122,7 +185,7 @@
 
 <script>
 import { getRequest } from "@/api/user.js";
-import vuex_mixin from '@/components/mixins/vuex_mixin';
+import vuex_mixin from "@/components/mixins/vuex_mixin";
 export default {
   name: "FeatureSelect",
   props: {
@@ -131,7 +194,7 @@ export default {
       default: "disFactor",
     },
   },
-  mixins:[vuex_mixin],
+  mixins: [vuex_mixin],
   computed: {},
   data() {
     return {
@@ -141,6 +204,7 @@ export default {
       socialFeatures: [],
       checkAll_1: false,
       checkAll_2: false,
+      checkAll_target: false,
       computeFeatures: [],
       knownFeatures: [],
       targetFeature: [],
@@ -153,7 +217,6 @@ export default {
 
   methods: {
     init() {
-      console.log(this.m_dataset);
       getRequest("/tTableManager/tablemanager", {
         tableName: this.m_dataset,
       }).then((res) => {
@@ -169,7 +232,11 @@ export default {
               this.allFeatures.push(item.field_name);
               this.socialFeatures.push(item.field_name);
             } else if (item.is_zoo_information == 1) {
-              this.targetFeature.push(item.field_name);
+              console.log(this.moduleName);
+              //上面判断是否是标签列
+              if (this.moduleName === "disFactor") {
+                this.targetFeature.push(item.field_name);
+              }
             }
           }
         });
@@ -178,6 +245,10 @@ export default {
         this.knownFeatures = this.m_known_features;
         this.changeBox_1();
         this.changeBox_2();
+        if (this.moduleName !== "disFactor") {
+          this.targetFeature = this.m_target_feature;
+          this.changeBox_target();
+        }
       });
     },
 
@@ -197,6 +268,14 @@ export default {
       }
     },
 
+    changeBox_target() {
+      if (this.targetFeature.length === this.allFeatures.length) {
+        this.checkAll_target = true;
+      } else {
+        this.checkAll_target = false;
+      }
+    },
+
     next() {
       if (this.targetFeature.length < 1) {
         alert("该数据没有目标列，请重新选择数据表");
@@ -211,7 +290,11 @@ export default {
         known_features: this.knownFeatures,
         target_feature: this.targetFeature,
       });
-      this.m_changeStep(4);
+      this.m_changeStep(this.m_step + 1);
+    },
+
+    backStep() {
+      this.m_changeStep(this.m_step - 1);
     },
   },
 };

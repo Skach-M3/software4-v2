@@ -10,8 +10,8 @@ import TaskManage from "@/components/tab/TaskManage.vue";
 import dataManage from "@/components/tab/dataManage.vue";
 import modelManage from "@/components/tab/modelManage.vue";
 import DisFactor from "@/components/tab/DisFactor.vue"
-import TaskInfo from "@/components/tab/subcomponents/TaskInfo.vue"
-import DataSelect from "@/components/tab/subcomponents/DataSelect.vue"
+import F_Factor from "@/components/tab/F_Factor.vue";
+import FactorDis from "@/components/tab/FactorDis.vue";
 // import LogIn from "@/views/LogIn.vue"
 import UserSideBar from "@/components/user/UserSideBar.vue"
 import Predict from "@/components/user/Predict.vue"
@@ -75,7 +75,17 @@ const routes = [
       {
         path: "DisFactor",
         name: "DisFactor",
-        component: DisFactor
+        component: DisFactor,
+      },
+      {
+        path: "F_Factor",
+        name: "F_Factor",
+        component: F_Factor,
+      },
+      {
+        path: "FactorDis",
+        name: "FactorDis",
+        component: FactorDis,
       },
     ],
   },

@@ -54,7 +54,7 @@ export default new Vuex.Store({
   },
   modules: {
     disFactor: taskModule,
-    factFactor: taskModule,
-    factDiease: taskModule
+    f_Factor: taskModule,
+    factorDis: taskModule
   },
 });

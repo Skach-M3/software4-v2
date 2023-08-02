@@ -59,6 +59,9 @@
       >
       </el-table-column>
     </el-table>
+    <div class="buttonGroup">
+      <el-button @click="backStep()" round>上一步</el-button>
+    </div>
   </div>
 </template>
 
@@ -140,6 +143,10 @@ export default {
       this.m_changeStep(3);
       this.m_changeTaskInfo({ dataset: this.chosenData });
     },
+
+    backStep() {
+      this.m_changeStep(this.m_step - 1);
+    },
   },
 };
 </script>
@@ -161,5 +168,12 @@ export default {
 #dataList .button {
   padding: 0;
   float: right;
+}
+
+.buttonGroup {
+  width: 200px;
+  margin-top: 5vh;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>

@@ -51,11 +51,11 @@
               <i class="el-icon-menu"></i>
               <span slot="title">疾病危险因素挖掘</span>
             </el-menu-item>
-            <el-menu-item index="">
+            <el-menu-item index="F_Factor">
               <i class="el-icon-menu"></i>
               <span slot="title">危险因素相关因素挖掘</span>
             </el-menu-item>
-            <el-menu-item index="">
+            <el-menu-item index="FactorDis">
               <i class="el-icon-menu"></i>
               <span slot="title">危险因素相关疾病挖掘</span>
             </el-menu-item>
