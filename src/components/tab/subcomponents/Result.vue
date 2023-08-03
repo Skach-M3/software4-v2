@@ -44,6 +44,8 @@
       <span class="lineStyle">▍</span
       ><span class="featureTitle">任务结果：</span>
     </div>
+    <h3>专家匹配度：{{ ratio }}</h3>
+    <h3>运算时间：{{m_result.time}}</h3>
     <div class="graphBox">
       <GraphVue
         v-if="initFlag"
@@ -73,7 +75,12 @@ export default {
       default: "disFactor",
     },
   },
-  computed: {},
+  computed: {
+    ratio() {
+      let num = (this.m_result.ratio*100).toFixed(2);
+      return num + "%";
+    },
+  },
 
   data() {
     return {
@@ -234,10 +241,16 @@ export default {
   margin-bottom: 20px;
 }
 
+h3{
+  display: inline;
+  margin-right: 22%;
+}
+
 .graphBox {
   width: 100%;
   height: 40vh;
   box-shadow: 0px 0px 13px -3px #c7e2ea;
+  margin-top: 20px;
 }
 
 .buttonGroup .el-button {
