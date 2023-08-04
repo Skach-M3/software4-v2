@@ -46,6 +46,7 @@
     </div>
     <h3>专家匹配度：{{ ratio }}</h3>
     <h3>运算时间：{{m_result.time}}</h3>
+    <h3>独立性检验次数：{{m_result.ci}}</h3>
     <div class="graphBox">
       <GraphVue
         v-if="initFlag"
@@ -120,9 +121,9 @@ export default {
         }
         this.graphTitile = `${this.m_disease}相关危险因素`;
         this.node.push(JSON.parse(JSON.stringify(tempNode)));
-        let ref_x = 1000 / (this.m_result.res.length + 1);
-        for (let i = 0; i < this.m_result.res.length; i++) {
-          tempNode.name = this.m_result.res[i];
+        let ref_x = 1000 / (this.m_result.res[0].length + 1);
+        for (let i = 0; i < this.m_result.res[0].length; i++) {
+          tempNode.name = this.m_result.res[0][i];
           tempNode.x = ref_x * (i + 1);
           tempNode.y = top_y;
           this.node.push(JSON.parse(JSON.stringify(tempNode)));

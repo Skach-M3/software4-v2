@@ -2,10 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import SideBar from '@/components/sideBar/index.vue'
 import dash from '@/views/dash/index.vue'
-// import metastasis from "@/views/lung/metastasis";
-// import earlyLung from "@/views/lung/earlyLung";
-// import connectMining from "@/components/tab/connectMining.vue";
-import dangePredict from "@/components/tab/dangePredict.vue";
 import TaskManage from "@/components/tab/TaskManage.vue";
 import dataManage from "@/components/tab/dataManage.vue";
 import modelManage from "@/components/tab/modelManage.vue";
@@ -13,9 +9,6 @@ import DisFactor from "@/components/tab/DisFactor.vue"
 import F_Factor from "@/components/tab/F_Factor.vue";
 import FactorDis from "@/components/tab/FactorDis.vue";
 // import LogIn from "@/views/LogIn.vue"
-import UserSideBar from "@/components/user/UserSideBar.vue"
-import Predict from "@/components/user/Predict.vue"
-import DieaseIntro from "@/components/user/DieaseIntro/DieaseIntro.vue"
 import SoftwareIntro from "@/components/tab/SoftwareIntro.vue";
 Vue.use(VueRouter)
 
@@ -48,24 +41,9 @@ const routes = [
         component: modelManage,
       },
       {
-        path: "Predict",
-        name: "Predict_manager",
-        component: Predict,
-      },
-      {
-        path: "DieaseIntro",
-        name: "DieaseIntro_manager",
-        component: DieaseIntro,
-      },
-      {
         path: "SoftwareIntro",
         name: "SoftwareIntro",
         component: SoftwareIntro,
-      },
-      {
-        path: "dangePredict",
-        name: "dangePredict",
-        component: dangePredict,
       },
       {
         path: "TaskManage",
@@ -89,43 +67,6 @@ const routes = [
       },
     ],
   },
-  {
-    path: "/UserSideBar",
-    name: "UserSideBar",
-    component: UserSideBar,
-    children: [
-      {
-        path: "Predict",
-        name: "Predict",
-        component: Predict,
-      },
-      {
-        path: "DieaseIntro",
-        name: "DieaseIntro",
-        component: DieaseIntro,
-      },
-    ],
-  },
-
-  // {
-  //     path : '/metastasis',
-  //     name: 'metastasis',
-  //     component : metastasis
-  // },
-  // {
-  //     path:'/connectMining',
-  //     name:'connectMining',
-  //     component:connectMining,
-  // },{
-  //     path:'/dangePredict',
-  //     name:'dangePredict',
-  //     component:dangePredict,
-  // },
-  // {
-  //     path:'/importModel',
-  //     name:'importModel',
-  //     component:importModel,
-  // }
 ];
 
 const router = new VueRouter({
