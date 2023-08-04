@@ -1,3 +1,4 @@
+
 export const tabSwitch = {
     data() {
         return {
@@ -21,3 +22,19 @@ export const resetForm = {
     }
   },
 };
+
+export const debounce = {
+  methods: {
+    debounce(fn, delay) {
+      let t = null;
+      return function () {
+        if (t !== null) {
+          clearTimeout(t);
+        }
+        t = setTimeout(() => {
+          fn.call(this);
+        }, delay);
+      }
+    }
+  }
+}

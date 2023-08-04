@@ -88,9 +88,25 @@
           <el-input
             v-model="dialogForm.tableName"
             placeholder="请输入数据表名称"
+            @input="checkDataName"
           ></el-input>
         </el-form-item>
-        <el-form-item label="特征个数" prop="featuresNum">
+        <el-form-item label="涉及疾病" prop="dataDisease">
+          <el-select
+            v-model="dialogForm.dataDisease"
+            filterable
+            placeholder="请选择或搜索"
+          >
+            <el-option
+              v-for="item in disOptions"
+              :key="item.name"
+              :label="item.name"
+              :value="item.name"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <!-- <el-form-item label="特征个数" prop="featuresNum">
           <el-input-number
             v-model="dialogForm.featuresNum"
             :min="1"
@@ -114,11 +130,11 @@
             <el-option label="社会学特征" value="social"></el-option>
             <el-option label="生理学特征" value="medical"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button @click="resetForm()">重置</el-button>
+        <el-button @click="resetForm('dialogFormRef')">重置</el-button>
         <el-button type="primary" @click="submitTable">下一步</el-button>
       </div>
       <!--          选择数据表单       -->
@@ -157,10 +173,13 @@
 </template>
 
 <script>
-import { postRequest } from "@/api/user";
+import { getRequest } from "@/api/user";
 import { mapGetters, mapState } from "vuex";
+import { disOptions } from "@/components/tab/constData.js";
+import { resetForm, debounce } from "../mixins/mixin";
 
 export default {
+  mixins: [resetForm, debounce],
   computed: {
     ...mapGetters(["dataDisList", "dataCreatorList"]),
     ...mapState(["dataList"]),
@@ -170,13 +189,22 @@ export default {
     return {
       disease: "",
       creator: "",
+      disOptions,
       dialogForm: {
         tableName: "",
+        dataDisease: "",
         featuresNum: 1,
         fields: [{ name: "", type: "" }],
         rules: {
           tableName: [
             { required: true, message: "数据表名称不能为空", trigger: "blur" },
+          ],
+          dataDisease: [
+            {
+              required: true,
+              message: "涉及疾病不能为空",
+              trigger: "blur",
+            },
           ],
           numFeatures: [
             { required: true, message: "特征个数不能为空", trigger: "blur" },
@@ -188,6 +216,28 @@ export default {
       dialogFormVisible: false,
       selectVisible: false,
     };
+  },
+
+  created() {
+    // this.$watch("dialogForm.tableName",()=>{
+    //   debounce_func(() => {
+    //     console.log("laksdjflkasdjflkasdjf");
+    //   }, 1000);
+    // })
+    this.checkDataName = this.debounce(() => {
+      console.log(this.dialogForm.tableName);
+      getRequest("/DataTable/inspection", {
+        newname: this.dialogForm.tableName,
+      }).then((res) => {
+        if (!res) {
+          this.$message({
+            showClose: true,
+            message: "数据表重名，请重新填写",
+            type: "error",
+          });
+        }
+      });
+    }, 1000);
   },
 
   methods: {
@@ -204,6 +254,7 @@ export default {
     importData() {
       this.dialogFormVisible = true;
     },
+
     generateFields() {
       const numFields = parseInt(this.dialogForm.featuresNum);
       if (!isNaN(numFields)) {
@@ -213,11 +264,7 @@ export default {
         }));
       }
     },
-    resetForm() {
-      this.dialogForm.dataSetName = "";
-      this.dialogForm.featuresNum = 1;
-      this.dialogForm.fields = [{ name: "", type: "" }];
-    },
+
     handleSubmit() {
       console.log("文件上传中...");
     },
@@ -248,25 +295,14 @@ export default {
       return isCSV;
     },
     submitTable() {
-      this.selectVisible = true;
-      const filedMap = {};
-      let fieldtemp = this.dialogForm.fields;
-      for (let i = 0; i < fieldtemp.length; i++) {
-        //   let tempName = fieldtemp[i].name;
-        //   let tempType = fieldtemp[i].type;
-        //   let temp = { [tempName]: tempType };
-        filedMap[fieldtemp[i].name] = fieldtemp[i].type;
-        //   console.log(tempName, tempType);
-        //   console.log(temp);
-        //   filedMap[i] = temp;
-      }
-      //   let filedMap_json = JSON.stringify(filedMap);
-      const params = {
-        //上传的内容
-        tableName: this.dialogForm.tableName,
-        columnsNum: this.dialogForm.featuresNum,
-        filedMap: filedMap,
-      };
+      this.$refs["dialogFormRef"].validate((valid) => {
+        if (valid) {
+          this.selectVisible = true;
+        } else {
+          this.$message("请填写必填项");
+          return false;
+        }
+      });
     },
   },
 };
