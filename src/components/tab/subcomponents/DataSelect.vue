@@ -3,7 +3,7 @@
     <div id="dataList">
       <el-card
         :body-style="{ padding: '0px' }"
-        v-for="(item, index) in list"
+        v-for="(item, index) in showList"
         :key="index"
         :shadow="chosenData === item.table_name ? 'always' : 'hover'"
         style="width: 210px"
@@ -28,15 +28,13 @@
       </el-card>
     </div>
     <el-pagination
-      @size-change="pageSizeChange()"
       @current-change="currentPageChange()"
       :current-page.sync="currentPage"
-      :page-sizes="[3, 4, 5]"
       :page-size.sync="pageSize"
-      layout="sizes, prev, pager, next"
+      layout="total, prev, pager, next"
       :total="dataTotal"
       :hide-on-single-page="true"
-      style="margin-left: 35%; margin-top: 20px"
+      style="margin-left: 40%; margin-top: 20px"
     >
     </el-pagination>
     <el-table
@@ -91,6 +89,7 @@ export default {
       dataTableVision: false,
       patientTable: [],
       list: [],
+      showList: [],
     };
   },
 
@@ -106,6 +105,12 @@ export default {
         }
       }
       this.dataTotal = this.list.length;
+      //设置要显示的数据列表
+      if (this.dataTotal > 4) {
+        for (let i = 0; i < 4; i++) {
+          this.showList.push(this.list[i]);
+        }
+      }
     },
 
     getData(tablename) {
@@ -119,25 +124,27 @@ export default {
       });
     },
 
-    pageSizeChange() {
-      getRequest(
-        `DataManager/data/heart?page=${this.currentPage}&pageSize=${this.pageSize}`
-      ).then((res) => {
-        console.log("新的datalist👉", res.list);
-        this.dataList = res.list;
-        this.dataTotal = res.total;
-      });
-    },
+    // pageSizeChange() {
+    //   for (let i = 0; i < this.pageSize; i++) {
+    //     this.showList.push(this.list[i]);
+    //   }
+    // },
 
     currentPageChange() {
-      getRequest(
-        `DataManager/data/heart?page=${this.currentPage}&pageSize=${this.pageSize}`
-      ).then((res) => {
-        console.log("新的datalist👉", res.list);
-        this.dataList = res.list;
-        this.dataTotal = res.total;
-      });
+      let start = (this.currentPage - 1) * this.pageSize;
+      let end = start + this.pageSize - 1;
+      this.showList.length = 0;
+      if (this.list.length >= end + 1) {
+        for (let i = start; i <= end; i++) {
+          this.showList.push(this.list[i]);
+        }
+      } else {
+        for (let j = start; j < this.list.length; j++) {
+          this.showList.push(this.list[j]);
+        }
+      }
     },
+
     next(name) {
       this.chosenData = name;
       this.m_changeStep(3);

@@ -44,7 +44,7 @@
       <span class="lineStyle">▍</span
       ><span class="featureTitle">任务结果：</span>
     </div>
-    <h3>专家匹配度：{{ ratio }}</h3>
+    <h3>专家知识匹配度：{{ ratio }}</h3>
     <h3 v-if="m_result.time">运算时间：{{ m_result.time }} 秒</h3>
     <h3 v-if="m_result.ci">独立性检验次数：{{ m_result.ci }}</h3>
     <div class="graphBox">
@@ -195,6 +195,9 @@ export default {
 
   methods: {
     next() {
+      //上传任务
+      
+      
       this.m_changeStep(1);
       let defaultValue = {
         step: 1,
