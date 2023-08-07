@@ -45,8 +45,8 @@
       ><span class="featureTitle">任务结果：</span>
     </div>
     <h3>专家匹配度：{{ ratio }}</h3>
-    <h3>运算时间：{{m_result.time}}</h3>
-    <h3>独立性检验次数：{{m_result.ci}}</h3>
+    <h3 v-if="m_result.time">运算时间：{{ m_result.time }} 秒</h3>
+    <h3 v-if="m_result.ci">独立性检验次数：{{ m_result.ci }}</h3>
     <div class="graphBox">
       <GraphVue
         v-if="initFlag"
@@ -78,7 +78,7 @@ export default {
   },
   computed: {
     ratio() {
-      let num = (this.m_result.ratio*100).toFixed(2);
+      let num = (this.m_result.ratio * 100).toFixed(2);
       return num + "%";
     },
   },
@@ -128,7 +128,7 @@ export default {
           tempNode.y = top_y;
           this.node.push(JSON.parse(JSON.stringify(tempNode)));
           tempLink.source = this.m_target_feature[0];
-          tempLink.target = this.m_result.res[i];
+          tempLink.target = this.m_result.res[0][i];
           this.links.push(JSON.parse(JSON.stringify(tempLink)));
         }
         console.log(this.node, this.links);
@@ -242,7 +242,7 @@ export default {
   margin-bottom: 20px;
 }
 
-h3{
+h3 {
   display: inline;
   margin-right: 22%;
 }

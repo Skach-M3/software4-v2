@@ -63,7 +63,7 @@
             <el-button
               size="mini"
               type="danger"
-              @click="handleDelete(scope.$index)"
+              @click="handleDelete(scope.row)"
               >删除</el-button
             >
           </template>
@@ -268,8 +268,10 @@ export default {
     handleEdit(index, row) {
       console.log(index, row);
     },
-    handleDelete(index) {
-      this.tableData.splice(index, 1);
+    handleDelete(row) {
+      postRequest(`DataTable/delete/${row.id}`).then(res=>{
+        this.SetDataList(res);
+      })
     },
     clearFilter() {
       this.disease = "";

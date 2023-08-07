@@ -9,7 +9,7 @@ export default {
   props:{
     title_text:{
       type:String,
-      default:"关系图"
+      default:"关系图",
     },
     node:{
       type:Array,
@@ -37,6 +37,7 @@ export default {
       option = {
         title: {
           text: this.title_text,
+          subtext:"下层是目标节点，上层为关联节点"
         },
         toolbox:{
           show: true

@@ -34,7 +34,7 @@
                     ></el-icon>
                   </el-popover>
                 </template>
-                <el-input v-model.number="SF_DRMB_form.K_OR"></el-input>
+                <el-input v-model.trim="SF_DRMB_form.K_OR"></el-input>
                 <span class="valueRange">(取值范围为 0 - 1 )</span>
               </el-form-item>
 
@@ -51,7 +51,7 @@
                     ></el-icon>
                   </el-popover>
                 </template>
-                <el-input v-model.number="SF_DRMB_form.K_and_PC"></el-input>
+                <el-input v-model.trim="SF_DRMB_form.K_and_PC"></el-input>
                 <span class="valueRange">(取值范围为 0.15 - 0.3 )</span>
               </el-form-item>
 
@@ -68,7 +68,7 @@
                     ></el-icon>
                   </el-popover>
                 </template>
-                <el-input v-model.number="SF_DRMB_form.K_and_SP"></el-input>
+                <el-input v-model.trim="SF_DRMB_form.K_and_SP"></el-input>
                 <span class="valueRange">(取值范围为 0.4 - 0.8 )</span>
               </el-form-item>
             </el-form>
@@ -183,7 +183,11 @@ export default {
         })
         .catch((err) => {
           this.loading = false;
-          this.$message(`发生错误：${err}`);
+          this.$message({
+            showClose:true,
+            type:"error",
+            message:`发生错误：${err}`
+          });
         });
     },
   },

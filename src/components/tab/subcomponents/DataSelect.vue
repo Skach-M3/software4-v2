@@ -119,25 +119,25 @@ export default {
       });
     },
 
-    // pageSizeChange() {
-    //   getRequest(
-    //     `DataManager/data/heart?page=${this.currentPage}&pageSize=${this.pageSize}`
-    //   ).then((res) => {
-    //     console.log("新的datalist👉", res.list);
-    //     this.dataList = res.list;
-    //     this.dataTotal = res.total;
-    //   });
-    // },
+    pageSizeChange() {
+      getRequest(
+        `DataManager/data/heart?page=${this.currentPage}&pageSize=${this.pageSize}`
+      ).then((res) => {
+        console.log("新的datalist👉", res.list);
+        this.dataList = res.list;
+        this.dataTotal = res.total;
+      });
+    },
 
-    // currentPageChange() {
-    //   getRequest(
-    //     `DataManager/data/heart?page=${this.currentPage}&pageSize=${this.pageSize}`
-    //   ).then((res) => {
-    //     console.log("新的datalist👉", res.list);
-    //     this.dataList = res.list;
-    //     this.dataTotal = res.total;
-    //   });
-    // },
+    currentPageChange() {
+      getRequest(
+        `DataManager/data/heart?page=${this.currentPage}&pageSize=${this.pageSize}`
+      ).then((res) => {
+        console.log("新的datalist👉", res.list);
+        this.dataList = res.list;
+        this.dataTotal = res.total;
+      });
+    },
     next(name) {
       this.chosenData = name;
       this.m_changeStep(3);
