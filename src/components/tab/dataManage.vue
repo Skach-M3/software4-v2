@@ -60,12 +60,17 @@
             <span>操作</span>
           </template>
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="danger"
-              @click="handleDelete(scope.row)"
-              >删除</el-button
-            >
+            <el-popconfirm title="删除后无法恢复" 
+            icon="el-icon-warning"
+            icon-color="red"
+            @confirm="handleDelete(scope.row)">
+              <el-button
+                slot="reference"
+                size="mini"
+                type="danger"
+                >删除</el-button
+              >
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -151,10 +156,26 @@
             :key="index"
             :label="name"
           >
-            <el-select v-model="featuresMap[name]" placeholder="请选择特征类型" @change="test(name,featuresMap[name])">
-              <el-option label="人口学特征" value="people" key="people"></el-option>
-              <el-option label="社会学特征" value="social" key="social"></el-option>
-              <el-option label="生理学特征" value="medical" key="medical"></el-option>
+            <el-select
+              v-model="featuresMap[name]"
+              placeholder="请选择特征类型"
+              @change="test(name, featuresMap[name])"
+            >
+              <el-option
+                label="人口学特征"
+                value="people"
+                key="people"
+              ></el-option>
+              <el-option
+                label="社会学特征"
+                value="social"
+                key="social"
+              ></el-option>
+              <el-option
+                label="生理学特征"
+                value="medical"
+                key="medical"
+              ></el-option>
             </el-select>
           </el-form-item>
         </el-form>
@@ -167,8 +188,8 @@
 </template>
 
 <script>
-import { getRequest,postRequest } from "@/api/user";
-import { mapGetters, mapMutations, mapState ,mapActions} from "vuex";
+import { getRequest, postRequest } from "@/api/user";
+import { mapGetters, mapMutations, mapState, mapActions } from "vuex";
 import { disOptions } from "@/components/tab/constData.js";
 import { resetForm, debounce } from "../mixins/mixin";
 
@@ -260,18 +281,18 @@ export default {
     ...mapMutations(["SetDataList"]),
     ...mapActions(["getDataList"]),
 
-    test(name,label){
-      console.log(name,label);
-      this.$set(this.featuresMap,this.featuresMap[name],label);
+    test(name, label) {
+      console.log(name, label);
+      this.$set(this.featuresMap, this.featuresMap[name], label);
     },
 
     handleEdit(index, row) {
       console.log(index, row);
     },
     handleDelete(row) {
-      postRequest(`DataTable/delete/${row.id}`).then(res=>{
+      postRequest(`DataTable/delete/${row.id}`).then((res) => {
         this.SetDataList(res);
-      })
+      });
     },
     clearFilter() {
       this.disease = "";
@@ -397,39 +418,39 @@ export default {
       });
     },
 
-    compelete(){
+    compelete() {
       this.loadText = "正在添加字段类型";
       this.loading = true;
       let tableHeaders = [];
-      console.log("compelete里的featuresMap.id",this.featuresMap.id);
+      console.log("compelete里的featuresMap.id", this.featuresMap.id);
       for (const key in this.featuresMap) {
-        console.log("old",key,this.featuresMap[key]);
+        console.log("old", key, this.featuresMap[key]);
         if (Object.hasOwnProperty.call(this.featuresMap, key)) {
-          console.log("new",key,this.featuresMap[key]);
-          switch (this.featuresMap[key]){
+          console.log("new", key, this.featuresMap[key]);
+          switch (this.featuresMap[key]) {
             case "people":
               tableHeaders.push({
-                "fieldName": key,
-                "isDemography":"1",
-                "isPhysiological":"0",
-                "isSociology": "0"
-              })
+                fieldName: key,
+                isDemography: "1",
+                isPhysiological: "0",
+                isSociology: "0",
+              });
               break;
             case "medical":
               tableHeaders.push({
-                "fieldName": key,
-                "isDemography":"0",
-                "isPhysiological":"1",
-                "isSociology": "0"
-              })
+                fieldName: key,
+                isDemography: "0",
+                isPhysiological: "1",
+                isSociology: "0",
+              });
               break;
             case "social":
               tableHeaders.push({
-                "fieldName": key,
-                "isDemography":"0",
-                "isPhysiological":"0",
-                "isSociology": "1"
-              })
+                fieldName: key,
+                isDemography: "0",
+                isPhysiological: "0",
+                isSociology: "1",
+              });
               break;
             default:
               break;
@@ -437,24 +458,24 @@ export default {
         }
       }
       console.log(tableHeaders);
-      postRequest("/tTableManager/insertTableManager",{
+      postRequest("/tTableManager/insertTableManager", {
         tableName: this.dialogForm.tableName,
-        tableHeaders
-      }).then(res=>{
+        tableHeaders,
+      }).then((res) => {
         console.log(res);
         // if(res.length>this.dataList.length){
-          // 这里不应重新获取数据列表，应该用res直接设置vuex里的datalist，但是有bug
-          // this.SetDataList(res);
-          this.getDataList();
-          this.$message({
-            showClose: true,
-            type: "success",
-            message: "操作成功，已添加数据表",
-          });
-          this.featuresVision = false;
-          this.dialogFormVisible = false;
+        // 这里不应重新获取数据列表，应该用res直接设置vuex里的datalist，但是有bug
+        // this.SetDataList(res);
+        this.getDataList();
+        this.$message({
+          showClose: true,
+          type: "success",
+          message: "操作成功，已添加数据表",
+        });
+        this.featuresVision = false;
+        this.dialogFormVisible = false;
         // }
-      })
+      });
     },
   },
 };

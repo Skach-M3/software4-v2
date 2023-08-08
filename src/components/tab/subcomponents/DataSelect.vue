@@ -95,6 +95,8 @@ export default {
 
   created() {
     this.init();
+    console.log(this.list);
+    console.log(this.showList);
   },
 
   methods: {
@@ -108,6 +110,10 @@ export default {
       //设置要显示的数据列表
       if (this.dataTotal > 4) {
         for (let i = 0; i < 4; i++) {
+          this.showList.push(this.list[i]);
+        }
+      } else {
+        for (let i = 0; i < this.list.length; i++) {
           this.showList.push(this.list[i]);
         }
       }
