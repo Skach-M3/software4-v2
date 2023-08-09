@@ -22,11 +22,12 @@ export default {
   },
 
   methods:{
-    ...mapActions(["getDataList","getTaskList"]),
+    ...mapActions(["getDataList","getTaskList","getModelList"]),
     init() {
       //获取所有数据表信息
       this.getDataList();
       this.getTaskList();
+      this.getModelList();
     }
   }
 }

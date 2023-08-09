@@ -26,11 +26,12 @@
           <div slot="header" class="clearfix">
             <span class="lineStyle">▍</span><span>系统模型信息</span>
           </div>
-          <el-table :data="modelInfo" stripe style="width: 100%" height="22.5vh">
-            <el-table-column prop="taskid" label="模型id" width="140"></el-table-column>
-            <el-table-column prop="modelname" label="模型名称" width="200"></el-table-column>
-            <el-table-column prop="diseasename" label="涉及病种"></el-table-column>
+          <el-table :data="modelList" stripe style="width: 100%" height="22.5vh">
+            <el-table-column prop="id" label="模型id" width="140"></el-table-column>
+            <el-table-column prop="modelName" label="模型名称" width="200"></el-table-column>
             <el-table-column prop="publisher" label="发布人"> </el-table-column>
+            <el-table-column prop="createtime" label="创建时间"></el-table-column>
+            
           </el-table>
         </el-card>
       </div>
@@ -40,19 +41,13 @@
       <div class="left" >
         <el-card :body-style="{padding:'0px',paddingLeft:'20px',paddingRight:'20px',height:'48vh'}">
           <div slot="header" class="clearfix">
-            <span class="lineStyle">▍</span><span>现有数据库信息</span>
+            <span class="lineStyle">▍</span><span>数据表概览</span>
           </div>
-          <el-table :data="databaseInfo" stripe style="width: 100%"   max-height="400">
-            <el-table-column prop="databasename" label="库名" width="130px"></el-table-column>
-            <el-table-column prop="disease" label="涉及疾病" width="120px"></el-table-column>
-            <el-table-column prop="tablenumber" label="数据表数"></el-table-column>
-            <el-table-column prop="operators" label="创建者"> </el-table-column>
-            <el-table-column label="操作">
-              <template slot-scope="scope">
-                <el-button plain type="primary" size="small" @click="getDataByBase(scope.row.databasename)">查看</el-button>
-              </template>
-              
-            </el-table-column>
+          <el-table :data="dataList" stripe style="width: 100%"   max-height="400">
+            <el-table-column prop="table_name" label="表名" width="130px"></el-table-column>
+            <el-table-column prop="disease" label="涉及疾病" width="150px"></el-table-column>
+            <el-table-column prop="featurenumber" label="特征数"></el-table-column>
+            <el-table-column prop="creator" label="创建者"> </el-table-column>
           </el-table>
         </el-card>
       </div>
@@ -60,20 +55,13 @@
       <div class="mid">
         <el-card :body-style="{padding:'0px',paddingLeft:'20px',paddingRight:'20px',height:'48vh'}">
           <div slot="header" class="clearfix">
-            <span class="lineStyle">▍</span><span>库内数据信息 </span><span v-if="currentDatabase">（{{currentDatabase}}）</span>
+            <span class="lineStyle">▍</span><span>任务信息概览 </span>
           </div>
-          <el-table :data="datasetInfo" stripe style="width: 100%"   max-height="400">
-            <el-table-column prop="tablename" label="表名" width="110px"></el-table-column>
-            <el-table-column prop="featurenumber" label="特征数" width="90px"></el-table-column>
-            <el-table-column prop="datanumber" label="样本数"></el-table-column>
-            <el-table-column prop="operators" label="创建者"></el-table-column>
-            <el-table-column label="操作">
-              <template slot-scope="scope">
-                <el-button plain type="primary" size="small" :disabled="!scope.row.projection"
-                @click="getResult(scope.row.affiliationdatabase,scope.row.tablename)">查看结果</el-button>
-              </template>
-              
-            </el-table-column>
+          <el-table :data="taskList" stripe style="width: 100%"   max-height="400">
+            <el-table-column prop="taskName" label="任务名"></el-table-column>
+            <el-table-column prop="leader" label="负责人"></el-table-column>
+            <el-table-column prop="model" label="算法"></el-table-column>
+            <el-table-column prop="dataset" label="数据集"></el-table-column>
           </el-table>
         </el-card>
       </div>
@@ -81,15 +69,10 @@
       <div class="right">
         <el-card :body-style="{padding:'0',paddingLeft:'20px',paddingRight:'20px',paddingTop:'20px',height:'45.9vh',overflow:'hidden'}">
           <div slot="header" class="clearfix">
-            <span class="lineStyle">▍</span><span>挖掘任务概览</span><span v-if="currentDataset">（{{currentDataset}}）</span>
+            <span class="lineStyle">▍</span><span>近期新建任务数</span>
           </div>
-          <div style="width:500px;height:500px; margin-top:20px">
-            <PieChart 
-            v-if="!pieLoading" 
-            v-loading="pieLoading" 
-            element-loading-text="正在获取结果"
-            :data="rateCount" 
-            :title="''"></PieChart>
+          <div id="chartBox">
+            <LineChartVue :statistic="taskTotal"></LineChartVue>
           </div>
         </el-card>
       </div>
@@ -99,22 +82,17 @@
 </template>
 
 <script>
-import PieChart from '@/components/tab/subcomponents/PieChart.vue'
 import {getRequest,postRequest} from '@/api/user'
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
+import LineChartVue from '@/components/tab/subcomponents/LineChart.vue';
 export default {
   name: "index",
-  components:{PieChart: PieChart},
+  components:{LineChartVue},
+  computed:{
+    ...mapState(["modelList","dataList","taskList"])
+  },
   data() {
     return {
-      currentDatabase:"",
-      currentDataset:"",
-      modelInfo:[],
-      databaseInfo:[],
-      datasetInfo:[],
-      predictResult:[],
-      rateCount:[],
-      pieLoading: false,
       quickEntry: [
         {
           title: "数据管理",
@@ -142,99 +120,22 @@ export default {
           router: "",
         }
       ],
+      taskTotal:[],
+      sevendays:[],
     };
   },
   
-  mounted() {
+  beforeMount() {
     this.init();
   },
 
   methods: {
     init(){
-      // 获取模型信息
-      // getRequest("/Model/getall").then((res)=>{
-      //   this.modelInfo = res;
-      // }).catch(error=>{
-      //   console.log(error);
-      // })
-      // 获取数据库信息
-      // getRequest("/DataManager/database").then((res)=>{
-      //   this.databaseInfo = res;
-      //   if(this.databaseInfo[0].databasename){
-      //     this.currentDatabase = this.databaseInfo[0].databasename;
-      //     this.getDataByBase(this.databaseInfo[0].databasename);
-      //   }
-      // }).catch(error=>{
-      //   console.log(error);
-      // })
-    },
-
-    // 根据库名获取数据表
-    getDataByBase(databasename){
-      // postRequest("/DataManager/data",JSON.stringify({databasename})).then((res)=>{
-      //   this.datasetInfo = res;
-      //   if(databasename){
-      //     this.currentDatabase = databasename;
-      //     this.getResult(this.datasetInfo[0].affiliationdatabase,this.datasetInfo[0].tablename)
-      //   }
-      // }).catch(error=>{
-      //   console.log(error);
-      // })
-    },
-
-    // 获取特定数据表的预测结果
-    getResult(basename,tablename){
-      this.pieLoading = true;
-      if(tablename){
-        this.currentDataset = tablename;
-      }
-      getRequest("/DataManager/getInfoByTableName",{basename,tablename}).then((res)=>{
-        this.predictResult = res.data;
-        this.rateCount = [];
-        let high = 0;
-        let mid = 0;
-        let low = 0;
-        for (const item of this.predictResult) {
-          if(!item.disease_probability){
-            break;
-          }
-          let rate = parseFloat((item.disease_probability*100).toFixed(2));
-          if(rate > 70){
-            high++;
-          }else if(rate >45){
-            mid++;
-          }else{
-            low++;
-          }
-          
-        }
-        if(low > 0){
-          let lowCount = {
-            value: low,
-            name: "低风险"
-          }
-          this.rateCount.push(lowCount);
-        }
-        if(mid >0 ){
-          let midCount = {
-            value: mid,
-            name: "中风险"
-          }
-          this.rateCount.push(midCount);
-        }
-        if(high > 0){
-          let highCount = {
-            value: high,
-            name: "高风险"
-          }
-          this.rateCount.push(highCount);
-        }
-
-        this.pieLoading = false;
-      }).catch(error=>{
-        console.log(error);
+      getRequest("Task/total").then(res=>{
+        console.log(res);
       })
     },
+    
 
     quickLink(index) {
       this.$router.push(this.quickEntry[index].router);
@@ -320,6 +221,11 @@ export default {
 }
 .card {
   padding: 0;
+  height: 100%;
+}
+
+#chartBox{
+  width: 100%;
   height: 100%;
 }
 </style>

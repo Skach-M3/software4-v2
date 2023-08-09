@@ -210,6 +210,8 @@ export default {
         time: this.m_result?.time,
         Ratio: this.m_result?.ratio,
         ci: this.m_result?.ci,
+        res: this.m_result?.res,
+        dataset: this.m_dataset
       };
       let alghName = "m_" + this.m_algorithm;
       let para = [];
