@@ -249,6 +249,7 @@ export default {
   },
 
   created() {
+    // 检查重名的防抖函数
     this.checkTableName = this.debounce(() => {
       getRequest("/DataTable/inspection", {
         newname: this.dialogForm.tableName,

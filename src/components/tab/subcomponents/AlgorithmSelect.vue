@@ -2,10 +2,11 @@
   <div v-loading="loading" element-loading-text="拼命运算中">
     <el-container>
       <el-tabs id="modelList" v-model="model" tab-position="left">
+        <!-- tab-pane的name值必须与vuex里的算法名字一一对应 -->
         <el-tab-pane
           label="SF-DRMB"
           :disabled="moduleName === 'f_Factor'"
-          name="SF-DRMB"
+          name="SF_DRMB"
         >
           <div class="titleBox">SF-DRMB</div>
           <div class="introBox">
@@ -16,7 +17,7 @@
           </div>
           <div class="paramBox">
             <el-form
-              v-model="SF_DRMB_form"
+              :model="SF_DRMB_form"
               class=""
               label-position="top"
               ref="SF_DRMB_ref"
@@ -154,7 +155,7 @@ export default {
       if (this.moduleName === "f_Factor") {
         this.model = "IAMB";
       } else {
-        this.model = "SF-DRMB";
+        this.model = "SF_DRMB";
       }
     },
 

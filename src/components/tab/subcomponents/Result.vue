@@ -46,7 +46,7 @@
     </div>
     <h3>专家知识匹配度：{{ ratio }}</h3>
     <h3 v-if="m_result.time">运算时间：{{ m_result.time }} 秒</h3>
-    <h3 v-if="m_result.ci">独立性检验次数：{{ m_result.ci }}</h3>
+    <h3 v-if="m_result.ci">独立性检验次数：{{ m_result.ci }} 次</h3>
     <div class="graphBox">
       <GraphVue
         v-if="initFlag"
@@ -64,6 +64,8 @@
 <script>
 import vuex_mixin from "@/components/mixins/vuex_mixin";
 import GraphVue from "./Graph.vue";
+import { postRequest } from "@/api/user";
+import { mapActions, mapMutations } from "vuex";
 export default {
   name: "Result",
   mixins: [vuex_mixin],
@@ -194,10 +196,41 @@ export default {
   },
 
   methods: {
+    ...mapMutations(["SetTaskList"]),
     next() {
       //上传任务
-      
-      
+      let payload = {
+        taskName: this.m_taskName,
+        leader: this.m_principal,
+        participant: this.m_participants,
+        disease: this.m_disease,
+        model: this.m_algorithm,
+        feature: this.m_use_features,
+        targetcolumn: this.m_target_feature,
+        time: this.m_result?.time,
+        Ratio: this.m_result?.ratio,
+        ci: this.m_result?.ci,
+      };
+      let alghName = "m_" + this.m_algorithm;
+      let para = [];
+      let paraValue = [];
+      for (const key in this[alghName]) {
+        if (Object.hasOwnProperty.call(this[alghName], key)) {
+          para.push(key);
+          paraValue.push(this[alghName].key);
+        }
+      }
+      payload.para = para;
+      payload.paraValue = paraValue;
+      postRequest("Task/add", payload).then((res) => {
+        this.SetTaskList(res);
+        this.$message({
+          showClose: true,
+          type: "success",
+          message: "新建任务成功",
+        });
+      });
+
       this.m_changeStep(1);
       let defaultValue = {
         step: 1,
@@ -247,7 +280,7 @@ export default {
 
 h3 {
   display: inline;
-  margin-right: 22%;
+  margin-right: 20%;
 }
 
 .graphBox {
