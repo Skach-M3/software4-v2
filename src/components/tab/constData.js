@@ -1,5 +1,10 @@
 export let disOptions = [
   {
+    name: "多疾病",
+    value: 'multiDis',
+    disable: true,
+  },
+  {
     name: "胃癌向淋巴结转移",
     value: 1,
     disable: true,

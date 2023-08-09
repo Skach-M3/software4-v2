@@ -47,7 +47,7 @@
               <i class="el-icon-menu"></i>
               <span slot="title">任务管理</span>
             </el-menu-item>
-            <el-menu-item index="/DisFactor">
+            <el-menu-item index="DisFactor">
               <i class="el-icon-menu"></i>
               <span slot="title">疾病危险因素挖掘</span>
             </el-menu-item>

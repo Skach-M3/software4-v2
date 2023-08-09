@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import PieChart from '@/components/user/PieChart.vue'
+import PieChart from '@/components/tab/subcomponents/PieChart.vue'
 import {getRequest,postRequest} from '@/api/user'
 import { mapActions } from 'vuex';
 export default {
