@@ -90,7 +90,10 @@ export default {
     this.init();
     this.$watch("m_dataDisList", () => {
       this.init();
-      this.$message("数据更新成功");
+      this.$message({
+        message: "数据更新成功",
+        type: "success",
+      });
     });
   },
 
@@ -103,19 +106,31 @@ export default {
       this.taskInfoForm.principal = this.m_principal;
       this.taskInfoForm.participants = this.m_participants;
       this.taskInfoForm.disease = this.m_disease;
-      if (this.m_disease.length < 1) {
-        let isInit = false; //是否已经设置默认选择第一个可选病
+      if (this.m_disease.length < 1 && this.moduleName != "factorDis") {
         for (const item of this.m_dataDisList) {
           let index = this.disOptions.findIndex(({ name }) => name === item);
           if (index != -1) {
             this.disOptions[index].disable = false;
-            if (!isInit) {
-              this.taskInfoForm.disease = this.disOptions[index].name;
-              isInit = true;
-            }
           }
         }
+        // 只有第三个挖掘功能的时候才允许选择多疾病
+        this.disOptions[0].disable = true;
+        // 设置默认疾病
+        for (const item of this.disOptions) {
+          if (!item.disable) {
+            this.taskInfoForm.disease = item.name;
+            break;
+          }
+        }
+        return;
       }
+      
+      // 第三个挖掘功能可选疾病设置
+      for (const item of this.disOptions) {
+        item.disable = true;
+      }
+      this.disOptions[0].disable = false;
+      this.taskInfoForm.disease = this.disOptions[0].name;
     },
 
     next() {

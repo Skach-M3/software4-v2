@@ -106,6 +106,13 @@ export default {
           this.list.push(item);
         }
       }
+      if(this.list.length<1){
+        this.$message({
+          message:'该病种没有数据，请上传',
+          type:'warning'
+        })
+        return false;
+      }
       this.dataTotal = this.list.length;
       //设置要显示的数据列表
       if (this.dataTotal > 4) {
