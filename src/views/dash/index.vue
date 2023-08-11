@@ -233,6 +233,7 @@ export default {
   methods: {
     init() {
       getRequest("Task/totals").then((res) => {
+        console.log(res);
         this.chartLegend = ["当天任务数"];
 
         this.taskTotal.push({
@@ -241,26 +242,25 @@ export default {
           smooth: true,
           data: [],
         });
-        for (const item of res[0].usages) {
-          this.modelName.push(item.model);
+        for (const item of this.modelList) {
+          this.modelName.push(item.modelName);
           this.taskModel.push({
-            name: item.model,
+            name: item.modelName,
             type: "line",
             smooth: true,
-            data: [],
+            data: new Array(7).fill(0),
           });
         }
         console.log(this.taskModel);
-        for (const item of res) {
-          this.sevendays.push(item.formattedDate);
-          this.taskTotal[0].data.push(item.total);
-          for (const model of item.usages) {
+        for (let i = 0; i < 7; i++) {
+          this.sevendays.push(res[i].formattedDate);
+          this.taskTotal[0].data.push(res[i].total);
+          for (const model of res[i].usages) {
             let index = this.taskModel.findIndex((element) => {
-              // console.log(element.name,model.model);
               return element.name.trim() == model.model.trim();
             });
             console.log(index);
-            this.taskModel[index].data.push(model.usageCount);
+            this.taskModel[index].data[i] = model.usageCount;
           }
         }
         console.log(this.taskModel);
