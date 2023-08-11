@@ -103,6 +103,10 @@ export default {
     let tempLink = {
       source: "",
       target: "",
+      value: 1,
+      label:{
+        show: true,
+      },
       lineStyle: {
         width: 5,
         curveness: 0.2,
@@ -131,6 +135,9 @@ export default {
           this.node.push(JSON.parse(JSON.stringify(tempNode)));
           tempLink.source = this.m_target_feature[0];
           tempLink.target = this.m_result.res[0][i];
+          // 权重是随机数
+          tempLink.value = Number(Math.random().toFixed(3));
+          tempLink.lineStyle.width += tempLink.value * 2;
           this.links.push(JSON.parse(JSON.stringify(tempLink)));
         }
         console.log(this.node, this.links);
@@ -177,9 +184,11 @@ export default {
               this.node.push(JSON.parse(JSON.stringify(tempNode)));
               existedName.set(tempNode.name, 1);
             }
-
             tempLink.source = this.m_target_feature[i];
             tempLink.target = this.m_result.res[i][j];
+            // 权重是随机数
+            tempLink.value = Number(Math.random().toFixed(3));
+            tempLink.lineStyle.width += tempLink.value * 2;
             this.links.push(JSON.parse(JSON.stringify(tempLink)));
           }
         }
@@ -211,7 +220,7 @@ export default {
         Ratio: this.m_result?.ratio,
         ci: this.m_result?.ci,
         res: this.m_result?.res,
-        dataset: this.m_dataset
+        dataset: this.m_dataset,
       };
       let alghName = "m_" + this.m_algorithm;
       let para = [];

@@ -57,7 +57,8 @@ export default {
             // edgeSymbol: ["circle", "arrow"],//箭头形状
             // edgeSymbolSize: [4, 10],
             edgeLabel: {//边上标识
-              fontSize: 20,
+              fontSize: 15,
+              formatter: "{c}"//显示links的value值
             },
             data: this.node,
             // [
