@@ -124,13 +124,17 @@ export default {
         }
         return;
       }
-      
+
       // 第三个挖掘功能可选疾病设置
-      for (const item of this.disOptions) {
-        item.disable = true;
+      if (this.moduleName == "factorDis") {
+        for (const item of this.disOptions) {
+          item.disable = true;
+        }
+        if (this.m_dataDisList[0] == "多疾病") {
+          this.disOptions[0].disable = false;
+          this.taskInfoForm.disease = this.disOptions[0].name;
+        }
       }
-      this.disOptions[0].disable = false;
-      this.taskInfoForm.disease = this.disOptions[0].name;
     },
 
     next() {

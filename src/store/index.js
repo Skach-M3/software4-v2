@@ -65,7 +65,7 @@ export default new Vuex.Store({
           context.commit("SetDataList", res.reverse());
         })
         .catch((err) => {
-          alert("数据列表获取错误，请联系管理员。");
+          console.log("数据列表获取错误，请联系管理员。");
           console.log(err);
         });
     },
@@ -75,7 +75,7 @@ export default new Vuex.Store({
           context.commit("SetTaskList", res.reverse());
         })
         .catch((err) => {
-          alert("任务列表获取错误，请联系管理员。");
+          console.log("任务列表获取错误，请联系管理员。");
           console.log(err);
         });
     },
@@ -85,7 +85,7 @@ export default new Vuex.Store({
           context.commit("SetModelList", res);
         })
         .catch((err) => {
-          alert("模型列表获取错误，请联系管理员。");
+          console.log("模型列表获取错误，请联系管理员。");
           console.log(err);
         });
     },

@@ -22,42 +22,99 @@
       </div>
 
       <div class="right">
-        <el-card class="card" :body-style="{padding:'0px',paddingLeft:'20px',paddingRight:'20px'}">
+        <el-card
+          class="card"
+          :body-style="{
+            padding: '0px',
+            paddingLeft: '20px',
+            paddingRight: '20px',
+          }"
+        >
           <div slot="header" class="clearfix">
             <span class="lineStyle">▍</span><span>系统模型信息</span>
           </div>
-          <el-table :data="modelList" stripe style="width: 100%" height="22.5vh">
-            <el-table-column prop="id" label="模型id" width="140"></el-table-column>
-            <el-table-column prop="modelName" label="模型名称" width="200"></el-table-column>
+          <el-table
+            :data="modelList"
+            stripe
+            style="width: 100%"
+            height="22.5vh"
+          >
+            <el-table-column
+              prop="id"
+              label="模型id"
+              width="140"
+            ></el-table-column>
+            <el-table-column
+              prop="modelName"
+              label="模型名称"
+              width="200"
+            ></el-table-column>
             <el-table-column prop="publisher" label="发布人"> </el-table-column>
-            <el-table-column prop="createtime" label="创建时间"></el-table-column>
-            
+            <el-table-column
+              prop="createtime"
+              label="创建时间"
+            ></el-table-column>
           </el-table>
         </el-card>
       </div>
     </div>
 
     <div class="bottomBigDiv">
-      <div class="left" >
-        <el-card :body-style="{padding:'0px',paddingLeft:'20px',paddingRight:'20px',height:'48vh'}">
+      <div class="left">
+        <el-card
+          :body-style="{
+            padding: '0px',
+            paddingLeft: '20px',
+            paddingRight: '20px',
+            height: '48vh',
+          }"
+        >
           <div slot="header" class="clearfix">
             <span class="lineStyle">▍</span><span>数据表概览</span>
           </div>
-          <el-table :data="dataList" stripe style="width: 100%"   max-height="400">
-            <el-table-column prop="table_name" label="表名" width="130px"></el-table-column>
-            <el-table-column prop="disease" label="涉及疾病" width="150px"></el-table-column>
-            <el-table-column prop="featurenumber" label="特征数"></el-table-column>
+          <el-table
+            :data="dataList"
+            stripe
+            style="width: 100%"
+            max-height="400"
+          >
+            <el-table-column
+              prop="table_name"
+              label="表名"
+              width="130px"
+            ></el-table-column>
+            <el-table-column
+              prop="disease"
+              label="涉及疾病"
+              width="150px"
+            ></el-table-column>
+            <el-table-column
+              prop="featurenumber"
+              label="特征数"
+            ></el-table-column>
             <el-table-column prop="creator" label="创建者"> </el-table-column>
           </el-table>
         </el-card>
       </div>
-      
+
       <div class="mid">
-        <el-card :body-style="{padding:'0px',paddingLeft:'20px',paddingRight:'20px',height:'48vh'}">
+        <el-card
+          :body-style="{
+            padding: '0px',
+            paddingLeft: '20px',
+            paddingRight: '20px',
+            height: '48vh',
+          }"
+        >
           <div slot="header" class="clearfix">
             <span class="lineStyle">▍</span><span>任务信息概览 </span>
           </div>
-          <el-table :data="taskList" stripe style="width: 100%"   max-height="400">
+          <el-table
+            :data="taskList"
+            stripe
+            style="width: 100%"
+            max-height="400"
+          >
             <el-table-column prop="taskName" label="任务名"></el-table-column>
             <el-table-column prop="leader" label="负责人"></el-table-column>
             <el-table-column prop="model" label="算法"></el-table-column>
@@ -67,29 +124,58 @@
       </div>
 
       <div class="right">
-        <el-card :body-style="{padding:'0',paddingLeft:'20px',paddingRight:'20px',paddingTop:'20px',height:'45.9vh',overflow:'hidden'}">
+        <el-card
+          :body-style="{
+            padding: '0',
+            paddingLeft: '20px',
+            paddingRight: '20px',
+            paddingTop: '20px',
+            height: '45.9vh',
+            overflow: 'hidden',
+          }"
+        >
           <div slot="header" class="clearfix">
             <span class="lineStyle">▍</span><span>近期新建任务数</span>
+            <el-select
+              class="chartSelect"
+              v-model="charttype"
+              placeholder="请选择"
+              size="mini"
+              @change="changeChart"
+            >
+              <el-option
+                v-for="item in chartOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
           </div>
           <div id="chartBox">
-            <LineChartVue :statistic="taskTotal"></LineChartVue>
+            <!-- 不加v-if判断x轴长度他就可能无法渲染 -->
+            <LineChartVue
+              v-if="sevendays.length > 0"
+              :legend="chartLegend"
+              :statistic="chartData"
+              :x="sevendays"
+            ></LineChartVue>
           </div>
         </el-card>
       </div>
-
     </div>
   </div>
 </template>
 
 <script>
-import {getRequest,postRequest} from '@/api/user'
-import { mapActions, mapState } from 'vuex';
-import LineChartVue from '@/components/tab/subcomponents/LineChart.vue';
+import { getRequest } from "@/api/user";
+import { mapState } from "vuex";
+import LineChartVue from "@/components/tab/subcomponents/LineChart.vue";
 export default {
   name: "index",
-  components:{LineChartVue},
-  computed:{
-    ...mapState(["modelList","dataList","taskList"])
+  components: { LineChartVue },
+  computed: {
+    ...mapState(["modelList", "dataList", "taskList"]),
   },
   data() {
     return {
@@ -116,29 +202,91 @@ export default {
         },
         {
           title: "危险因素相关疾病挖掘",
-          img: require("../../assets/batchPredict.png"),
+          img: require("../../assets/lianxi.png"),
           router: "",
-        }
+        },
       ],
-      taskTotal:[],
-      sevendays:[],
+      chartLegend: [],
+      modelName: [],
+      chartData: [],
+      taskTotal: [],
+      taskModel: [],
+      sevendays: [],
+      charttype: 1,
+      chartOptions: [
+        {
+          value: 1,
+          label: "总数",
+        },
+        {
+          value: 2,
+          label: "分任务",
+        },
+      ],
     };
   },
-  
-  beforeMount() {
+
+  created() {
     this.init();
   },
 
   methods: {
-    init(){
-      getRequest("Task/total").then(res=>{
-        console.log(res);
-      })
+    init() {
+      getRequest("Task/totals").then((res) => {
+        this.chartLegend = ["当天任务数"];
+
+        this.taskTotal.push({
+          name: "当天任务数",
+          type: "line",
+          smooth: true,
+          data: [],
+        });
+        for (const item of res[0].usages) {
+          this.modelName.push(item.model);
+          this.taskModel.push({
+            name: item.model,
+            type: "line",
+            smooth: true,
+            data: [],
+          });
+        }
+        console.log(this.taskModel);
+        for (const item of res) {
+          this.sevendays.push(item.formattedDate);
+          this.taskTotal[0].data.push(item.total);
+          for (const model of item.usages) {
+            let index = this.taskModel.findIndex((element) => {
+              // console.log(element.name,model.model);
+              return element.name.trim() == model.model.trim();
+            });
+            console.log(index);
+            this.taskModel[index].data.push(model.usageCount);
+          }
+        }
+        console.log(this.taskModel);
+        console.log(this.sevendays);
+        this.chartData = this.taskTotal;
+        console.log(this.chartData[0].data);
+      });
     },
-    
 
     quickLink(index) {
       this.$router.push(this.quickEntry[index].router);
+    },
+
+    changeChart() {
+      switch (this.charttype) {
+        case 1: {
+          this.chartLegend = ["当天任务数"];
+          this.chartData = this.taskTotal;
+          break;
+        }
+        case 2: {
+          this.chartLegend = this.modelName;
+          this.chartData = this.taskModel;
+          break;
+        }
+      }
     },
   },
 };
@@ -224,8 +372,13 @@ export default {
   height: 100%;
 }
 
-#chartBox{
+#chartBox {
   width: 100%;
   height: 100%;
+}
+
+.chartSelect {
+  width: 100px;
+  margin-left: 25px;
 }
 </style>

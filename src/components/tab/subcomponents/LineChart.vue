@@ -5,19 +5,29 @@
 <script>
 import * as echarts from "echarts";
 export default {
-  props:{
-    statistic:{
-      type:Array,
-      default:()=>{}
+  props: {
+    legend:{
+      type: Array,
+      default: () => {},
     },
-    x:{
-      type:Array,
-      default:()=>{}
+    statistic: {
+      type: Array,
+      default: () => {},
+    },
+    x: {
+      type: Array,
+      default: () => {},
+    },
+  },
+  watch:{
+    statistic(){
+      this.initMyChart();
     }
-
   },
   data() {
-    return {};
+    return {
+      myChart:''
+    };
   },
 
   mounted() {
@@ -27,34 +37,43 @@ export default {
   methods: {
     initMyChart() {
       var chartDom = this.$refs.lineChart;
-      var myChart = echarts.init(chartDom);
+      if(!this.myChart){
+        this.myChart = echarts.init(chartDom);
+      }
       var option;
 
       option = {
+        legend: {
+          data: this.legend,
+        },
+        // grid: {
+        //   left: "2%",
+        //   right: "4%",
+        //   bottom: "10%",
+        //   top: "10%",
+        //   containLabel: true,
+        // },
+        tooltip: {
+          trigger: "axis",
+        },
         xAxis: {
           type: "category",
-          data: ["8-2", "8-3", "8-4", "8-5", "8-6", "8-7", "8-9"],
+          data: this.x,
         },
         yAxis: {
           type: "value",
         },
-        series: [
-          {
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
-            type: "line",
-            smooth: true,
-          },
-        ],
+        series: this.statistic,
       };
 
-      option && myChart.setOption(option);
+      option && this.myChart.setOption(option,true);
     },
   },
 };
 </script>
 
 <style scoped>
-#lineChart{
+#lineChart {
   width: 100%;
   height: 100%;
 }
