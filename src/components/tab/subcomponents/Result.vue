@@ -284,35 +284,43 @@ export default {
       }
       payload.para = para;
       payload.paraValue = paraValue;
-      postRequest("Task/add", payload).then((res) => {
-        this.SetTaskList(res);
-        this.$message({
-          showClose: true,
-          type: "success",
-          message: "新建任务成功",
+      postRequest("Task/add", payload)
+        .then((res) => {
+          this.SetTaskList(res.reverse());
+          this.$message({
+            showClose: true,
+            type: "success",
+            message: "新建任务成功",
+          });
+          this.m_changeStep(1);
+          let defaultValue = {
+            step: 1,
+            taskName: "",
+            principal: "",
+            participants: "",
+            disease: "",
+            dataset: "",
+            use_features: [],
+            known_features: [],
+            target_feature: [],
+            SF_DRMB: {
+              K_OR: 0.15,
+              K_and_PC: 0.3,
+              K_and_SP: 0.75,
+            },
+            result: [],
+          };
+          // TODO:这个改不了深层参数，需要写一个深拷贝通用方法
+          this.m_changeTaskInfo(defaultValue);
+        })
+        .catch((err) => {
+          this.$message({
+            type: "error",
+            message: "新建任务失败",
+          });
+          this.m_changeStep(this.m_step - 1);
+          return false;
         });
-      });
-
-      // this.m_changeStep(1);
-      // let defaultValue = {
-      //   step: 1,
-      //   taskName: "",
-      //   principal: "",
-      //   participants: "",
-      //   disease: "",
-      //   dataset: "",
-      //   use_features: [],
-      //   known_features: [],
-      //   target_feature: [],
-      //   SF_DRMB: {
-      //     K_OR: 0.15,
-      //     K_and_PC: 0.3,
-      //     K_and_SP: 0.75,
-      //   },
-      //   result: [],
-      // };
-      // // TODO:这个改不了深层参数，需要写一个深拷贝通用方法
-      // this.m_changeTaskInfo(defaultValue);
     },
   },
 };

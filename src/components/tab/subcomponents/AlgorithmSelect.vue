@@ -5,7 +5,7 @@
         <!-- tab-pane的name值必须与vuex里的算法名字一一对应 -->
         <el-tab-pane
           label="SF-DRMB"
-          :disabled="moduleName === 'f_Factor'"
+          :disabled="moduleName !== 'disFactor'"
           name="SF_DRMB"
         >
           <div class="titleBox">SF-DRMB</div>
@@ -152,10 +152,10 @@ export default {
   methods: {
     init() {
       this.SF_DRMB_form = this.m_SF_DRMB;
-      if (this.moduleName === "f_Factor") {
-        this.model = "IAMB";
-      } else {
+      if (this.moduleName === "disFactor") {
         this.model = "SF_DRMB";
+      } else {
+        this.model = "IAMB";
       }
     },
 

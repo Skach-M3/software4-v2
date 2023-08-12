@@ -282,7 +282,10 @@ export default {
         return;
       }
       if (this.computeFeatures.length < 5) {
-        alert("请选择至少5个特征参与运算");
+        this.$message({
+          type:'warning',
+          message:'请选择至少5个特征参与运算'
+        })
         return;
       }
       this.m_changeTaskInfo({
