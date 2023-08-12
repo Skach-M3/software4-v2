@@ -148,7 +148,7 @@ export default {
 .el-footer {
   height: 21px !important;
   font-size: 10px;
-  background-color: #1c1d22bb;
+  background-color: #a5a5a5bb;
   color: #252525;
   display: flex;
   justify-content: center;
