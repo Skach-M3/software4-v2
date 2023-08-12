@@ -65,7 +65,7 @@
 import vuex_mixin from "@/components/mixins/vuex_mixin";
 import GraphVue from "./Graph.vue";
 import { postRequest } from "@/api/user";
-import { mapActions, mapMutations } from "vuex";
+import { mapMutations } from "vuex";
 export default {
   name: "Result",
   mixins: [vuex_mixin],
@@ -195,9 +195,57 @@ export default {
         console.log(this.node, this.links);
         break;
       }
-      case "factorDis":
+      case "factorDis": {
+        // 不能有重复的name，用map存储已有name进行去重
+        let existedName = new Map();
+        let ref_x_t = 1000 / (this.m_target_feature.length + 1);
+        for (let i = 0; i < this.m_target_feature.length; i++) {
+          tempNode.name = this.m_target_feature[i];
+          tempNode.x = ref_x_t * i;
+          tempNode.y = bottom_y;
+          this.node.push(JSON.parse(JSON.stringify(tempNode)));
+          existedName.set(tempNode.name, 1);
+        }
+        // 检查结果二维数组中是否有值并统计总长度
+        let resLength = 0;
+        let ref_x_r = [];
+        for (const item of this.m_result.res) {
+          let tempLen = Number((ref_x_t / (item.length + 1)).toFixed(2));
+          ref_x_r.push(tempLen);
+          if (item.length > 0) {
+            resLength += item.length;
+          }
+        }
+        if (resLength == 0) {
+          {
+            this.$message("未挖掘出相关关系");
+            break;
+          }
+        }
+
         this.graphTitile = `${this.m_target_feature[0]}因素相关疾病`;
+
+        for (let i = 0; i < this.m_result.res.length; i++) {
+          for (let j = 0; j < this.m_result.res[i].length; j++) {
+            console.log(this.m_result.res[i][j], ref_x_r[i]);
+            if (!existedName.has(this.m_result.res[i][j])) {
+              tempNode.name = this.m_result.res[i][j];
+              tempNode.x = ref_x_t * i + (ref_x_r[i] + 1) * j;
+              tempNode.y = top_y;
+              this.node.push(JSON.parse(JSON.stringify(tempNode)));
+              existedName.set(tempNode.name, 1);
+            }
+            tempLink.source = this.m_target_feature[i];
+            tempLink.target = this.m_result.res[i][j];
+            // 权重是随机数
+            tempLink.value = Number(Math.random().toFixed(3));
+            tempLink.lineStyle.width = 3 + tempLink.value * 8;
+            this.links.push(JSON.parse(JSON.stringify(tempLink)));
+          }
+        }
+        console.log(this.node, this.links);
         break;
+      }
       default:
         break;
     }
@@ -217,7 +265,7 @@ export default {
         feature: this.m_use_features,
         targetcolumn: this.m_target_feature,
         time: this.m_result?.time,
-        Ratio: this.m_result?.ratio,
+        ratio: this.m_result?.ratio.toFixed(5),
         ci: this.m_result?.ci,
         res: this.m_result?.res,
         dataset: this.m_dataset,
@@ -227,8 +275,11 @@ export default {
       let paraValue = [];
       for (const key in this[alghName]) {
         if (Object.hasOwnProperty.call(this[alghName], key)) {
+          console.log(this[alghName]);
           para.push(key);
-          paraValue.push(this[alghName].key);
+          console.log(key);
+          console.log(this[alghName][key]);
+          paraValue.push(this[alghName][key]);
         }
       }
       payload.para = para;
@@ -242,26 +293,26 @@ export default {
         });
       });
 
-      this.m_changeStep(1);
-      let defaultValue = {
-        step: 1,
-        taskName: "",
-        principal: "",
-        participants: "",
-        disease: "",
-        dataset: "",
-        use_features: [],
-        known_features: [],
-        target_feature: [],
-        SF_DRMB: {
-          K_OR: 0.15,
-          K_and_PC: 0.3,
-          K_and_SP: 0.75,
-        },
-        result: [],
-      };
-      // TODO:这个改不了深层参数，需要写一个深拷贝通用方法
-      this.m_changeTaskInfo(defaultValue);
+      // this.m_changeStep(1);
+      // let defaultValue = {
+      //   step: 1,
+      //   taskName: "",
+      //   principal: "",
+      //   participants: "",
+      //   disease: "",
+      //   dataset: "",
+      //   use_features: [],
+      //   known_features: [],
+      //   target_feature: [],
+      //   SF_DRMB: {
+      //     K_OR: 0.15,
+      //     K_and_PC: 0.3,
+      //     K_and_SP: 0.75,
+      //   },
+      //   result: [],
+      // };
+      // // TODO:这个改不了深层参数，需要写一个深拷贝通用方法
+      // this.m_changeTaskInfo(defaultValue);
     },
   },
 };

@@ -59,7 +59,7 @@
               size="mini"
               type="primary"
               @click="handleCheck(scope.row)"
-              style="margin-right:20px"
+              style="margin-right: 20px"
               >查看</el-button
             >
             <el-popconfirm
@@ -76,12 +76,85 @@
         </el-table-column>
       </el-table>
     </div>
+
+    <el-dialog
+      :title="result.taskName"
+      :visible.sync="resultDialogShow"
+      v-if="resultDialogShow"
+      width="32%"
+      center
+    >
+      <div class="taskInfoBox principal">
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">任务负责人：</span>
+        <span>{{ result.leader }}</span>
+      </div>
+      <div
+        class="taskInfoBox participants"
+        v-if="result.participant.length > 0"
+      >
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">参与人：</span>
+        <span>{{ result.participant }}</span>
+      </div>
+      <div class="taskInfoBox disease">
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">研究病种：</span>
+        <span>{{ result.disease }}</span>
+      </div>
+      <div class="taskInfoBox dataset">
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">所用数据：</span>
+        <span>{{ result.dataset }}</span>
+      </div>
+      <div class="taskInfoBox algorithm">
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">所用算法：</span>
+        <span>{{ result.model }}</span>
+      </div>
+      <div class="taskInfoBox algorithmValue">
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">算法参数：</span>
+        <span v-if="result.para[0] == ''">本算法没有参数</span>
+        <div v-if="result.para[0] != ''">
+          <div v-for="(item, index) in result.para" :key="index">
+            <span>{{ result.para[index] }}：{{ result.paraValue[index] }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="taskInfoBox target_features">
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">目标因素：</span>
+        <span>{{ result.targetcolumn.toString() }}</span>
+      </div>
+      <div class="taskInfoBox use_features">
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">所用特征：</span>
+        <span>{{ result.feature.toString() }}</span>
+      </div>
+      <div class="taskInfoBox result">
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">挖掘结果：</span>
+        <div v-for="(item,index) in result.res" :key="index">
+          <span>{{result.targetcolumn[index]}} -> {{item.toString()}}</span>
+        </div>
+      </div>
+      <div class="taskInfoBox result">
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">专家知识匹配度：</span>
+        <span>{{(result.ratio * 100).toFixed(2)}}%</span>
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="resultDialogShow = false">关 闭</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { postRequest } from "@/utils/api";
-import { mapGetters, mapState } from "vuex";
+import { getRequest } from "@/utils/api";
+import { mapGetters, mapMutations, mapState } from "vuex";
 
 export default {
   computed: {
@@ -93,15 +166,24 @@ export default {
     return {
       disease: "",
       leader: "",
+      resultDialogShow: false,
+      result: {},
     };
   },
 
   methods: {
+    ...mapMutations(["SetTaskList"]),
     handleCheck(row) {
-      console.log(row);
+      getRequest(`Task/result/${row.id}`).then((res) => {
+        this.result = res;
+        this.resultDialogShow = true;
+      });
     },
     handleDelete(row) {
-      // this.tableData.splice(index, 1);
+      getRequest(`Task/delete/${row.id}`).then((res) => {
+        console.log(res);
+        this.SetTaskList(res.reverse());
+      });
     },
     clearFilter() {
       this.disease = "";
@@ -123,6 +205,12 @@ export default {
 }
 #table {
   margin-top: 10px;
+}
+.lineStyle {
+  color: rgb(100, 172, 231);
+}
+.featureTitle {
+  font-weight: 800;
 }
 /*#importDataTable >>> .el-input__inner{*/
 /*    width: 85%;*/
