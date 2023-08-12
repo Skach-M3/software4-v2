@@ -130,9 +130,15 @@ export default {
         for (const item of this.disOptions) {
           item.disable = true;
         }
-        if (this.m_dataDisList[0] == "多疾病") {
+        // 数据列表中有多疾病数据就显示
+        if (this.m_dataDisList.findIndex(item=>item== "多疾病") != -1) {
           this.disOptions[0].disable = false;
           this.taskInfoForm.disease = this.disOptions[0].name;
+        }else{
+          this.$message({
+            type:'warning',
+            message:'暂无多疾病数据集'
+          })
         }
       }
     },

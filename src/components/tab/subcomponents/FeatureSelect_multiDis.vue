@@ -1,11 +1,11 @@
 <template>
   <div class="Box">
     <!-- ------------------------------------选择目标特征 ------------------------------->
-    <div v-if="moduleName !== 'disFactor'">
+    <div>
       <div class="top">
         <span class="lineStyle">▍</span
-        ><span class="featureTitle">选择目标特征：</span>
-        <!-- <el-checkbox
+        ><span class="featureTitle">想研究哪些因素与疾病的关系：</span>
+        <el-checkbox
           v-model="checkAll_target"
           @change="
             (val) => {
@@ -15,7 +15,7 @@
           border
           size="small"
           >全选</el-checkbox
-        > -->
+        >
       </div>
       <div v-if="peopleFeatures.length > 0">
         <h3 class="featureSubTitle">人口学特征</h3>
@@ -30,7 +30,7 @@
         </el-checkbox-group>
       </div>
 
-      <div v-if="physiologicalFeatures.length > 0">
+      <div v-if="physiologicalFeatures.length > 1">
         <h3 class="featureSubTitle">生理学特征</h3>
         <el-checkbox-group v-model="targetFeature" @change="changeBox_target()">
           <el-checkbox
@@ -43,7 +43,7 @@
         </el-checkbox-group>
       </div>
 
-      <div v-if="socialFeatures.length > 0">
+      <div v-if="socialFeatures.length > 1">
         <h3 class="featureSubTitle">社会学特征</h3>
         <el-checkbox-group v-model="targetFeature" @change="changeBox_target()">
           <el-checkbox
@@ -58,16 +58,16 @@
       <el-divider></el-divider>
     </div>
 
-    <!-- ------------------------------------- 参与运算特征 ---------------------------->
+    <!-- ------------------------------------- 参与运算疾病 ---------------------------->
     <div>
       <div class="top">
         <span class="lineStyle">▍</span
-        ><span class="featureTitle">参与运算的特征：</span>
+        ><span class="featureTitle">参与运算的疾病：</span>
         <el-checkbox
           v-model="checkAll_1"
           @change="
             (val) => {
-              this.computeFeatures = val ? this.allFeatures : [];
+              this.computeFeatures = val ? this.labelList : [];
             }
           "
           border
@@ -76,37 +76,10 @@
         >
       </div>
 
-      <div v-if="peopleFeatures.length > 0">
-        <h3 class="featureSubTitle">人口学特征</h3>
+      <div>
         <el-checkbox-group v-model="computeFeatures" @change="changeBox_1()">
           <el-checkbox
-            v-for="item in peopleFeatures"
-            :label="item"
-            :key="item"
-            border
-            >{{ item }}</el-checkbox
-          >
-        </el-checkbox-group>
-      </div>
-
-      <div v-if="physiologicalFeatures.length > 0">
-        <h3 class="featureSubTitle">生理学特征</h3>
-        <el-checkbox-group v-model="computeFeatures" @change="changeBox_1()">
-          <el-checkbox
-            v-for="item in physiologicalFeatures"
-            :label="item"
-            :key="item"
-            border
-            >{{ item }}</el-checkbox
-          >
-        </el-checkbox-group>
-      </div>
-
-      <div v-if="socialFeatures.length > 0">
-        <h3 class="featureSubTitle">社会学特征</h3>
-        <el-checkbox-group v-model="computeFeatures" @change="changeBox_1()">
-          <el-checkbox
-            v-for="item in socialFeatures"
+            v-for="item in labelList"
             :label="item"
             :key="item"
             border
@@ -118,16 +91,16 @@
 
     <el-divider></el-divider>
 
-    <!-- --------------------------------------------- 已知特征 ----------------------------->
+    <!-- --------------------------------------------- 已知疾病 ----------------------------->
     <div>
       <div class="top">
         <span class="lineStyle">▍</span
-        ><span class="featureTitle">已知相关特征：</span>
+        ><span class="featureTitle">已知相关疾病：</span>
         <el-checkbox
           v-model="checkAll_2"
           @change="
             (val) => {
-              this.knownFeatures = val ? this.allFeatures : [];
+              this.knownFeatures = val ? this.labelList : [];
             }
           "
           border
@@ -136,38 +109,9 @@
         >
       </div>
 
-      <div v-if="peopleFeatures.length > 0">
-        <h3 class="featureSubTitle">人口学特征</h3>
-        <el-checkbox-group v-model="knownFeatures" @change="changeBox_2()">
-          <el-checkbox
-            v-for="item in peopleFeatures"
-            :label="item"
-            :key="item"
-            border
-            >{{ item }}</el-checkbox
-          >
-        </el-checkbox-group>
-      </div>
-    </div>
-
-    <div v-if="physiologicalFeatures.length > 0">
-      <h3 class="featureSubTitle">生理学特征</h3>
       <el-checkbox-group v-model="knownFeatures" @change="changeBox_2()">
         <el-checkbox
-          v-for="item in physiologicalFeatures"
-          :label="item"
-          :key="item"
-          border
-          >{{ item }}</el-checkbox
-        >
-      </el-checkbox-group>
-    </div>
-
-    <div v-if="socialFeatures.length > 0">
-      <h3 class="featureSubTitle">社会学特征</h3>
-      <el-checkbox-group v-model="knownFeatures" @change="changeBox_2()">
-        <el-checkbox
-          v-for="item in socialFeatures"
+          v-for="item in labelList"
           :label="item"
           :key="item"
           border
@@ -208,6 +152,7 @@ export default {
       computeFeatures: [],
       knownFeatures: [],
       targetFeature: [],
+      labelList: [],
     };
   },
 
@@ -231,12 +176,8 @@ export default {
             } else if (item.is_sociology == 1) {
               this.allFeatures.push(item.field_name);
               this.socialFeatures.push(item.field_name);
-            } else if (item.is_zoo_information == 1) {
-              console.log(this.moduleName);
-              //上面判断是否是标签列
-              if (this.moduleName === "disFactor") {
-                this.targetFeature.push(item.field_name);
-              }
+            } else if (item.is_label == 1) {
+              this.labelList.push(item.field_name);
             }
           }
         });
@@ -253,7 +194,7 @@ export default {
     },
 
     changeBox_1() {
-      if (this.computeFeatures.length === this.allFeatures.length) {
+      if (this.computeFeatures.length === this.labelList.length) {
         this.checkAll_1 = true;
       } else {
         this.checkAll_1 = false;
@@ -261,7 +202,7 @@ export default {
     },
 
     changeBox_2() {
-      if (this.knownFeatures.length === this.allFeatures.length) {
+      if (this.knownFeatures.length === this.labelList.length) {
         this.checkAll_2 = true;
       } else {
         this.checkAll_2 = false;
@@ -282,9 +223,10 @@ export default {
         return;
       }
       if (this.computeFeatures.length < 5) {
-        alert("请选择至少5个特征参与运算");
+        alert("请选择至少5个疾病参与运算");
         return;
       }
+      
       this.m_changeTaskInfo({
         use_features: this.computeFeatures,
         known_features: this.knownFeatures,
@@ -317,23 +259,23 @@ export default {
   font-size: 18px;
 }
 
+.el-checkbox--small {
+  padding-bottom: 10px;
+}
+
 .el-checkbox-group {
   padding-top: 10px;
   display: grid;
   grid-template-columns: repeat(7, 150px);
   grid-gap: 20px;
-  grid-template-rows: 20px, 20px;
-}
-
-.el-checkbox--small {
-  padding-bottom: 10px;
+  grid-template-rows: 20px,20px;
 }
 
 .el-checkbox-group .el-checkbox {
-  width: 120px;
+  width: 130px;
 }
 
-.el-checkbox-group >>> .el-checkbox__label {
+.el-checkbox-group >>> .el-checkbox__label{
   margin-top: 5px;
   line-height: 10px;
   width: 80px;

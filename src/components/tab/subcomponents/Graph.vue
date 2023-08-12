@@ -6,19 +6,19 @@
 import * as echarts from "echarts";
 export default {
   name: "Graph",
-  props:{
-    title_text:{
-      type:String,
-      default:"关系图",
+  props: {
+    title_text: {
+      type: String,
+      default: "关系图",
     },
-    node:{
-      type:Array,
-      default:()=>{}
+    node: {
+      type: Array,
+      default: () => {},
     },
-    links:{
-      type:Array,
-      default:()=>{}
-    }
+    links: {
+      type: Array,
+      default: () => {},
+    },
   },
   data() {
     return {};
@@ -29,6 +29,10 @@ export default {
   },
 
   methods: {
+    // 省略号函数
+    ellipsis(str, maxLength) {
+      return str.length > maxLength ? str.slice(0, maxLength) + " ..." : str;
+    },
     initMyChart() {
       var chartDom = this.$refs.graph;
       var myChart = echarts.init(chartDom);
@@ -37,10 +41,10 @@ export default {
       option = {
         title: {
           text: this.title_text,
-          subtext:"下层是目标节点，上层为关联节点"
+          subtext: "下层是目标节点，上层为关联节点",
         },
-        toolbox:{
-          show: true
+        toolbox: {
+          show: true,
         },
         tooltip: {},
         animationDurationUpdate: 1500,
@@ -49,16 +53,23 @@ export default {
           {
             type: "graph",
             layout: "none",
-            symbolSize: 60,//节点大小
+            symbolSize: 60, //节点大小
             roam: true,
-            label: {//节点标识
+            label: {
+              //节点标识
               show: true,
+              formatter: (params) => {
+                const maxLength = 15;
+                const labelText = params.data.name;
+                return this.ellipsis(labelText, maxLength);
+              },
             },
             // edgeSymbol: ["circle", "arrow"],//箭头形状
             // edgeSymbolSize: [4, 10],
-            edgeLabel: {//边上标识
+            edgeLabel: {
+              //边上标识
               fontSize: 15,
-              formatter: "{c}"//显示links的value值
+              formatter: "{c}", //显示links的value值
             },
             data: this.node,
             // [
@@ -140,7 +151,7 @@ export default {
 </script>
 
 <style scoped>
-#graph{
+#graph {
   width: 100%;
   height: 100%;
 }

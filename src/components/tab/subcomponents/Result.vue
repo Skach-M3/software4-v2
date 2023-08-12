@@ -104,7 +104,7 @@ export default {
       source: "",
       target: "",
       value: 1,
-      label:{
+      label: {
         show: true,
       },
       lineStyle: {
@@ -188,7 +188,7 @@ export default {
             tempLink.target = this.m_result.res[i][j];
             // 权重是随机数
             tempLink.value = Number(Math.random().toFixed(3));
-            tempLink.lineStyle.width += tempLink.value * 2;
+            tempLink.lineStyle.width = 3 + tempLink.value * 8;
             this.links.push(JSON.parse(JSON.stringify(tempLink)));
           }
         }

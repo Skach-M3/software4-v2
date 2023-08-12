@@ -24,7 +24,7 @@
       </el-main>
 
       <el-main v-if="step == 3" class="mainBox">
-        <FeatureSelectVue :moduleName="moduleName"></FeatureSelectVue>
+        <FeatureSelect_multiDisVue :moduleName="moduleName"></FeatureSelect_multiDisVue>
       </el-main>
 
       <el-main v-if="step == 4" class="mainBox">
@@ -42,7 +42,7 @@
 import { mapState } from "vuex";
 import AlgorithmSelectVue from "./subcomponents/AlgorithmSelect.vue";
 import DataSelectVue from "./subcomponents/DataSelect.vue";
-import FeatureSelectVue from "./subcomponents/FeatureSelect.vue";
+import FeatureSelect_multiDisVue from './subcomponents/FeatureSelect_multiDis.vue';
 import ResultVue from "./subcomponents/Result.vue";
 import TaskInfoVue from "./subcomponents/TaskInfo.vue";
 export default {
@@ -50,7 +50,7 @@ export default {
   components: {
     TaskInfoVue,
     DataSelectVue,
-    FeatureSelectVue,
+    FeatureSelect_multiDisVue,
     AlgorithmSelectVue,
     ResultVue,
   },
