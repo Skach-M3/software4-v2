@@ -231,7 +231,7 @@ export default {
             } else if (item.is_sociology == 1) {
               this.allFeatures.push(item.field_name);
               this.socialFeatures.push(item.field_name);
-            } else if (item.is_zoo_information == 1) {
+            } else if (item.is_label == 1) {
               console.log(this.moduleName);
               //上面判断是否是标签列
               if (this.moduleName === "disFactor") {
@@ -278,7 +278,7 @@ export default {
 
     next() {
       if (this.targetFeature.length < 1) {
-        alert("该数据没有目标列，请重新选择数据表");
+        alert("该数据没有标签特征，请重新选择或上传数据表");
         return;
       }
       if (this.computeFeatures.length < 5) {

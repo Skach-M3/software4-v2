@@ -176,6 +176,11 @@
                 value="medical"
                 key="medical"
               ></el-option>
+              <el-option
+                label="标签特征"
+                value="label"
+                key="label"
+              ></el-option>
             </el-select>
           </el-form-item>
         </el-form>
@@ -417,37 +422,64 @@ export default {
     },
 
     compelete() {
+      // 判断多标签合理性
+      let labelCount = 0;
+      for (const key in this.featuresMap) {
+        if (Object.hasOwnProperty.call(this.featuresMap, key)) {
+          if(this.featuresMap[key] == "label"){
+            labelCount++;
+          }
+        }
+      }
+      if(labelCount<1){
+        this.$message({
+          showClose: true,
+          type: 'warning',
+          message: '请至少设置一个标签特征'
+        })
+        return false;
+      }
+      if(this.dialogForm.dataDisease != "多疾病" && labelCount > 1){
+        this.$message({
+          showClose: true,
+          type: 'warning',
+          message: '只有多病种数据集能设置多个标签特征'
+        })
+        return false;
+      }
+
       this.loadText = "正在添加字段类型";
       this.loading = true;
       let tableHeaders = [];
-      console.log("compelete里的featuresMap.id", this.featuresMap.id);
       for (const key in this.featuresMap) {
-        console.log("old", key, this.featuresMap[key]);
         if (Object.hasOwnProperty.call(this.featuresMap, key)) {
-          console.log("new", key, this.featuresMap[key]);
           switch (this.featuresMap[key]) {
             case "people":
               tableHeaders.push({
                 fieldName: key,
                 isDemography: "1",
-                isPhysiological: "0",
-                isSociology: "0",
               });
               break;
             case "medical":
               tableHeaders.push({
                 fieldName: key,
-                isDemography: "0",
+                // isDemography: "0",
                 isPhysiological: "1",
-                isSociology: "0",
+                // isSociology: "0",
               });
               break;
             case "social":
               tableHeaders.push({
                 fieldName: key,
-                isDemography: "0",
-                isPhysiological: "0",
+                // isDemography: "0",
+                // isPhysiological: "0",
                 isSociology: "1",
+              });
+              break;
+            case "label":
+              tableHeaders.push({
+                fieldName: key,
+                isLabel: "1"
               });
               break;
             default:
