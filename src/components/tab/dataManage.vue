@@ -159,7 +159,7 @@
             <el-select
               v-model="featuresMap[name]"
               placeholder="请选择特征类型"
-              @change="test(name, featuresMap[name])"
+              @change="changeLabel(name, featuresMap[name])"
             >
               <el-option
                 label="人口学特征"
@@ -275,16 +275,15 @@ export default {
         }
         return true;
       });
-    }, 800);
+    }, 200);
   },
 
   methods: {
     ...mapMutations(["SetDataList"]),
     ...mapActions(["getDataList"]),
 
-    test(name, label) {
-      console.log(name, label);
-      this.$set(this.featuresMap, this.featuresMap[name], label);
+    changeLabel(name, label) {
+      this.featuresMap[name] = label;
     },
 
     handleEdit(index, row) {
@@ -356,6 +355,7 @@ export default {
       }
     },
 
+// 数据表上传函数
     upRequest(data) {
       const payload = new FormData();
       payload.append("file", data.file);
@@ -379,13 +379,10 @@ export default {
             message: "上传成功",
           });
           let featureList = res.tableHeaders;
-          console.log(featureList);
           // 把特征存为map的键
           for (const item of featureList) {
-            // this.featuresMap.set(item, "people");
-            this.featuresMap[item] = "people";
+            this.$set(this.featuresMap,item,"people");
           }
-          console.log(this.featuresMap);
           this.featuresVision = true;
         } else {
           this.$message({

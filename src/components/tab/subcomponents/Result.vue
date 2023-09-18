@@ -265,7 +265,7 @@ export default {
         feature: this.m_use_features,
         targetcolumn: this.m_target_feature,
         time: this.m_result?.time,
-        ratio: this.m_result?.ratio.toFixed(5),
+        ratio: this.m_result?.ratio?.toFixed(5),
         ci: this.m_result?.ci,
         res: this.m_result?.res,
         dataset: this.m_dataset,
