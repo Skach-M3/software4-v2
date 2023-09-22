@@ -46,7 +46,7 @@ import FeatureSelect_multiDisVue from './subcomponents/FeatureSelect_multiDis.vu
 import ResultVue from "./subcomponents/Result.vue";
 import TaskInfoVue from "./subcomponents/TaskInfo.vue";
 export default {
-  name: "DisFactor",
+  name: "FactorDis",
   components: {
     TaskInfoVue,
     DataSelectVue,

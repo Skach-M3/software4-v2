@@ -99,7 +99,7 @@ export default {
   methods: {
     ...mapMutations("disFactor",{dfChangeStep:"ChangeStep"}),
     changeMenu(){
-      this.dfChangeStep(1);
+      // this.dfChangeStep(1);
     }
   },
 };

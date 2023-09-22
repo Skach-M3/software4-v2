@@ -46,7 +46,7 @@ import FeatureSelectVue from "./subcomponents/FeatureSelect.vue";
 import ResultVue from "./subcomponents/Result.vue";
 import TaskInfoVue from "./subcomponents/TaskInfo.vue";
 export default {
-  name: "DisFactor",
+  name: "F_Factor",
   components: {
     TaskInfoVue,
     DataSelectVue,

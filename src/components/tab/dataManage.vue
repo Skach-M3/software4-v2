@@ -140,7 +140,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button @click="dialogFormVisible = false;resetForm('dialogFormRef')">取消</el-button>
         <el-button @click="resetForm('dialogFormRef')">重置</el-button>
         <el-button type="primary" @click="uploadFile">下一步</el-button>
       </div>
@@ -250,6 +250,14 @@ export default {
         },
       },
       dialogFormVisible: false,
+      options:{
+        method: "post",
+        data:{},
+        url: "/DataTable/upload",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     };
   },
 
@@ -296,7 +304,7 @@ export default {
     },
     handleDelete(row) {
       postRequest(`DataTable/delete/${row.id}`).then((res) => {
-        this.SetDataList(res);
+        this.SetDataList(res.reverse());
       });
     },
     clearFilter() {
@@ -366,7 +374,7 @@ export default {
       payload.append("file", data.file);
       payload.append("newName", this.dialogForm.tableName);
       payload.append("disease", this.dialogForm.dataDisease);
-      const options = {
+      this.options = {
         method: "post",
         data: payload,
         url: "/DataTable/upload",
@@ -374,14 +382,14 @@ export default {
           "Content-Type": "multipart/form-data",
         },
       };
-      this.$axios(options).then((res) => {
+      this.$axios(this.options).then((res) => {
         this.loading = false;
         console.log(res);
         if (res?.code == "200") {
           this.$message({
             showClose: true,
             type: "success",
-            message: "上传成功",
+            message: "解析成功",
           });
           let featureList = res.tableHeaders;
           // 把特征存为map的键
@@ -393,7 +401,7 @@ export default {
           this.$message({
             showClose: true,
             type: "error",
-            message: "上传失败",
+            message: "解析失败",
           });
         }
       });
@@ -488,23 +496,41 @@ export default {
         }
       }
       console.log(tableHeaders);
+
+      // 上传特征分类结果
       postRequest("/tTableManager/insertTableManager", {
         tableName: this.dialogForm.tableName,
         tableHeaders,
       }).then((res) => {
         console.log(res);
-        // if(res.length>this.dataList.length){
-        // 这里不应重新获取数据列表，应该用res直接设置vuex里的datalist，但是有bug
-        // this.SetDataList(res);
-        this.getDataList();
-        this.$message({
-          showClose: true,
-          type: "success",
-          message: "操作成功，已添加数据表",
-        });
-        this.featuresVision = false;
+        // this.$message({
+        //   showClose: true,
+        //   type: "success",
+        //   message: "操作成功，已添加数据表",
+        // });
+      });
+
+      // 重新上传数据表，使其保存到数据列表中
+      // 此处上传时后台已有数据表，可和后台配合只发送保存通知已提高效率
+      this.options.url = "/DataTable/uploadTable"
+      this.$axios(this.options).then((res) => {
+        console.log(res);
+        if (res?.code == "200") {
+          this.$message({
+            showClose: true,
+            type: "success",
+            message: "上传成功",
+          });
+          this.featuresVision = false;
         this.dialogFormVisible = false;
-        // }
+        this.getDataList();
+        } else {
+          this.$message({
+            showClose: true,
+            type: "error",
+            message: "上传失败",
+          });
+        }
       });
     },
   },
