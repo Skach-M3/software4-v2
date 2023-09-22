@@ -60,14 +60,13 @@
             <span>操作</span>
           </template>
           <template slot-scope="scope">
-            <el-popconfirm title="删除后无法恢复" 
-            icon="el-icon-warning"
-            icon-color="red"
-            @confirm="handleDelete(scope.row)">
-              <el-button
-                slot="reference"
-                size="mini"
-                type="danger"
+            <el-popconfirm
+              title="删除后无法恢复"
+              icon="el-icon-warning"
+              icon-color="red"
+              @confirm="handleDelete(scope.row)"
+            >
+              <el-button slot="reference" size="mini" type="danger"
                 >删除</el-button
               >
             </el-popconfirm>
@@ -140,12 +139,20 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false;resetForm('dialogFormRef')">取消</el-button>
+        <el-button
+          @click="
+            dialogFormVisible = false;
+            resetForm('dialogFormRef');
+          "
+          >取消</el-button
+        >
         <el-button @click="resetForm('dialogFormRef')">重置</el-button>
         <el-button type="primary" @click="uploadFile">下一步</el-button>
       </div>
 
       <el-dialog
+        v-loading="loading2"
+        :element-loading-text="loadText2"
         append-to-body
         title="请选择特征类型"
         :visible.sync="featuresVision"
@@ -176,11 +183,7 @@
                 value="medical"
                 key="medical"
               ></el-option>
-              <el-option
-                label="标签特征"
-                value="label"
-                key="label"
-              ></el-option>
+              <el-option label="标签特征" value="label" key="label"></el-option>
             </el-select>
           </el-form-item>
         </el-form>
@@ -214,7 +217,9 @@ export default {
   data() {
     return {
       loading: false,
+      loading2: false,
       loadText: "拼命加载中",
+      loadText2: "拼命加载中",
       disease: "",
       creator: "",
       disOptions,
@@ -250,14 +255,14 @@ export default {
         },
       },
       dialogFormVisible: false,
-      options:{
+      options: {
         method: "post",
-        data:{},
+        data: {},
         url: "/DataTable/upload",
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }
+      },
     };
   },
 
@@ -368,7 +373,7 @@ export default {
       }
     },
 
-// 数据表上传函数
+    // 数据表上传函数
     upRequest(data) {
       const payload = new FormData();
       payload.append("file", data.file);
@@ -394,7 +399,7 @@ export default {
           let featureList = res.tableHeaders;
           // 把特征存为map的键
           for (const item of featureList) {
-            this.$set(this.featuresMap,item,"people");
+            this.$set(this.featuresMap, item, "people");
           }
           this.featuresVision = true;
         } else {
@@ -434,30 +439,30 @@ export default {
       let labelCount = 0;
       for (const key in this.featuresMap) {
         if (Object.hasOwnProperty.call(this.featuresMap, key)) {
-          if(this.featuresMap[key] == "label"){
+          if (this.featuresMap[key] == "label") {
             labelCount++;
           }
         }
       }
-      if(labelCount<1){
+      if (labelCount < 1) {
         this.$message({
           showClose: true,
-          type: 'warning',
-          message: '请至少设置一个标签特征'
-        })
+          type: "warning",
+          message: "请至少设置一个标签特征",
+        });
         return false;
       }
-      if(this.dialogForm.dataDisease != "多疾病" && labelCount > 1){
+      if (this.dialogForm.dataDisease != "多疾病" && labelCount > 1) {
         this.$message({
           showClose: true,
-          type: 'warning',
-          message: '只有多病种数据集能设置多个标签特征'
-        })
+          type: "warning",
+          message: "只有多病种数据集能设置多个标签特征",
+        });
         return false;
       }
 
-      this.loadText = "正在添加字段类型";
-      this.loading = true;
+      this.loadText2 = "正在添加字段类型";
+      this.loading2 = true;
       let tableHeaders = [];
       for (const key in this.featuresMap) {
         if (Object.hasOwnProperty.call(this.featuresMap, key)) {
@@ -487,7 +492,7 @@ export default {
             case "label":
               tableHeaders.push({
                 fieldName: key,
-                isLabel: "1"
+                isLabel: "1",
               });
               break;
             default:
@@ -512,9 +517,11 @@ export default {
 
       // 重新上传数据表，使其保存到数据列表中
       // 此处上传时后台已有数据表，可和后台配合只发送保存通知已提高效率
-      this.options.url = "/DataTable/uploadTable"
+      this.options.url = "/DataTable/uploadTable";
       this.$axios(this.options).then((res) => {
         console.log(res);
+        this.loading2 = false;
+        this.resetForm('dialogFormRef');
         if (res?.code == "200") {
           this.$message({
             showClose: true,
@@ -522,8 +529,8 @@ export default {
             message: "上传成功",
           });
           this.featuresVision = false;
-        this.dialogFormVisible = false;
-        this.getDataList();
+          this.dialogFormVisible = false;
+          this.getDataList();
         } else {
           this.$message({
             showClose: true,
