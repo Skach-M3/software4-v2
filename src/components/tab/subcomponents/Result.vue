@@ -46,7 +46,7 @@
     </div>
     <h3>专家知识匹配度：{{ ratio }}</h3>
     <h3 v-if="m_result.time">运算时间：{{ m_result.time }} 秒</h3>
-    <h3 v-if="m_result.ci">独立性检验次数：{{ m_result.ci }} 次</h3>
+    <h3 v-if="m_result.ci">独立性检验次数：{{ m_result.ci }}次</h3>
     <div class="graphBox">
       <GraphVue
         v-if="initFlag"
@@ -269,6 +269,7 @@ export default {
         ci: this.m_result?.ci,
         res: this.m_result?.res,
         dataset: this.m_dataset,
+        uid:sessionStorage.getItem("userid")-0
       };
       let alghName = "m_" + this.m_algorithm;
       let para = [];
@@ -350,7 +351,7 @@ export default {
 
 h3 {
   display: inline;
-  margin-right: 20%;
+  margin-right: 15%;
 }
 
 .graphBox {

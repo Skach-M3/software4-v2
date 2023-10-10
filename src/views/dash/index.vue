@@ -169,7 +169,7 @@
 
 <script>
 import { getRequest } from "@/api/user";
-import { mapState } from "vuex";
+import { mapGetters, mapMutations, mapState ,mapActions} from "vuex";
 import LineChartVue from "@/components/tab/subcomponents/LineChart.vue";
 export default {
   name: "index",
@@ -183,27 +183,27 @@ export default {
         {
           title: "数据管理",
           img: require("../../assets/JKZX.png"),
-          router: "/dataManage",
+          router: "dataManage",
         },
         {
           title: "任务管理",
           img: require("../../assets/modelTrain.png"),
-          router: "/TaskManage",
+          router: "TaskManage",
         },
         {
           title: "疾病危险因素挖掘",
           img: require("../../assets/singlePredict.png"),
-          router: "/DisFactor",
+          router: "DisFactor",
         },
         {
           title: "危险因素相关因素挖掘",
           img: require("../../assets/batchPredict.png"),
-          router: "",
+          router: "F_Factor",
         },
         {
           title: "危险因素相关疾病挖掘",
           img: require("../../assets/lianxi.png"),
-          router: "",
+          router: "FactorDis",
         },
       ],
       chartLegend: [],
@@ -228,9 +228,11 @@ export default {
 
   created() {
     this.init();
+    this.getTaskList(sessionStorage.getItem("userid")-0);
   },
 
   methods: {
+    ...mapActions(["getTaskList"]),
     init() {
       getRequest("Task/totals").then((res) => {
         console.log(res);

@@ -69,8 +69,8 @@ export default new Vuex.Store({
           console.log(err);
         });
     },
-    getTaskList(context) {
-      getRequest("/Task/all")
+    getTaskList(context,uid) {
+      getRequest(`/Task/all?uid=${uid}`)
         .then((res) => {
           context.commit("SetTaskList", res.reverse());
         })

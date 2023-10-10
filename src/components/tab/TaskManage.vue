@@ -154,14 +154,16 @@
 
 <script>
 import { getRequest } from "@/utils/api";
-import { mapGetters, mapMutations, mapState } from "vuex";
+import { mapGetters, mapMutations, mapState ,mapActions} from "vuex";
 
 export default {
   computed: {
     ...mapState(["taskList"]),
     ...mapGetters(["taskLeaderList", "taskDiseaseList"]),
   },
-
+  created() {
+    this.getTaskList(sessionStorage.getItem("userid")-0);
+  },
   data() {
     return {
       disease: "",
@@ -172,6 +174,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(["getTaskList"]),
     ...mapMutations(["SetTaskList"]),
     handleCheck(row) {
       getRequest(`Task/result/${row.id}`).then((res) => {

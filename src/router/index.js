@@ -92,6 +92,7 @@ router.beforeEach((to, from, next) => {
   //next() 放行 next('/login')强制跳转
 
   if (to.path === '/') return next();
+  if(to.path==='/register') return next();
   //获取token
   const uid = window.sessionStorage.getItem('userid');
   if (!uid) return next('/');

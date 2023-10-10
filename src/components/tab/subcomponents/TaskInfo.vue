@@ -19,7 +19,7 @@
           <span class="lineStyle">▍</span>
           <span>任务负责人</span>
         </template>
-        <el-input v-model="taskInfoForm.principal"></el-input>
+        <el-input v-model="taskInfoForm.principal" :disabled="true"></el-input>
       </el-form-item>
       <el-form-item prop="participants" class="inputBox shortItem">
         <template slot="label">
@@ -103,7 +103,7 @@ export default {
       //和vuex内数据同步
       console.log("当前模块名👉", this.moduleName);
       this.taskInfoForm.taskName = this.m_taskName;
-      this.taskInfoForm.principal = this.m_principal;
+      this.taskInfoForm.principal = sessionStorage.getItem("username");
       this.taskInfoForm.participants = this.m_participants;
       this.taskInfoForm.disease = this.m_disease;
       if (this.m_disease.length < 1 && this.moduleName != "factorDis") {

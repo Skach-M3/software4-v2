@@ -26,7 +26,8 @@ export default {
     init() {
       //获取所有数据表信息
       this.getDataList();
-      this.getTaskList();
+      //因为用户登录后只展示登录用户所创建的任务，所以getTaskList在登录后跳转组件时调用
+      //this.getTaskList();
       this.getModelList();
     }
   }
@@ -38,7 +39,7 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  //text-align: center;
+  /* //text-align: center; */
   color: #2c3e50;
 }
 *{
@@ -49,12 +50,12 @@ export default {
 html,body{
   height: 100%;
 }
-//注明的样式
+/* //注明的样式 */
 .explain{
   color: red;
   font-size: 12px;
 }
-//表单头的样式
+/* //表单头的样式 */
 .whiteItem .el-form-item__label {
   color: #fff;
 }
@@ -91,7 +92,7 @@ html,body{
   }
 }
 
-//::-webkit-scrollbar {
+/* //::-webkit-scrollbar {
 //  width: 0 !important;
 //}
 //::-webkit-scrollbar {
@@ -100,6 +101,6 @@ html,body{
 //}
 //html,body,#app {
 //  height: 100%;
-//}
+//} */
 </style>
 

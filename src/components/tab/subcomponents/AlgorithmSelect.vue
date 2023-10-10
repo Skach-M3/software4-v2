@@ -178,6 +178,12 @@ export default {
       postRequest(url, payload)
         .then((res) => {
           console.log(res);
+          if(isNaN(res.ratio)){
+            console.log("ration:");
+            res.ratio = 0;
+            console.log(res.ratio);
+          }
+          
           this.m_changeTaskInfo({ algorithm: this.model, result: res });
           this.loading = false;
           this.m_changeStep(this.m_step + 1);

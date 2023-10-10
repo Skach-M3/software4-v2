@@ -14,7 +14,7 @@
         <div class="page">
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pagenum"
                 :page-sizes="[1, 5, 10, 20]" :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper"
-                :total="total" v-show="!isView">
+                :total="total" v-show="!isView" :hide-on-single-page="true">
             </el-pagination>
         </div>
         <div v-show="isView">
@@ -40,11 +40,12 @@
                 </el-table-column>
             </el-table>
         </div>
-        <el-dialog :title="tempTableName+tableForm.field_name" :visible.sync="tableFormVisable" width="40%"
+        <el-dialog :title="tableForm.field_name" :visible.sync="tableFormVisable" width="40%"
             :before-close="handleClose">
             <el-form ref="tableFormRef" :model="tableForm" label-width="160px">
                 <el-form-item label="是否为人口学特征" prop="is_demography">
-                    <el-select ref="is_demography" v-model="tableForm.is_demography" placeholder="请选择"     @change="((value)=>{selectChanged(value,  $refs.is_demography)})">
+                    <el-select ref="is_demography" v-model="tableForm.is_demography" placeholder="请选择"
+                        @change="((value)=>{selectChanged(value,  $refs.is_demography)})">
                         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                         </el-option>
                     </el-select>
@@ -52,7 +53,8 @@
 
 
                 <el-form-item label="是否为行为学特征" prop="is_physiological">
-                    <el-select ref="is_physiological" v-model="tableForm.is_physiological" placeholder="请选择"  @change="((value)=>{selectChanged(value, $refs.is_physiological)})">
+                    <el-select ref="is_physiological" v-model="tableForm.is_physiological" placeholder="请选择"
+                        @change="((value)=>{selectChanged(value, $refs.is_physiological)})">
                         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                         </el-option>
                     </el-select>
@@ -60,14 +62,16 @@
 
 
                 <el-form-item label="是否为社会学特征" prop="is_sociology">
-                    <el-select ref="is_sociology" v-model="tableForm.is_sociology" placeholder="请选择"  @change="((value)=>{selectChanged(value,  $refs.is_sociology)})">
+                    <el-select ref="is_sociology" v-model="tableForm.is_sociology" placeholder="请选择"
+                        @change="((value)=>{selectChanged(value,  $refs.is_sociology)})">
                         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                         </el-option>
                     </el-select>
                 </el-form-item>
 
                 <el-form-item label="是否为标签" prop="is_label">
-                    <el-select ref="is_label" v-model="tableForm.is_label" placeholder="请选择"  @change="((value)=>{selectChanged(value,  $refs.is_label)})">
+                    <el-select ref="is_label" v-model="tableForm.is_label" placeholder="请选择"
+                        @change="((value)=>{selectChanged(value,  $refs.is_label)})">
                         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                         </el-option>
                     </el-select>
@@ -95,6 +99,7 @@
                 total: 0,
                 tableInfoData: [],
                 tempTableName: '',
+                tempTbaleType: "",
                 tableForm: {
                     fieldName: '',
                     is_demography: '',
@@ -109,18 +114,24 @@
                 }, {
                     value: '0',
                     label: '否'
-                }]
+                }],
+
             }
         },
         created() {
             this.getTableNameList();
+
         },
         methods: {
             getTableNameList() {
-                getRequest("/tTableManager/getTableNames").then((resp) => {
-                    if (resp.code == "200") {
+                let loginUid = sessionStorage.getItem("userid") - 0
+                getRequest(`/tTableManager/getTableNames/${loginUid}`).then((resp) => {
+                    if (resp?.code == "200") {
                         this.tableNameList = resp.data
                         this.getTableData();
+                        if(!this.tableNameList.length){
+                            this.$message.warning("您还没有上传任何数据！")
+                        }
                     }
                     else {
                         this.$message.error("获取字段信息失败")
@@ -149,9 +160,10 @@
             submitData(tableName) {
                 this.tempTableName = tableName;
                 getRequest(`/tTableManager/getFiledNamesByTableName?table_name=${tableName}`).then((resp) => {
-                    if (resp.code == "200") {
+                    if (resp?.code == "200") {
                         this.isView = true
-                        this.tableInfoData = resp.data
+                        this.tableInfoData = resp.data.field
+                        this.tempTbaleType = resp.data.disease
                     }
                     else {
                         this.$message.error("无法查看该字段信息")
@@ -161,13 +173,15 @@
             goBack() {
                 this.isView = false;
                 this.tempTableName = '';
+                this.tempTbaleType = '';
                 this.handleCurrentChange(1);
             },
-            editTable(tempTableName, fieldName) {
-                this.tableForm = fieldName;
+            editTable(tempTableName, row) {
+                this.tableForm = row;
                 this.tableFormVisable = true;
             },
             handleClose() {
+                
                 this.tableFormVisable = false
                 this.resetForm()
             },
@@ -180,39 +194,69 @@
                         // this.isView = true
                         // this.tableInfoData = resp.data
                         this.tableFormVisable = false
-                        this.resetForm()
+                        //this.resetForm()
                         this.$message.success("更新字段成功")
-                    }
-                    else {
-                        this.$message.error("无法查看该字段信息")
-                    }
-                });
-                getRequest(`/tTableManager/getFiledNamesByTableName?table_name=${this.tempTableName}`).then((resp) => {
+                        getRequest(`/tTableManager/getFiledNamesByTableName?table_name=${this.tempTableName}`).then((resp) => {
                     if (resp.code == "200") {
                         this.isView = true
-                        this.tableInfoData = resp.data
+                        this.tableInfoData = resp.data.field
                     }
                     else {
                         this.$message.error("无法查看该字段信息")
                     }
                 });
-            },
-            selectChanged(val,ref) {
-                if(val==1){
-                    let flag=false;
-                    let tempLable = ref.$parent.prop;
-                    for (const item in this.tableForm) {
-                    if(item !== tempLable && this.tableForm[item]=="1"){
-                        flag=true
-                        this.tableForm[item]="0";
+                    }
+                    else {
+                        this.$message.error("无法查看该字段信息")
                     }
                 }
-                if(flag){
-                    this.$message.warning("一个字段只能为一种标签!");
-                }
-                }
                 
+                );
                 
+            },
+            selectChanged(val, ref) {
+                let count = 0;
+                this.tableInfoData.forEach(element => {
+                    count = count + (element["is_label"]-0);
+                });
+                
+                //单疾病情况
+                if (this.tempTbaleType != "多疾病" && count >= 2) {
+                    this.$message.error("单疾病只能有一个字段为标签！")
+                    this.tableForm.is_label="0"
+                }
+                else if(this.tempTbaleType != "多疾病" && count <= 1)
+                {
+                    if (val == 1) {
+                        let flag = false;
+                        let tempLable = ref.$parent.prop;
+                        for (const item in this.tableForm) {
+                            if (item !== tempLable && this.tableForm[item] == "1") {
+                                flag = true
+                                this.tableForm[item] = "0";
+                            }
+                        }
+                        if (flag) {
+                            this.$message.warning("一个字段只能为一种标签!");
+                        }
+                    }
+                }
+                //多疾病
+                else if(this.tempTbaleType == "多疾病" ){
+                    if (val == 1) {
+                        let flag = false;
+                        let tempLable = ref.$parent.prop;
+                        for (const item in this.tableForm) {
+                            if (item !== tempLable && this.tableForm[item] == "1") {
+                                flag = true
+                                this.tableForm[item] = "0";
+                            }
+                        }
+                        if (flag) {
+                            this.$message.warning("一个字段只能为一种标签!");
+                        }
+                    }
+                }
             }
         }
     }

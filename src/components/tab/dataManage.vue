@@ -54,7 +54,8 @@
         <el-table-column label="字段个数" prop="featurenumber">
         </el-table-column>
         <el-table-column label="创建人" prop="creator"> </el-table-column>
-        <el-table-column label="创建时间" prop="create_time"> </el-table-column>
+        <el-table-column label="UID" prop="uid"> </el-table-column>
+        <!-- <el-table-column label="创建时间" prop="create_time"> </el-table-column> -->
         <el-table-column align="center">
           <template slot="header">
             <span>操作</span>
@@ -66,7 +67,7 @@
               icon-color="red"
               @confirm="handleDelete(scope.row)"
             >
-              <el-button slot="reference" size="mini" type="danger"
+              <el-button slot="reference" size="mini" type="danger" :disabled="scope.row.uid != loginUserID"
                 >删除</el-button
               >
             </el-popconfirm>
@@ -206,6 +207,9 @@ export default {
   computed: {
     ...mapGetters(["dataDisList", "dataCreatorList"]),
     ...mapState(["dataList"]),
+    loginUserID(){
+      return sessionStorage.getItem("userid")
+    }
   },
 
   watch: {
@@ -379,6 +383,8 @@ export default {
       payload.append("file", data.file);
       payload.append("newName", this.dialogForm.tableName);
       payload.append("disease", this.dialogForm.dataDisease);
+      payload.append("user", sessionStorage.getItem("username"));
+      payload.append("uid", sessionStorage.getItem("userid")-0);
       this.options = {
         method: "post",
         data: payload,
@@ -396,6 +402,7 @@ export default {
             type: "success",
             message: "解析成功",
           });
+          console.log(payload);
           let featureList = res.tableHeaders;
           // 把特征存为map的键
           for (const item of featureList) {
@@ -500,12 +507,12 @@ export default {
           }
         }
       }
-      console.log(tableHeaders);
-
+      let userId = sessionStorage.getItem("userid")-0;
       // 上传特征分类结果
       postRequest("/tTableManager/insertTableManager", {
         tableName: this.dialogForm.tableName,
         tableHeaders,
+        userId
       }).then((res) => {
         console.log(res);
         // this.$message({
@@ -519,7 +526,7 @@ export default {
       // 此处上传时后台已有数据表，可和后台配合只发送保存通知已提高效率
       this.options.url = "/DataTable/uploadTable";
       this.$axios(this.options).then((res) => {
-        console.log(res);
+        
         this.loading2 = false;
         this.resetForm('dialogFormRef');
         if (res?.code == "200") {

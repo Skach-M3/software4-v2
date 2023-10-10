@@ -92,9 +92,11 @@
 </template>
 
 <script>
-import { postRequest, getRequest } from "@/utils/api";
+import { postRequest} from "@/utils/api";
+import { mapGetters, mapMutations, mapState ,mapActions} from "vuex";
 export default {
   name: "Login",
+  
   data() {
     return {
       loginForm: {
@@ -112,6 +114,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions(["getTaskList"]),
     submitlogin() {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
@@ -123,6 +126,7 @@ export default {
               if (resp.code == "200") {
                  sessionStorage.setItem("username", resp.data.username);
                  sessionStorage.setItem("userid", resp.data.uid);
+                 
                  this.$router.push('/sideBar/SoftwareIntro');
               }
             }

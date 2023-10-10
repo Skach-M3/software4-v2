@@ -11,7 +11,7 @@
         </div>
         <div class="size-icon2">
           <div class="icon">
-            <div class="singleBox" @click="quickLink('/DisFactor')">
+            <div class="singleBox" @click="quickLink('DisFactor')">
               <img
                 src="@/assets/danLiYuCe.png"
                 class="imgStyle"
@@ -21,7 +21,7 @@
             </div>
           </div>
           <div class="icon">
-            <div class="singleBox" @click="quickLink('/F_Factor')">
+            <div class="singleBox" @click="quickLink('F_Factor')">
               <img
                 src="@/assets/batch.png"
                 class="imgStyle"
@@ -31,7 +31,7 @@
             </div>
           </div>
           <div class="icon">
-            <div class="singleBox" @click="quickLink('/FactorDis')">
+            <div class="singleBox" @click="quickLink('FactorDis')">
               <img
                 src="@/assets/-research.png"
                 class="imgStyle"
@@ -54,12 +54,12 @@ export default {
         {
           title: "数据管理",
           img: require("@/assets/book.png"),
-          router: "/DieaseIntro",
+          router: "dataManage",
         },
         {
           title: "任务管理",
           img: require("@/assets/model_intro.png"),
-          router: "/TaskManage",
+          router: "TaskManage",
         },
       ],
     };

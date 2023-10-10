@@ -48,7 +48,7 @@
   </template>
   
   <script>
-  import { postRequest, getRequest } from "@/utils/api";
+  import { postRequest} from "@/utils/api";
   export default {
     name: "Login",
     data() {
@@ -94,6 +94,7 @@
                 password:this.registerForm.password,
                 role:0
             }
+            console.log(this.registerForm);
             postRequest("/user/signUp", params).then((resp) => {
               if (resp) {
                 this.loading = false;
@@ -113,6 +114,9 @@
                 //     }
                 //   });
               }
+              else {
+                  this.$message.error("用户名已存在，请重新输入用户名！");
+                }
             });
           } else {
             this.$message.error("请输入所有字段");
