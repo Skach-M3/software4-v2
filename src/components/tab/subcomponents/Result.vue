@@ -89,6 +89,7 @@ export default {
       x: 300,
       y: 300,
       color: "#7B68EE",
+      symbolSize: 65
     };
     let tempLink = {
       source: "",
@@ -114,6 +115,7 @@ export default {
           this.$message("未挖掘出相关关系");
           tempNode.x = 500;
           tempNode.y = 500;
+          tempNode.color = "#c2b8fae1";
           break;
         }
         this.graphTitile = `${this.m_disease}相关危险因素`;
@@ -156,7 +158,7 @@ export default {
             tempNode.color = "#000080";
           }
           else {
-            tempNode.color = "#1E90FF";
+            tempNode.color = "#c2b8fae1";
           }
           this.node.push(JSON.parse(JSON.stringify(tempNode)));
           existedName.set(tempNode.name, 1);
@@ -222,7 +224,7 @@ export default {
             tempNode.color = "#000080";
           }
           else {
-            tempNode.color = "#1E90FF";
+            tempNode.color = "#c2b8fae1";
           }
           this.node.push(JSON.parse(JSON.stringify(tempNode)));
           existedName.set(tempNode.name, 1);
@@ -391,5 +393,6 @@ h3 {
 .buttonGroup .el-button {
   margin-top: 30px;
   margin-left: 50%;
+  color: #c2b8fae1;
 }
 </style>

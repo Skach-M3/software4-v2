@@ -84,7 +84,7 @@ export default {
               //节点标识
               show: true,
               formatter: (params) => {
-                const maxLength = 15;
+                const maxLength = 5;
                 const labelText = params.data.name;
                 return this.ellipsis(labelText, maxLength);
               },
