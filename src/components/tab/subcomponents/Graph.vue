@@ -4,6 +4,7 @@
 
 <script>
 import * as echarts from "echarts";
+
 export default {
   name: "Graph",
   props: {
@@ -21,9 +22,28 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      // con_node:[],
+      // un_con_node:[],
+      // con_links:[]
+    };
   },
+  created() {
+  //   this.links.forEach(element => {
+  //     this.con_node.push(element.source);
+  //     this.con_node.push(element.target);
+  //   });
+  //   this.con_node = [...new Set(this.con_node)];
+  //   console.log(this.con_node);
+  //   this.un_con_node = this.node.filter(function(elem){
+  //       for(var i=0;i<this.con_node.length;i++){
+  //           if(elem.name==this.con_node[i]){
+  //               return false;
+  //       }
+  //     }
+  // });
 
+  },
   mounted() {
     this.initMyChart();
   },
@@ -49,6 +69,11 @@ export default {
         tooltip: {},
         animationDurationUpdate: 1500,
         animationEasingUpdate: "quinticInOut",
+      //   series:function(){
+      //      let serie=[]
+           
+      //     return serie;
+      //  },
         series: [
           {
             type: "graph",
@@ -72,6 +97,13 @@ export default {
               formatter: "{c}", //显示links的value值
             },
             data: this.node,
+            itemStyle:{
+                normal:{
+                      color: function(params) {
+                        return params.data.color    //获取具体的参数
+                    },
+                }
+        },
             // [
             //   {
             //     name: "Node 1",
@@ -141,6 +173,7 @@ export default {
               curveness: 0,
             },
           },
+          
         ],
       };
 

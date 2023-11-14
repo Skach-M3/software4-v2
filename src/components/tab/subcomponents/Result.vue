@@ -2,58 +2,45 @@
   <div>
     <div class="taskBox1">
       <div class="taskInfoBox taskname">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">任务名称：</span>
+        <span class="lineStyle">▍</span><span class="featureTitle">任务名称：</span>
         <span>{{ m_taskName }}</span>
       </div>
       <div class="taskInfoBox principal">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">任务负责人：</span>
+        <span class="lineStyle">▍</span><span class="featureTitle">任务负责人：</span>
         <span>{{ m_principal }}</span>
       </div>
       <div class="taskInfoBox participants" v-if="m_participants.length > 0">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">参与人：</span>
+        <span class="lineStyle">▍</span><span class="featureTitle">参与人：</span>
         <span>{{ m_participants }}</span>
       </div>
     </div>
     <div class="taskBox1">
       <div class="taskInfoBox disease">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">研究病种：</span>
+        <span class="lineStyle">▍</span><span class="featureTitle">研究病种：</span>
         <span>{{ m_disease }}</span>
       </div>
       <div class="taskInfoBox dataset">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">所用数据：</span>
+        <span class="lineStyle">▍</span><span class="featureTitle">所用数据：</span>
         <span>{{ m_dataset }}</span>
       </div>
       <div class="taskInfoBox algorithm">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">所用算法：</span>
+        <span class="lineStyle">▍</span><span class="featureTitle">所用算法：</span>
         <span>{{ m_algorithm }}</span>
       </div>
     </div>
 
     <div class="taskInfoBox use_features">
-      <span class="lineStyle">▍</span
-      ><span class="featureTitle">所用特征：</span>
+      <span class="lineStyle">▍</span><span class="featureTitle">所用特征：</span>
       <span>{{ m_use_features.toString() }}</span>
     </div>
     <div class="taskInfoBox result">
-      <span class="lineStyle">▍</span
-      ><span class="featureTitle">任务结果：</span>
+      <span class="lineStyle">▍</span><span class="featureTitle">任务结果：</span>
     </div>
     <h3>专家知识匹配度：{{ ratio }}</h3>
     <h3 v-if="m_result.time">运算时间：{{ m_result.time }} 秒</h3>
     <h3 v-if="m_result.ci">独立性检验次数：{{ m_result.ci }}次</h3>
     <div class="graphBox">
-      <GraphVue
-        v-if="initFlag"
-        :title_text="graphTitile"
-        :node="node"
-        :links="links"
-      ></GraphVue>
+      <GraphVue v-if="initFlag" :title_text="graphTitile" :node="node" :links="links"></GraphVue>
     </div>
     <div class="buttonGroup">
       <el-button type="primary" @click="next()" round>完成</el-button>
@@ -95,10 +82,13 @@ export default {
   },
 
   created() {
+    console.log("console.log(this.m_target_feature);" + this.m_target_feature);
+    console.log("this.m_result" + JSON.stringify(this.m_result.res));
     let tempNode = {
       name: this.m_target_feature[0],
       x: 300,
       y: 300,
+      color: "#7B68EE",
     };
     let tempLink = {
       source: "",
@@ -119,6 +109,7 @@ export default {
         tempNode.name = this.m_target_feature[0];
         tempNode.x = 500;
         tempNode.y = bottom_y;
+        tempNode.color = "#7B68EE";
         if (this.m_result.res.length < 1) {
           this.$message("未挖掘出相关关系");
           tempNode.x = 500;
@@ -132,6 +123,7 @@ export default {
           tempNode.name = this.m_result.res[0][i];
           tempNode.x = ref_x * (i + 1);
           tempNode.y = top_y;
+          tempNode.color = "#FFDEAD";
           this.node.push(JSON.parse(JSON.stringify(tempNode)));
           tempLink.source = this.m_target_feature[0];
           tempLink.target = this.m_result.res[0][i];
@@ -140,7 +132,12 @@ export default {
           tempLink.lineStyle.width += tempLink.value * 2;
           this.links.push(JSON.parse(JSON.stringify(tempLink)));
         }
-        console.log(this.node, this.links);
+        this.node.forEach(element => {
+          console.log(element);
+        });
+        this.links.forEach(element => {
+          console.log(element);
+        });
         break;
       }
 
@@ -152,6 +149,15 @@ export default {
           tempNode.name = this.m_target_feature[i];
           tempNode.x = ref_x_t * i;
           tempNode.y = bottom_y;
+          if (this.m_result.res[i].length > 0 && this.m_result.res[i].length <= 2) {
+            tempNode.color = "#7B68EE";
+          }
+          else if (this.m_result.res[i].length >= 3) {
+            tempNode.color = "#000080";
+          }
+          else {
+            tempNode.color = "#1E90FF";
+          }
           this.node.push(JSON.parse(JSON.stringify(tempNode)));
           existedName.set(tempNode.name, 1);
         }
@@ -181,6 +187,7 @@ export default {
               tempNode.name = this.m_result.res[i][j];
               tempNode.x = ref_x_t * i + (ref_x_r[i] + 1) * j;
               tempNode.y = top_y;
+              tempNode.color = "#FFDEAD";
               this.node.push(JSON.parse(JSON.stringify(tempNode)));
               existedName.set(tempNode.name, 1);
             }
@@ -192,7 +199,12 @@ export default {
             this.links.push(JSON.parse(JSON.stringify(tempLink)));
           }
         }
-        console.log(this.node, this.links);
+        this.node.forEach(element => {
+          console.log(element);
+        });
+        this.links.forEach(element => {
+          console.log(element);
+        });
         break;
       }
       case "factorDis": {
@@ -203,6 +215,15 @@ export default {
           tempNode.name = this.m_target_feature[i];
           tempNode.x = ref_x_t * i;
           tempNode.y = bottom_y;
+          if (this.m_result.res[i].length > 0 && this.m_result.res[i].length <= 2) {
+            tempNode.color = "#7B68EE";
+          }
+          else if (this.m_result.res[i].length >= 3) {
+            tempNode.color = "#000080";
+          }
+          else {
+            tempNode.color = "#1E90FF";
+          }
           this.node.push(JSON.parse(JSON.stringify(tempNode)));
           existedName.set(tempNode.name, 1);
         }
@@ -232,6 +253,7 @@ export default {
               tempNode.name = this.m_result.res[i][j];
               tempNode.x = ref_x_t * i + (ref_x_r[i] + 1) * j;
               tempNode.y = top_y;
+              tempNode.color = "#FFDEAD";
               this.node.push(JSON.parse(JSON.stringify(tempNode)));
               existedName.set(tempNode.name, 1);
             }
@@ -243,7 +265,12 @@ export default {
             this.links.push(JSON.parse(JSON.stringify(tempLink)));
           }
         }
-        console.log(this.node, this.links);
+        this.node.forEach(element => {
+          console.log(element);
+        });
+        this.links.forEach(element => {
+          console.log(element);
+        });
         break;
       }
       default:
@@ -269,7 +296,7 @@ export default {
         ci: this.m_result?.ci,
         res: this.m_result?.res,
         dataset: this.m_dataset,
-        uid:sessionStorage.getItem("userid")-0
+        uid: sessionStorage.getItem("userid") - 0
       };
       let alghName = "m_" + this.m_algorithm;
       let para = [];
