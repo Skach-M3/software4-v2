@@ -61,6 +61,9 @@
             <span>操作</span>
           </template>
           <template slot-scope="scope">
+            <el-button slot="reference" size="mini" type="primary"  style="margin-right: 10px" @click="getData(scope.row.table_name)"
+                >查看</el-button
+              >
             <el-popconfirm
               title="删除后无法恢复"
               icon="el-icon-warning"
@@ -75,7 +78,36 @@
         </el-table-column>
       </el-table>
     </div>
-
+      <!-- ==============================     查看数据的对话框 ================================================================ -->
+    
+<el-dialog
+  title="详细数据"
+  :visible.sync="DatadialogVisible"
+  v-if="DatadialogVisible"
+  width="70%">
+  <el-table
+      :data="patientTable"
+      style="width: 100%; margin-top: 20px"
+      max-height="450px"
+      border
+      stripe
+      v-loading="getData_loading"
+      element-loading-text="正在获取数据"
+      element-loading-spinner="el-icon-loading"
+    >
+      <el-table-column type="index"> </el-table-column>
+      <el-table-column
+        v-for="(key, index) in Object.keys(patientTable[0])"
+        :key="index"
+        :label="key"
+        :prop="key"
+      >
+      </el-table-column>
+    </el-table>
+  <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="DatadialogVisible = false">确 定</el-button>
+  </span>
+</el-dialog>
     <!--===============================     导入数据表单   ===================================================================-->
     <el-dialog
       v-loading="loading"
@@ -222,13 +254,16 @@ export default {
     return {
       loading: false,
       loading2: false,
+      getData_loading: false,
       loadText: "拼命加载中",
       loadText2: "拼命加载中",
       disease: "",
       creator: "",
       disOptions,
       featuresVision: false,
+      DatadialogVisible:false,
       featuresMap: {},
+      patientTable:[],
       dialogForm: {
         filesInfo: [],
         tableName: "",
@@ -303,7 +338,17 @@ export default {
   methods: {
     ...mapMutations(["SetDataList"]),
     ...mapActions(["getDataList"]),
-
+    getData(tablename) {
+      this.DatadialogVisible = true;
+      this.getData_loading = true;
+      getRequest("/DataTable/getInfoByTableName", {
+        tableName: tablename,
+      }).then((res) => {
+        this.patientTable = res.data;
+        console.log(this.patientTable);
+        this.getData_loading = false;
+      });
+    },
     changeLabel(name, label) {
       this.featuresMap[name] = label;
     },
