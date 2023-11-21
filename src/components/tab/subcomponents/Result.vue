@@ -42,8 +42,11 @@
     <div class="graphBox">
       <GraphVue v-if="initFlag" :title_text="graphTitile" :node="node" :links="links"></GraphVue>
     </div>
+    <div class="treeBox">
+      <Tree v-if="initFlag" :title_text="graphTitile" :data="data"></Tree>
+    </div>
     <div class="buttonGroup">
-      <el-button type="primary" @click="next()" round>完成</el-button>
+      <el-button type="primary" @click="next()" round>保存任务</el-button>
     </div>
   </div>
 </template>
@@ -51,6 +54,7 @@
 <script>
 import vuex_mixin from "@/components/mixins/vuex_mixin";
 import GraphVue from "./Graph.vue";
+import Tree from "./Tree.vue";
 import { postRequest } from "@/api/user";
 import { mapMutations } from "vuex";
 export default {
@@ -58,6 +62,7 @@ export default {
   mixins: [vuex_mixin],
   components: {
     GraphVue,
+    Tree
   },
   props: {
     moduleName: {
@@ -78,12 +83,18 @@ export default {
       graphTitile: "",
       node: [],
       links: [],
+      data: {}
     };
   },
 
   created() {
     console.log("console.log(this.m_target_feature);" + this.m_target_feature);
     console.log("this.m_result" + JSON.stringify(this.m_result.res));
+    console.log("this.tree" + JSON.stringify(this.m_result.treeRes));
+    var treeData = {
+      name: "结果统计",
+      children: []
+    }
     let tempNode = {
       name: this.m_target_feature[0],
       x: 300,
@@ -134,12 +145,15 @@ export default {
           tempLink.lineStyle.width += tempLink.value * 2;
           this.links.push(JSON.parse(JSON.stringify(tempLink)));
         }
-        this.node.forEach(element => {
-          console.log(element);
+        var firstChildren = { name: String(Object.keys(this.m_result.treeRes)), children: [] };
+        treeData.children.push(firstChildren);
+        var secondChildrenList = Array.from(this.m_result.treeRes.target);
+        console.log(secondChildrenList);
+        secondChildrenList.forEach(element => {
+          var secondChildren = { name: String(element), children: [] };
+          treeData.children[0].children.push(secondChildren);
         });
-        this.links.forEach(element => {
-          console.log(element);
-        });
+        this.data = treeData;
         break;
       }
 
@@ -201,12 +215,17 @@ export default {
             this.links.push(JSON.parse(JSON.stringify(tempLink)));
           }
         }
-        this.node.forEach(element => {
-          console.log(element);
+        var resTreedata = this.m_result.treeRes;
+        Object.entries(resTreedata).forEach(function ([key, value],index) {
+          var firstChildren = {name:String(key),children:[]};
+          treeData.children.push(firstChildren);
+          var secondChildrenList = Array.from(value);
+          secondChildrenList.forEach(element => {
+          var secondChildren = {name:String(element),children:[]};
+          treeData.children[index].children.push(secondChildren);
         });
-        this.links.forEach(element => {
-          console.log(element);
         });
+        this.data = treeData;
         break;
       }
       case "factorDis": {
@@ -267,12 +286,17 @@ export default {
             this.links.push(JSON.parse(JSON.stringify(tempLink)));
           }
         }
-        this.node.forEach(element => {
-          console.log(element);
+        var resTreedata = this.m_result.treeRes;
+        Object.entries(resTreedata).forEach(function ([key, value],index) {
+          var firstChildren = {name:String(key),children:[]};
+          treeData.children.push(firstChildren);
+          var secondChildrenList = Array.from(value);
+          secondChildrenList.forEach(element => {
+          var secondChildren = {name:String(element),children:[]};
+          treeData.children[index].children.push(secondChildren);
         });
-        this.links.forEach(element => {
-          console.log(element);
         });
+        this.data = treeData;
         break;
       }
       default:
@@ -390,9 +414,21 @@ h3 {
   margin-top: 20px;
 }
 
+.treeBox {
+  width: 100%;
+  height: 50vh;
+  box-shadow: 0px 0px 13px -3px #c7e2ea;
+  margin-top: 20px;
+}
+
 .buttonGroup .el-button {
   margin-top: 30px;
   margin-left: 50%;
-  color: #c2b8fae1;
 }
+
+span{
+
+    white-space:pre-wrap;
+    word-wrap : break-word ;
+}  
 </style>
