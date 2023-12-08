@@ -1,101 +1,91 @@
 <template>
   <div>
-    <div class="taskBox1">
-      <div class="taskInfoBox taskname">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">任务名称：</span>
-        <span>{{ m_taskName }}</span>
+    <div id="pdf_1">
+      <div class="taskBox1">
+        <div class="taskInfoBox taskname">
+          <span class="lineStyle">▍</span><span class="featureTitle">任务名称：</span>
+          <span>{{ m_taskName }}</span>
+        </div>
+        <div class="taskInfoBox principal">
+          <span class="lineStyle">▍</span><span class="featureTitle">任务负责人：</span>
+          <span>{{ m_principal }}</span>
+        </div>
+        <div class="taskInfoBox participants" v-if="m_participants.length > 0">
+          <span class="lineStyle">▍</span><span class="featureTitle">参与人：</span>
+          <span>{{ m_participants }}</span>
+        </div>
       </div>
-      <div class="taskInfoBox principal">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">任务负责人：</span>
-        <span>{{ m_principal }}</span>
+      <div class="taskBox1">
+        <div class="taskInfoBox disease">
+          <span class="lineStyle">▍</span><span class="featureTitle">研究病种：</span>
+          <span>{{ m_disease }}</span>
+        </div>
+        <div class="taskInfoBox dataset">
+          <span class="lineStyle">▍</span><span class="featureTitle">所用数据：</span>
+          <span>{{ m_dataset }}</span>
+        </div>
+        <div class="taskInfoBox algorithm">
+          <span class="lineStyle">▍</span><span class="featureTitle">所用算法：</span>
+          <span>{{ m_algorithm }}</span>
+        </div>
       </div>
-      <div class="taskInfoBox participants" v-if="m_participants.length > 0">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">参与人：</span>
-        <span>{{ m_participants }}</span>
+
+      <div class="taskInfoBox use_features">
+        <span class="lineStyle">▍</span><span class="featureTitle">所用特征：</span>
+        <span>{{ m_use_features.toString() }}</span>
       </div>
     </div>
-    <div class="taskBox1">
-      <div class="taskInfoBox disease">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">研究病种：</span>
-        <span>{{ m_disease }}</span>
+    <div id="pdf_2">
+      <div class="taskInfoBox result">
+        <span class="lineStyle">▍</span><span class="featureTitle">特征分布：</span>
       </div>
-      <div class="taskInfoBox dataset">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">所用数据：</span>
-        <span>{{ m_dataset }}</span>
-      </div>
-      <div class="taskInfoBox algorithm">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">所用算法：</span>
-        <span>{{ m_algorithm }}</span>
+
+      <div id="table">
+        <div id="creatorFilter">
+          <span>特征类型：</span>
+          <el-select v-model="type" clearable placeholder="请选择">
+            <el-option key="人口学" label="人口学" value="人口学"> </el-option>
+            <el-option key="社会学" label="社会学" value="社会学"> </el-option>
+            <el-option key="行为学" label="行为学" value="行为学"> </el-option>
+          </el-select>
+        </div>
+        <el-table :data="distribution.filter((data) => !type || data.type.includes(type))"
+          style="width: 95%; margin-top: 20px; margin-bottom: 50px" stripe max-height="800"
+          :header-cell-style="{ background: '#eef1f6', color: '#606266' }"   id="out-table">
+          <el-table-column label="特征名" prop="feature_name"> </el-table-column>
+          <el-table-column label="样本量" prop="num"> </el-table-column>
+          <el-table-column label="特征类型" prop="type"> </el-table-column>
+          <el-table-column label="平均值" prop="average"> </el-table-column>
+          <el-table-column label="标准差" prop="bzc"></el-table-column>
+          <el-table-column label="偏度" prop="skewness"> </el-table-column>
+          <el-table-column label="峰度" prop="kurtosis"> </el-table-column>
+          <el-table-column label="Shapiro-Wilk">
+            <el-table-column label="统计量D值" prop="s_w_d"> </el-table-column>
+            <el-table-column label="P值" prop="s_w_p"> </el-table-column>
+          </el-table-column>
+          <el-table-column label="Kolmogorov-Smirnov">
+            <el-table-column label="统计量D值" prop="k_s_d"> </el-table-column>
+            <el-table-column label="P值" prop="k_s_p"> </el-table-column>
+          </el-table-column>
+        </el-table>
       </div>
     </div>
 
-    <div class="taskInfoBox use_features">
-      <span class="lineStyle">▍</span
-      ><span class="featureTitle">所用特征：</span>
-      <span>{{ m_use_features.toString() }}</span>
-    </div>
-    <div class="taskInfoBox result">
-      <span class="lineStyle">▍</span
-      ><span class="featureTitle">特征分布：</span>
-    </div>
-
-    <div id="table">
-      <div id="creatorFilter">
-        <span>特征类型：</span>
-        <el-select v-model="type" clearable placeholder="请选择">
-          <el-option key="人口学" label="人口学" value="人口学"> </el-option>
-          <el-option key="社会学" label="社会学" value="社会学"> </el-option>
-          <el-option key="行为学" label="行为学" value="行为学"> </el-option>
-        </el-select>
+    <div id="pdf_3">
+      <div class="taskInfoBox result">
+        <span class="lineStyle">▍</span><span class="featureTitle">任务结果：</span>
       </div>
-      <el-table
-        :data="distribution.filter((data) => !type || data.type.includes(type))"
-        style="width: 95%; margin-top: 20px; margin-bottom: 50px"
-        stripe
-        max-height="800"
-        :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
-      >
-        <el-table-column label="特征名" prop="feature_name"> </el-table-column>
-        <el-table-column label="样本量" prop="num"> </el-table-column>
-        <el-table-column label="特征类型" prop="type"> </el-table-column>
-        <el-table-column label="平均值" prop="average"> </el-table-column>
-        <el-table-column label="标准差" prop="bzc"></el-table-column>
-        <el-table-column label="偏度" prop="skewness"> </el-table-column>
-        <el-table-column label="峰度" prop="kurtosis"> </el-table-column>
-        <el-table-column label="Shapiro-Wilk">
-          <el-table-column label="统计量D值" prop="s_w_d"> </el-table-column>
-          <el-table-column label="P值" prop="s_w_p"> </el-table-column>
-        </el-table-column>
-        <el-table-column label="Kolmogorov-Smirnov">
-          <el-table-column label="统计量D值" prop="k_s_d"> </el-table-column>
-          <el-table-column label="P值" prop="k_s_p"> </el-table-column>
-        </el-table-column>
-      </el-table>
+      <h3>专家知识匹配度：{{ ratio }}</h3>
+      <h3 v-if="m_result.time">运算时间：{{ m_result.time }} 秒</h3>
+      <h3 v-if="m_result.ci">独立性检验次数：{{ m_result.ci }}次</h3>
     </div>
-
-    <div class="taskInfoBox result">
-      <span class="lineStyle">▍</span
-      ><span class="featureTitle">任务结果：</span>
-    </div>
-    <h3>专家知识匹配度：{{ ratio }}</h3>
-    <h3 v-if="m_result.time">运算时间：{{ m_result.time }} 秒</h3>
-    <h3 v-if="m_result.ci">独立性检验次数：{{ m_result.ci }}次</h3>
-    <div class="graphBox">
-      <GraphVue
-        v-if="initFlag"
-        :title_text="graphTitile"
-        :node="node"
-        :links="links"
-      ></GraphVue>
-    </div>
-    <div class="treeBox">
-      <Tree v-if="initFlag" :title_text="graphTitile" :data="data"></Tree>
+    <div id="pdf_4">
+      <div class="graphBox">
+        <GraphVue v-if="initFlag" :title_text="graphTitile" :node="node" :links="links"></GraphVue>
+      </div>
+      <div class="treeBox">
+        <Tree v-if="initFlag" :title_text="graphTitile" :data="data"></Tree>
+      </div>
     </div>
     <div class="buttonGroup">
       <el-button type="success" @click="exportRes()" round>导出结果</el-button>
@@ -105,11 +95,17 @@
 </template>
 
 <script>
+
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import vuex_mixin from "@/components/mixins/vuex_mixin";
 import GraphVue from "./Graph.vue";
 import Tree from "./Tree.vue";
 import { postRequest } from "@/api/user";
 import { mapMutations } from "vuex";
+import { time } from "echarts";
 export default {
   name: "Result",
   mixins: [vuex_mixin],
@@ -425,7 +421,7 @@ export default {
         tempNode.x = 500;
         tempNode.y = bottom_y;
         tempNode.color = "#7B68EE";
-        if (this.m_result.res.length < 1) {
+        if (this.m_result.res.flat(Infinity).length < 1) {
           this.$message("未挖掘出相关关系");
           tempNode.x = 500;
           tempNode.y = 500;
@@ -448,13 +444,13 @@ export default {
           tempLink.lineStyle.width += tempLink.value * 2;
           this.links.push(JSON.parse(JSON.stringify(tempLink)));
         }
+
         var firstChildren = {
           name: String(Object.keys(this.m_result.treeRes)),
           children: [],
         };
         treeData.children.push(firstChildren);
-        var secondChildrenList = Array.from(this.m_result.treeRes.target);
-        console.log(secondChildrenList);
+        var secondChildrenList = Array.from(this.m_result.treeRes[firstChildren.name]);
         secondChildrenList.forEach((element) => {
           var secondChildren = { name: String(element), children: [] };
           treeData.children[0].children.push(secondChildren);
@@ -684,13 +680,67 @@ export default {
           return false;
         });
     },
+    exportExcel() {
+        /* 从表生成工作簿对象 */
+        this.type="";
+        setTimeout(() => {
+          var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
+        /* 获取二进制字符串作为输出 */
+        var wbout = XLSX.write(wb, {
+            bookType: "xlsx",
+            bookSST: true,
+            type: "array"
+        });
+        try {
+            FileSaver.saveAs(
+            //Blob 对象表示一个不可变、原始数据的类文件对象。
+            //Blob 表示的不一定是JavaScript原生格式的数据。
+            //File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
+            //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
+            new Blob([wbout], { type: "application/octet-stream" }),
+            //设置导出文件名称
+            `${this.m_taskName}-特征分布表格.xlsx`
+            );
+        } catch (e) {
+            if (typeof console !== "undefined") console.log(e, wbout);
+        }
+        return wbout;
+        }, 1000);
+        },
 
-    exportRes() {
-      this.$message({
-        type: "success",
-        message: "导出成功",
+    async exportRes() {
+      
+      this.exportExcel()
+      const divsToExport = ['pdf_1', 'pdf_3', 'pdf_4'];
+      const pdf_positions = [
+        { x: 5, y: 10 },
+        { x: 5, y: 40 },
+        { x: 2, y: 55 },
+      ];
+      const pdf = new jsPDF();
+
+      const renderPromises = divsToExport.map((divId, index) => {
+        const div = document.getElementById(divId);
+        return html2canvas(div).then((canvas) => {
+          const imgData = canvas.toDataURL('image/png');
+          const imgProps = pdf.getImageProperties(imgData);
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+          const position = pdf_positions[index] || { x: 0, y: 0 };
+          pdf.addImage(
+            imgData,
+            'PNG',
+            position.x,
+            position.y,
+            pdfWidth,
+            pdfHeight
+          );
+        });
       });
-    },
+
+      await Promise.all(renderPromises);
+      pdf.save(`${this.m_taskName}.pdf`);
+    }
   },
 };
 </script>
@@ -725,14 +775,14 @@ h3 {
 .graphBox {
   width: 100%;
   height: 40vh;
-  box-shadow: 0px 0px 13px -3px #c7e2ea;
+
   margin-top: 20px;
 }
 
 .treeBox {
   width: 100%;
   height: 50vh;
-  box-shadow: 0px 0px 13px -3px #c7e2ea;
+
   margin-top: 20px;
 }
 

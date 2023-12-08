@@ -31,7 +31,7 @@
               :title="item"
               trigger="hover"
               :content="getDeficiency(item)"
-              open-delay="200"
+              :open-delay=200
             >
               <span slot="reference">{{ item }}</span>
             </el-popover></el-checkbox
@@ -53,7 +53,7 @@
               :title="item"
               trigger="hover"
               :content="getDeficiency(item)"
-              open-delay="200"
+              :open-delay=200
             >
               <span slot="reference">{{ item }}</span>
             </el-popover></el-checkbox
@@ -75,7 +75,7 @@
               :title="item"
               trigger="hover"
               :content="getDeficiency(item)"
-              open-delay="200"
+              :open-delay=200
             >
               <span slot="reference">{{ item }}</span>
             </el-popover></el-checkbox
@@ -116,7 +116,7 @@
               :title="item"
               trigger="hover"
               :content="getDeficiency(item)"
-              open-delay="200"
+              :open-delay=200
             >
               <span slot="reference">{{ item }}</span>
             </el-popover></el-checkbox
@@ -153,7 +153,7 @@
             :title="item"
             trigger="hover"
             :content="getDeficiency(item)"
-            open-delay="200"
+            :open-delay=200
           >
             <span slot="reference">{{ item }}</span>
           </el-popover></el-checkbox

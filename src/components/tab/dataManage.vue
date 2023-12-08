@@ -345,7 +345,7 @@ export default {
         tableName: tablename,
       }).then((res) => {
         this.patientTable = res.data;
-        console.log(this.patientTable);
+        console.log("patientTable:"+res.data);
         this.getData_loading = false;
       });
     },
