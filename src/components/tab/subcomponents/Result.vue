@@ -2,50 +2,103 @@
   <div>
     <div class="taskBox1">
       <div class="taskInfoBox taskname">
-        <span class="lineStyle">▍</span><span class="featureTitle">任务名称：</span>
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">任务名称：</span>
         <span>{{ m_taskName }}</span>
       </div>
       <div class="taskInfoBox principal">
-        <span class="lineStyle">▍</span><span class="featureTitle">任务负责人：</span>
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">任务负责人：</span>
         <span>{{ m_principal }}</span>
       </div>
       <div class="taskInfoBox participants" v-if="m_participants.length > 0">
-        <span class="lineStyle">▍</span><span class="featureTitle">参与人：</span>
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">参与人：</span>
         <span>{{ m_participants }}</span>
       </div>
     </div>
     <div class="taskBox1">
       <div class="taskInfoBox disease">
-        <span class="lineStyle">▍</span><span class="featureTitle">研究病种：</span>
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">研究病种：</span>
         <span>{{ m_disease }}</span>
       </div>
       <div class="taskInfoBox dataset">
-        <span class="lineStyle">▍</span><span class="featureTitle">所用数据：</span>
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">所用数据：</span>
         <span>{{ m_dataset }}</span>
       </div>
       <div class="taskInfoBox algorithm">
-        <span class="lineStyle">▍</span><span class="featureTitle">所用算法：</span>
+        <span class="lineStyle">▍</span
+        ><span class="featureTitle">所用算法：</span>
         <span>{{ m_algorithm }}</span>
       </div>
     </div>
 
     <div class="taskInfoBox use_features">
-      <span class="lineStyle">▍</span><span class="featureTitle">所用特征：</span>
+      <span class="lineStyle">▍</span
+      ><span class="featureTitle">所用特征：</span>
       <span>{{ m_use_features.toString() }}</span>
     </div>
     <div class="taskInfoBox result">
-      <span class="lineStyle">▍</span><span class="featureTitle">任务结果：</span>
+      <span class="lineStyle">▍</span
+      ><span class="featureTitle">特征分布：</span>
+    </div>
+
+    <div id="table">
+      <div id="creatorFilter">
+        <span>特征类型：</span>
+        <el-select v-model="type" clearable placeholder="请选择">
+          <el-option key="人口学" label="人口学" value="人口学"> </el-option>
+          <el-option key="社会学" label="社会学" value="社会学"> </el-option>
+          <el-option key="行为学" label="行为学" value="行为学"> </el-option>
+        </el-select>
+      </div>
+      <el-table
+        :data="distribution.filter((data) => !type || data.type.includes(type))"
+        style="width: 95%; margin-top: 20px; margin-bottom: 50px"
+        stripe
+        max-height="800"
+        :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
+      >
+        <el-table-column label="特征名" prop="feature_name"> </el-table-column>
+        <el-table-column label="样本量" prop="num"> </el-table-column>
+        <el-table-column label="特征类型" prop="type"> </el-table-column>
+        <el-table-column label="平均值" prop="average"> </el-table-column>
+        <el-table-column label="标准差" prop="bzc"></el-table-column>
+        <el-table-column label="偏度" prop="skewness"> </el-table-column>
+        <el-table-column label="峰度" prop="kurtosis"> </el-table-column>
+        <el-table-column label="Shapiro-Wilk">
+          <el-table-column label="统计量D值" prop="s_w_d"> </el-table-column>
+          <el-table-column label="P值" prop="s_w_p"> </el-table-column>
+        </el-table-column>
+        <el-table-column label="Kolmogorov-Smirnov">
+          <el-table-column label="统计量D值" prop="k_s_d"> </el-table-column>
+          <el-table-column label="P值" prop="k_s_p"> </el-table-column>
+        </el-table-column>
+      </el-table>
+    </div>
+
+    <div class="taskInfoBox result">
+      <span class="lineStyle">▍</span
+      ><span class="featureTitle">任务结果：</span>
     </div>
     <h3>专家知识匹配度：{{ ratio }}</h3>
     <h3 v-if="m_result.time">运算时间：{{ m_result.time }} 秒</h3>
     <h3 v-if="m_result.ci">独立性检验次数：{{ m_result.ci }}次</h3>
     <div class="graphBox">
-      <GraphVue v-if="initFlag" :title_text="graphTitile" :node="node" :links="links"></GraphVue>
+      <GraphVue
+        v-if="initFlag"
+        :title_text="graphTitile"
+        :node="node"
+        :links="links"
+      ></GraphVue>
     </div>
     <div class="treeBox">
       <Tree v-if="initFlag" :title_text="graphTitile" :data="data"></Tree>
     </div>
     <div class="buttonGroup">
+      <el-button type="success" @click="exportRes()" round>导出结果</el-button>
       <el-button type="primary" @click="next()" round>保存任务</el-button>
     </div>
   </div>
@@ -62,7 +115,7 @@ export default {
   mixins: [vuex_mixin],
   components: {
     GraphVue,
-    Tree
+    Tree,
   },
   props: {
     moduleName: {
@@ -83,7 +136,257 @@ export default {
       graphTitile: "",
       node: [],
       links: [],
-      data: {}
+      data: {},
+      type: "",
+      distribution: [
+        {
+          feature_name: "age",
+          num: 3200,
+          type: "人口学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "sex",
+          num: 3200,
+          type: "社会学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "cp",
+          num: 3200,
+          type: "社会学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "trestbps",
+          num: 3200,
+          type: "人口学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "chol",
+          num: 3200,
+          type: "社会学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "fbs",
+          num: 3200,
+          type: "行为学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "restcq",
+          num: 3200,
+          type: "人口学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "thalach",
+          num: 3200,
+          type: "社会学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "wxanq",
+          num: 3200,
+          type: "人口学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "oldpeak",
+          num: 3200,
+          type: "人口学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "slope",
+          num: 3200,
+          type: "社会学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "ca",
+          num: 3200,
+          type: "行为学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "thal",
+          num: 3200,
+          type: "人口学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "chcol",
+          num: 3200,
+          type: "行为学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "sodc",
+          num: 3200,
+          type: "人口学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "cakr",
+          num: 3200,
+          type: "人口学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "bdre",
+          num: 3200,
+          type: "人口学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "age",
+          num: 3200,
+          type: "行为学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+        {
+          feature_name: "age",
+          num: 3200,
+          type: "人口学",
+          average: 32.66,
+          bzc: 7.858,
+          skewness: 3.299,
+          kurtosis: 41.529,
+          s_w_d: 0.114,
+          s_w_p: 0.0,
+          k_s_d: 0.116,
+          k_s_p: 0.0,
+        },
+      ],
     };
   },
 
@@ -93,14 +396,14 @@ export default {
     console.log("this.tree" + JSON.stringify(this.m_result.treeRes));
     var treeData = {
       name: "结果统计",
-      children: []
-    }
+      children: [],
+    };
     let tempNode = {
       name: this.m_target_feature[0],
       x: 300,
       y: 300,
       color: "#7B68EE",
-      symbolSize: 65
+      symbolSize: 65,
     };
     let tempLink = {
       source: "",
@@ -145,11 +448,14 @@ export default {
           tempLink.lineStyle.width += tempLink.value * 2;
           this.links.push(JSON.parse(JSON.stringify(tempLink)));
         }
-        var firstChildren = { name: String(Object.keys(this.m_result.treeRes)), children: [] };
+        var firstChildren = {
+          name: String(Object.keys(this.m_result.treeRes)),
+          children: [],
+        };
         treeData.children.push(firstChildren);
         var secondChildrenList = Array.from(this.m_result.treeRes.target);
         console.log(secondChildrenList);
-        secondChildrenList.forEach(element => {
+        secondChildrenList.forEach((element) => {
           var secondChildren = { name: String(element), children: [] };
           treeData.children[0].children.push(secondChildren);
         });
@@ -165,13 +471,14 @@ export default {
           tempNode.name = this.m_target_feature[i];
           tempNode.x = ref_x_t * i;
           tempNode.y = bottom_y;
-          if (this.m_result.res[i].length > 0 && this.m_result.res[i].length <= 2) {
+          if (
+            this.m_result.res[i].length > 0 &&
+            this.m_result.res[i].length <= 2
+          ) {
             tempNode.color = "#7B68EE";
-          }
-          else if (this.m_result.res[i].length >= 3) {
+          } else if (this.m_result.res[i].length >= 3) {
             tempNode.color = "#000080";
-          }
-          else {
+          } else {
             tempNode.color = "#c2b8fae1";
           }
           this.node.push(JSON.parse(JSON.stringify(tempNode)));
@@ -216,14 +523,14 @@ export default {
           }
         }
         var resTreedata = this.m_result.treeRes;
-        Object.entries(resTreedata).forEach(function ([key, value],index) {
-          var firstChildren = {name:String(key),children:[]};
+        Object.entries(resTreedata).forEach(function ([key, value], index) {
+          var firstChildren = { name: String(key), children: [] };
           treeData.children.push(firstChildren);
           var secondChildrenList = Array.from(value);
-          secondChildrenList.forEach(element => {
-          var secondChildren = {name:String(element),children:[]};
-          treeData.children[index].children.push(secondChildren);
-        });
+          secondChildrenList.forEach((element) => {
+            var secondChildren = { name: String(element), children: [] };
+            treeData.children[index].children.push(secondChildren);
+          });
         });
         this.data = treeData;
         break;
@@ -236,13 +543,14 @@ export default {
           tempNode.name = this.m_target_feature[i];
           tempNode.x = ref_x_t * i;
           tempNode.y = bottom_y;
-          if (this.m_result.res[i].length > 0 && this.m_result.res[i].length <= 2) {
+          if (
+            this.m_result.res[i].length > 0 &&
+            this.m_result.res[i].length <= 2
+          ) {
             tempNode.color = "#7B68EE";
-          }
-          else if (this.m_result.res[i].length >= 3) {
+          } else if (this.m_result.res[i].length >= 3) {
             tempNode.color = "#000080";
-          }
-          else {
+          } else {
             tempNode.color = "#c2b8fae1";
           }
           this.node.push(JSON.parse(JSON.stringify(tempNode)));
@@ -287,14 +595,14 @@ export default {
           }
         }
         var resTreedata = this.m_result.treeRes;
-        Object.entries(resTreedata).forEach(function ([key, value],index) {
-          var firstChildren = {name:String(key),children:[]};
+        Object.entries(resTreedata).forEach(function ([key, value], index) {
+          var firstChildren = { name: String(key), children: [] };
           treeData.children.push(firstChildren);
           var secondChildrenList = Array.from(value);
-          secondChildrenList.forEach(element => {
-          var secondChildren = {name:String(element),children:[]};
-          treeData.children[index].children.push(secondChildren);
-        });
+          secondChildrenList.forEach((element) => {
+            var secondChildren = { name: String(element), children: [] };
+            treeData.children[index].children.push(secondChildren);
+          });
         });
         this.data = treeData;
         break;
@@ -322,7 +630,7 @@ export default {
         ci: this.m_result?.ci,
         res: this.m_result?.res,
         dataset: this.m_dataset,
-        uid: sessionStorage.getItem("userid") - 0
+        uid: sessionStorage.getItem("userid") - 0,
       };
       let alghName = "m_" + this.m_algorithm;
       let para = [];
@@ -344,7 +652,7 @@ export default {
           this.$message({
             showClose: true,
             type: "success",
-            message: "新建任务成功",
+            message: "任务保存成功",
           });
           this.m_changeStep(1);
           let defaultValue = {
@@ -375,6 +683,13 @@ export default {
           this.m_changeStep(this.m_step - 1);
           return false;
         });
+    },
+
+    exportRes() {
+      this.$message({
+        type: "success",
+        message: "导出成功",
+      });
     },
   },
 };
@@ -421,14 +736,15 @@ h3 {
   margin-top: 20px;
 }
 
-.buttonGroup .el-button {
+.buttonGroup {
   margin-top: 30px;
-  margin-left: 50%;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
 }
 
-span{
-
-    white-space:pre-wrap;
-    word-wrap : break-word ;
-}  
+span {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
 </style>

@@ -25,7 +25,16 @@
             :label="item"
             :key="item"
             border
-            >{{ item }}</el-checkbox
+            ><el-popover
+              placement="top-end"
+              width="150"
+              :title="item"
+              trigger="hover"
+              :content="getDeficiency(item)"
+              open-delay="200"
+            >
+              <span slot="reference">{{ item }}</span>
+            </el-popover></el-checkbox
           >
         </el-checkbox-group>
       </div>
@@ -38,7 +47,16 @@
             :label="item"
             :key="item"
             border
-            >{{ item }}</el-checkbox
+            ><el-popover
+              placement="top-end"
+              width="150"
+              :title="item"
+              trigger="hover"
+              :content="getDeficiency(item)"
+              open-delay="200"
+            >
+              <span slot="reference">{{ item }}</span>
+            </el-popover></el-checkbox
           >
         </el-checkbox-group>
       </div>
@@ -51,7 +69,16 @@
             :label="item"
             :key="item"
             border
-            >{{ item }}</el-checkbox
+            ><el-popover
+              placement="top-end"
+              width="150"
+              :title="item"
+              trigger="hover"
+              :content="getDeficiency(item)"
+              open-delay="200"
+            >
+              <span slot="reference">{{ item }}</span>
+            </el-popover></el-checkbox
           >
         </el-checkbox-group>
       </div>
@@ -83,7 +110,16 @@
             :label="item"
             :key="item"
             border
-            >{{ item }}</el-checkbox
+            ><el-popover
+              placement="top-end"
+              width="150"
+              :title="item"
+              trigger="hover"
+              :content="getDeficiency(item)"
+              open-delay="200"
+            >
+              <span slot="reference">{{ item }}</span>
+            </el-popover></el-checkbox
           >
         </el-checkbox-group>
       </div>
@@ -110,12 +146,17 @@
       </div>
 
       <el-checkbox-group v-model="knownFeatures" @change="changeBox_2()">
-        <el-checkbox
-          v-for="item in labelList"
-          :label="item"
-          :key="item"
-          border
-          >{{ item }}</el-checkbox
+        <el-checkbox v-for="item in labelList" :label="item" :key="item" border
+          ><el-popover
+            placement="top-end"
+            width="150"
+            :title="item"
+            trigger="hover"
+            :content="getDeficiency(item)"
+            open-delay="200"
+          >
+            <span slot="reference">{{ item }}</span>
+          </el-popover></el-checkbox
         >
       </el-checkbox-group>
     </div>
@@ -217,6 +258,11 @@ export default {
       }
     },
 
+    getDeficiency() {
+      let rate = (Math.random() * 100).toFixed(3);
+      return `缺失率：${rate}%`;
+    },
+
     next() {
       if (this.targetFeature.length < 1) {
         alert("该数据没有目标列，请重新选择数据表");
@@ -226,7 +272,7 @@ export default {
         alert("请选择至少5个疾病参与运算");
         return;
       }
-      
+
       this.m_changeTaskInfo({
         use_features: this.computeFeatures,
         known_features: this.knownFeatures,
@@ -268,14 +314,20 @@ export default {
   display: grid;
   grid-template-columns: repeat(7, 150px);
   grid-gap: 20px;
-  grid-template-rows: 20px,20px;
+  grid-template-rows: 20px, 20px;
 }
 
 .el-checkbox-group .el-checkbox {
   width: 130px;
 }
 
-.el-checkbox-group >>> .el-checkbox__label{
+.el-checkbox span {
+  display: block;
+  width: 100px;
+}
+
+/* 使用popover以后省略号就没用了 */
+.el-checkbox-group >>> .el-checkbox__label {
   margin-top: 5px;
   line-height: 10px;
   width: 80px;
