@@ -1,6 +1,82 @@
 <template>
   <div>
-    <div class="topBigDiv">
+    <div class="topStatistic">
+      <el-card class="top_statistic_card">
+        <el-card class="statistic_item">
+          <div class="text_place">
+            <i class="el-icon-s-grid"></i> 专病集个数:{{statistic.specialityCount}}
+          </div>
+        </el-card>
+        <el-card class="statistic_item">
+          <div class="text_place">
+            <i class="el-icon-s-data"></i> 样本总量:{{statistic.sampleCount}}
+          </div>
+        </el-card>
+        <el-card class="statistic_item">
+          <div class="text_place">
+            <i class="el-icon-time"></i> 起始时间:<p></p>{{statistic.startAndEndTime}}
+          </div>
+        </el-card>
+        <el-card class="statistic_item">
+          <div class="text_place">
+            <i class="el-icon-s-claim"></i> 任务总数:{{statistic.taskCount}}
+          </div>
+        </el-card>
+      </el-card>
+    </div>
+
+    <div class="midStatistic">
+      <el-card class="mid_statistic_card">
+        <el-card>
+          <div slot="header" class="clearfix">
+            <span class="lineStyle">▍</span><span>近期新建任务数</span>
+            <el-select class="chartSelect" v-model="charttype" placeholder="请选择" size="mini" @change="changeChart">
+              <el-option v-for="item in chartOptions" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+          <div id="chartBox" style="height: 400px;width: 470px;">
+           
+            <LineChartVue v-if="sevendays.length > 0" :legend="chartLegend" :statistic="chartData" :x="sevendays">
+            </LineChartVue>
+          </div>
+        </el-card>
+        <el-card>
+          <div slot="header" class="clearfix">
+            <span class="lineStyle">▍</span><span>疾病占比</span>
+          </div>
+          <div id="chartBox" style="height: 400px;width: 470px;">
+           
+            <Pie >
+            </Pie>
+          </div>
+        </el-card>
+        <el-card>
+          <div slot="header" class="clearfix">
+            <span class="lineStyle">▍</span><span>缺失占比</span>
+          </div>
+          <div id="chartBox" style="height: 400px;width: 500px;">
+        
+            <Sprit >
+            </Sprit>
+          </div>
+        </el-card>
+      </el-card>
+    </div>
+
+    <div class="bottomStatistic">
+      <el-card class="bottom_statistic_card">
+        <div slot="header" class="clearfix">
+            <span class="lineStyle">▍</span><span>正负样本占比</span>
+          </div>
+        <div id="chartBox">
+            <Bar style="height: 400px;width: 1400px;">
+            </Bar>
+          </div>
+      </el-card>
+    </div>
+
+    <!-- <div class="topBigDiv">
       <div class="left">
         <el-card class="card">
           <div slot="header" class="clearfix">
@@ -9,11 +85,7 @@
           <div class="quickEntryBox">
             <div v-for="(item, index) in quickEntry" :key="index">
               <div class="singleBox" @click="quickLink(index)">
-                <img
-                  :src="item.img"
-                  class="imgStyle"
-                  style="border-radius: 15px"
-                />
+                <img :src="item.img" class="imgStyle" style="border-radius: 15px" />
                 <div style="text-align: center">{{ item.title }}</div>
               </div>
             </div>
@@ -22,38 +94,19 @@
       </div>
 
       <div class="right">
-        <el-card
-          class="card"
-          :body-style="{
-            padding: '0px',
-            paddingLeft: '20px',
-            paddingRight: '20px',
-          }"
-        >
+        <el-card class="card" :body-style="{
+          padding: '0px',
+          paddingLeft: '20px',
+          paddingRight: '20px',
+        }">
           <div slot="header" class="clearfix">
             <span class="lineStyle">▍</span><span>系统模型信息</span>
           </div>
-          <el-table
-            :data="modelList"
-            stripe
-            style="width: 100%"
-            height="22.5vh"
-          >
-            <el-table-column
-              prop="id"
-              label="模型id"
-              width="140"
-            ></el-table-column>
-            <el-table-column
-              prop="modelName"
-              label="模型名称"
-              width="200"
-            ></el-table-column>
+          <el-table :data="modelList" stripe style="width: 100%" height="22.5vh">
+            <el-table-column prop="id" label="模型id" width="140"></el-table-column>
+            <el-table-column prop="modelName" label="模型名称" width="200"></el-table-column>
             <el-table-column prop="publisher" label="发布人"> </el-table-column>
-            <el-table-column
-              prop="createtime"
-              label="创建时间"
-            ></el-table-column>
+            <el-table-column prop="createtime" label="创建时间"></el-table-column>
           </el-table>
         </el-card>
       </div>
@@ -61,60 +114,35 @@
 
     <div class="bottomBigDiv">
       <div class="left">
-        <el-card
-          :body-style="{
-            padding: '0px',
-            paddingLeft: '20px',
-            paddingRight: '20px',
-            height: '48vh',
-          }"
-        >
+        <el-card :body-style="{
+          padding: '0px',
+          paddingLeft: '20px',
+          paddingRight: '20px',
+          height: '48vh',
+        }">
           <div slot="header" class="clearfix">
             <span class="lineStyle">▍</span><span>数据表概览</span>
           </div>
-          <el-table
-            :data="dataList"
-            stripe
-            style="width: 100%"
-            max-height="400"
-          >
-            <el-table-column
-              prop="table_name"
-              label="表名"
-              width="130px"
-            ></el-table-column>
-            <el-table-column
-              prop="disease"
-              label="涉及疾病"
-              width="150px"
-            ></el-table-column>
-            <el-table-column
-              prop="featurenumber"
-              label="特征数"
-            ></el-table-column>
+          <el-table :data="dataList" stripe style="width: 100%" max-height="400">
+            <el-table-column prop="table_name" label="表名" width="130px"></el-table-column>
+            <el-table-column prop="disease" label="涉及疾病" width="150px"></el-table-column>
+            <el-table-column prop="featurenumber" label="特征数"></el-table-column>
             <el-table-column prop="creator" label="创建者"> </el-table-column>
           </el-table>
         </el-card>
       </div>
 
       <div class="mid">
-        <el-card
-          :body-style="{
-            padding: '0px',
-            paddingLeft: '20px',
-            paddingRight: '20px',
-            height: '48vh',
-          }"
-        >
+        <el-card :body-style="{
+          padding: '0px',
+          paddingLeft: '20px',
+          paddingRight: '20px',
+          height: '48vh',
+        }">
           <div slot="header" class="clearfix">
             <span class="lineStyle">▍</span><span>任务信息概览 </span>
           </div>
-          <el-table
-            :data="taskList"
-            stripe
-            style="width: 100%"
-            max-height="400"
-          >
+          <el-table :data="taskList" stripe style="width: 100%" max-height="400">
             <el-table-column prop="taskName" label="任务名"></el-table-column>
             <el-table-column prop="leader" label="负责人"></el-table-column>
             <el-table-column prop="model" label="算法"></el-table-column>
@@ -124,61 +152,53 @@
       </div>
 
       <div class="right">
-        <el-card
-          :body-style="{
-            padding: '0',
-            paddingLeft: '20px',
-            paddingRight: '20px',
-            paddingTop: '20px',
-            height: '45.9vh',
-            overflow: 'hidden',
-          }"
-        >
+        <el-card :body-style="{
+          padding: '0',
+          paddingLeft: '20px',
+          paddingRight: '20px',
+          paddingTop: '20px',
+          height: '45.9vh',
+          overflow: 'hidden',
+        }">
           <div slot="header" class="clearfix">
             <span class="lineStyle">▍</span><span>近期新建任务数</span>
-            <el-select
-              class="chartSelect"
-              v-model="charttype"
-              placeholder="请选择"
-              size="mini"
-              @change="changeChart"
-            >
-              <el-option
-                v-for="item in chartOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
+            <el-select class="chartSelect" v-model="charttype" placeholder="请选择" size="mini" @change="changeChart">
+              <el-option v-for="item in chartOptions" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </div>
           <div id="chartBox">
-            <!-- 不加v-if判断x轴长度他就可能无法渲染 -->
-            <LineChartVue
-              v-if="sevendays.length > 0"
-              :legend="chartLegend"
-              :statistic="chartData"
-              :x="sevendays"
-            ></LineChartVue>
+            <!-不加v-if判断x轴长度他就可能无法渲染 -->
+            <!-- <LineChartVue v-if="sevendays.length > 0" :legend="chartLegend" :statistic="chartData" :x="sevendays">
+            </LineChartVue>
           </div>
         </el-card>
       </div>
-    </div>
+    </div> --> 
   </div>
 </template>
 
 <script>
 import { getRequest } from "@/api/user";
-import { mapGetters, mapMutations, mapState ,mapActions} from "vuex";
+import { mapGetters, mapMutations, mapState, mapActions } from "vuex";
 import LineChartVue from "@/components/tab/subcomponents/LineChart.vue";
+import Pie from "@/components/tab/subcomponents/Pie.vue";
+import Sprit from "@/components/tab/subcomponents/Sprit.vue";
+import Bar from "@/components/tab/subcomponents/Bar.vue";
 export default {
   name: "index",
-  components: { LineChartVue },
+  components: { LineChartVue,Pie,Sprit,Bar },
   computed: {
     ...mapState(["modelList", "dataList", "taskList"]),
   },
   data() {
     return {
+      statistic:{
+        specialityCount:25,
+        sampleCount:106000,
+        startAndEndTime:'2011-01-01 - 2021-01-01',
+        taskCount:1000
+      },
       quickEntry: [
         {
           title: "数据管理",
@@ -228,7 +248,7 @@ export default {
 
   created() {
     this.init();
-    this.getTaskList(sessionStorage.getItem("userid")-0);
+    this.getTaskList(sessionStorage.getItem("userid") - 0);
   },
 
   methods: {
@@ -302,16 +322,19 @@ export default {
   justify-content: space-between;
   align-items: center;
 }
+
 .topBigDiv .left {
   box-sizing: border-box;
   width: 49%;
   height: 100%;
 }
+
 .topBigDiv .right {
   box-sizing: border-box;
   width: 49%;
   height: 100%;
 }
+
 .topBigDiv .left .quickEntryBox {
   /*border: 1px red solid;*/
   /*box-sizing: border-box;*/
@@ -322,6 +345,7 @@ export default {
   justify-content: space-evenly;
   align-items: center;
 }
+
 .topBigDiv .left .quickEntryBox .singleBox {
   /*border: 1px red solid;*/
   /*box-sizing: border-box;*/
@@ -329,10 +353,12 @@ export default {
   height: 80px;
   border-radius: 20%;
 }
+
 .topBigDiv .left .quickEntryBox .imgStyle {
   width: 90%;
   height: 90%;
 }
+
 .bottomBigDiv {
   box-sizing: border-box;
   height: 55vh;
@@ -341,34 +367,41 @@ export default {
   align-items: center;
   margin-top: 20px;
 }
+
 .bottomBigDiv .left {
   box-sizing: border-box;
   height: 100%;
   width: 33%;
   overflow: hidden;
 }
+
 .bottomBigDiv .mid {
   box-sizing: border-box;
   height: 100%;
   width: 33%;
 }
+
 .bottomBigDiv .right {
   box-sizing: border-box;
   height: 100%;
   width: 33%;
 }
+
 .clearfix:before,
 .clearfix:after {
   display: table;
   content: "";
 }
+
 .clearfix:after {
   clear: both;
 }
+
 .lineStyle {
   color: rgb(100, 172, 231);
   font-weight: 40;
 }
+
 .card {
   padding: 0;
   height: 100%;
@@ -382,5 +415,78 @@ export default {
 .chartSelect {
   width: 100px;
   margin-left: 25px;
+}
+
+.top_statistic_card {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  height: 33%;
+
+  .el-card {
+    display: inline-block;
+    width: 21%;
+    height: 100px;
+    margin: 1%;
+    padding: 10px;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px 0 rgba;
+    background: rgba(255, 255, 255, 0.1);
+
+  }
+}
+
+.midStatistic {
+  width: 100%;
+}
+
+.mid_statistic_card {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  height: 100%;
+
+  .el-card {
+    display: inline-block;
+    width: 31%;
+    height: 100%;
+    margin: 0.5% 1.3% 0.5% 0.1%;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px 0 rgba;
+    background: rgba(255, 255, 255, 0.1);
+
+  }
+}
+
+.bottomStatistic{
+  width: 100%;
+}
+.bottom_statistic_card {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  height: 100%;
+}
+#taskChart {
+  width: 100%;
+  height: 100%;
+}
+.statistic_item{
+  position: relative;
+}
+
+.statistic_item .text_place{
+  position: absolute;
+  top:20px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: relative;
+  font-size: 20px;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 </style>

@@ -166,7 +166,7 @@ export default {
               if (resp.code == "200") {
                 sessionStorage.setItem("username", resp.data.username);
                 sessionStorage.setItem("userid", resp.data.uid);
-
+                sessionStorage.setItem("userrole", resp.data.role);
                 this.$router.push("/sideBar/SoftwareIntro");
               }
             } else {

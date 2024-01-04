@@ -1,12 +1,6 @@
 <template>
   <div id="mainBox">
-    <el-form
-      ref="taskInfoForm"
-      :model="taskInfoForm"
-      label-width="100px"
-      class="form"
-      label-position="top"
-    >
+    <el-form ref="taskInfoForm" :model="taskInfoForm" label-width="100px" class="form" label-position="top">
       <el-form-item prop="taskName" class="inputBox shortItem">
         <template slot="label">
           <span class="lineStyle">▍</span>
@@ -28,25 +22,22 @@
         </template>
         <el-input v-model="taskInfoForm.participants"></el-input>
       </el-form-item>
+      <el-form-item prop="tips">
+        <template slot="label">
+          <span class="lineStyle">▍</span>
+          <span>备注</span>
+        </template>
+        <el-input type="textarea" :autosize="{ minRows: 10, maxRows: 20 }" placeholder="请输入内容"
+          v-model="taskInfoForm.label"></el-input>
+      </el-form-item>
       <el-form-item prop="disease">
         <template slot="label">
           <span class="lineStyle">▍</span>
           <span>研究病种</span>
         </template>
-        <el-radio-group
-          id="disGroup"
-          v-model="taskInfoForm.disease"
-          ref="disGroup"
-        >
-          <el-radio
-            v-for="(dis, index) in disOptions"
-            :key="index"
-            :label="dis.name"
-            class="disGroup-item"
-            border
-            :disabled="dis.disable"
-            >{{ dis.name }}</el-radio
-          >
+        <el-radio-group id="disGroup" v-model="taskInfoForm.disease" ref="disGroup">
+          <el-radio v-for="(dis, index) in disOptions" :key="index" :label="dis.name" class="disGroup-item" border
+            :disabled="dis.disable">{{ dis.name }}</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item>
@@ -81,6 +72,7 @@ export default {
         principal: "",
         participants: "",
         disease: "",
+        tips: ""
       },
     };
   },
@@ -131,13 +123,13 @@ export default {
           item.disable = true;
         }
         // 数据列表中有多疾病数据就显示
-        if (this.m_dataDisList.findIndex(item=>item== "多疾病") != -1) {
+        if (this.m_dataDisList.findIndex(item => item == "多疾病") != -1) {
           this.disOptions[0].disable = false;
           this.taskInfoForm.disease = this.disOptions[0].name;
-        }else{
+        } else {
           this.$message({
-            type:'warning',
-            message:'暂无多疾病数据集'
+            type: 'warning',
+            message: '暂无多疾病数据集'
           })
         }
       }
@@ -166,13 +158,16 @@ export default {
   width: 80vh;
   margin: auto;
 }
+
 .form .inputBox {
   width: 25%;
 }
+
 .form .shortItem {
   display: inline-block;
   margin-right: 12vh;
 }
+
 .form .inputBox:last-child {
   width: 50%;
 }
@@ -186,6 +181,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 }
+
 .disGroup-item {
   width: 180px;
   margin-bottom: 10px;

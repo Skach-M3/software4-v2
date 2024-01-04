@@ -684,9 +684,10 @@ export default {
         /* 从表生成工作簿对象 */
         this.type="";
         setTimeout(() => {
-          var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
+
+          var wb = XLSX?.utils.table_to_book(document.querySelector("#out-table"));
         /* 获取二进制字符串作为输出 */
-        var wbout = XLSX.write(wb, {
+        var wbout = XLSX?.write(wb, {
             bookType: "xlsx",
             bookSST: true,
             type: "array"
