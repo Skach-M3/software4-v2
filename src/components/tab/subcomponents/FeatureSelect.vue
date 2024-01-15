@@ -281,7 +281,7 @@
           <div class="select_feature_check_boxs">
             <el-checkbox-group v-model="checked_dependent_variables">
               <div v-for="item in all_features" :key="item.id" v-show="item.status == 0 || item.status == 1"> <el-checkbox
-                  :label="item" @change="item.status = 1">{{ item.label }}
+                  :label="item" @change="item.status = (item.status == 1)? 0:1">{{ item.label }}
                 </el-checkbox> <el-progress :percentage="item.fill_rate * 100"
                   :color="changeProgressColor(item.fill_rate * 100)"></el-progress></div>
             </el-checkbox-group>
@@ -303,7 +303,7 @@
           <div class="select_feature_check_boxs">
             <el-checkbox-group v-model="checked_independent_variables">
               <div v-for="item in all_features" :key="item.id" v-show="item.status == 0 || item.status == 2"> <el-checkbox
-                  :label="item" @change="item.status = 2">{{ item.label }}
+                  :label="item" @change="item.status = (item.status == 2)? 0:2">{{ item.label }}
                 </el-checkbox> <el-progress :percentage="item.fill_rate * 100"
                   :color="changeProgressColor(item.fill_rate * 100)"></el-progress></div>
             </el-checkbox-group>
