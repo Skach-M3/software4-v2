@@ -2,25 +2,17 @@
   <div>
     <div class="topStatistic">
       <el-card class="top_statistic_card">
-        <el-card class="statistic_item">
-          <div class="text_place">
-            <i class="el-icon-s-grid"></i> 专病集个数:{{statistic.specialityCount}}
-          </div>
+        <el-card>
+          图标，专病数据集个数
         </el-card>
-        <el-card class="statistic_item">
-          <div class="text_place">
-            <i class="el-icon-s-data"></i> 样本总量:{{statistic.sampleCount}}
-          </div>
+        <el-card>
+          图标，样本总量
         </el-card>
-        <el-card class="statistic_item">
-          <div class="text_place">
-            <i class="el-icon-time"></i> 起始时间:<p></p>{{statistic.startAndEndTime}}
-          </div>
+        <el-card>
+          图标，时间
         </el-card>
-        <el-card class="statistic_item">
-          <div class="text_place">
-            <i class="el-icon-s-claim"></i> 任务总数:{{statistic.taskCount}}
-          </div>
+        <el-card>
+          图标，任务总数
         </el-card>
       </el-card>
     </div>
@@ -193,12 +185,6 @@ export default {
   },
   data() {
     return {
-      statistic:{
-        specialityCount:25,
-        sampleCount:106000,
-        startAndEndTime:'2011-01-01 - 2021-01-01',
-        taskCount:1000
-      },
       quickEntry: [
         {
           title: "数据管理",
@@ -475,18 +461,5 @@ export default {
 #taskChart {
   width: 100%;
   height: 100%;
-}
-.statistic_item{
-  position: relative;
-}
-
-.statistic_item .text_place{
-  position: absolute;
-  top:20px;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  position: relative;
-  font-size: 20px;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 </style>

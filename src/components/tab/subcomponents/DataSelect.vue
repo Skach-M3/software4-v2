@@ -1,64 +1,5 @@
 <template>
   <div>
-    <div class="content">
-      <div class="left_tree">
-        <el-tree :data="dataSelectTree" show-checkbox default-expand-all node-key="id" ref="tree" highlight-current
-          @check-change="handleCheckChange">
-        </el-tree>
-      </div>
-      <div class="right_table">
-        <el-card class="right_table_topCard">
-          <div class="describe_content">
-            <h3>数据集名称</h3>
-            <p style="margin-top:0.5%">
-              <i class="el-icon-user"></i>创建人: <span>张三</span>
-              <i class="el-icon-time"></i>创建时间: <span>2023.12.13</span>
-              <i class="el-icon-data"></i>所属类别: <span>糖尿病/一型糖尿病</span>
-            </p>
-          </div>
-          <div class="buttom">
-            <el-button type=success>确认</el-button>
-          </div>
-          <el-table :data="tableData" stripe style="width: 100%">
-            <el-table-column prop="date" label="特征1" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征2" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征3" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征4" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征5" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征6" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征7" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征8" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征9" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征10" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征11" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征12" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征13" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征1" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征1" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征1" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征1" width="80">
-            </el-table-column>
-
-          </el-table>
-        </el-card>
-      </div>
-    </div>
     <div id="dataList">
       <el-card
         :body-style="{ padding: '0px' }"
@@ -126,8 +67,7 @@
 // TODO:大数据预览卡顿， 需要做虚拟列表，动态渲染
 import { getRequest } from "@/api/user.js";
 import vuex_mixin from "@/components/mixins/vuex_mixin";
-import { dataSelectTree } from "@/components/tab/dataSelectTree"; //虚拟数据选择树
-import { tableData } from "@/components/tab/dataSelectTableData"; //虚拟表格数据
+
 export default {
   name: "DataSelect",
   mixins: [vuex_mixin],
@@ -150,13 +90,13 @@ export default {
       patientTable: [],
       list: [],
       showList: [],
-      dataSelectTree: [],
-      tableData:[]
     };
   },
 
   created() {
     this.init();
+    console.log(this.list);
+    console.log(this.showList);
   },
 
   methods: {
@@ -166,10 +106,10 @@ export default {
           this.list.push(item);
         }
       }
-      if (this.list.length < 1) {
+      if(this.list.length<1){
         this.$message({
-          message: '该病种没有数据，请上传',
-          type: 'warning'
+          message:'该病种没有数据，请上传',
+          type:'warning'
         })
         return false;
       }
@@ -184,10 +124,6 @@ export default {
           this.showList.push(this.list[i]);
         }
       }
-
-      //获得虚拟数据树和表格数据
-      this.dataSelectTree = dataSelectTree
-      this.tableData = tableData
     },
 
     getData(tablename) {
@@ -231,12 +167,6 @@ export default {
     backStep() {
       this.m_changeStep(this.m_step - 1);
     },
-    handleCheckChange(data, checked, indeterminate) {
-      if (checked) {
-        this.$refs.tree.setCheckedKeys([data.id])
-      }
-    },
-
   },
 };
 </script>
@@ -255,7 +185,6 @@ export default {
   padding-bottom: 10px;
   line-height: 15px;
 }
-
 #dataList .button {
   padding: 0;
   float: right;
@@ -266,54 +195,5 @@ export default {
   margin-top: 5vh;
   margin-left: auto;
   margin-right: auto;
-}
-
-.content {
-  width: 100%;
-  height: auto;
-}
-
-.left_tree {
-  display: inline-block;
-  height: auto;
-  width: 15%;
-  border-radius: 3px;
-  border-left: 1px solid #e6e6e6;
-  border-right: 1px solid #e6e6e6;
-}
-
-.right_table {
-  display: inline-block;
-  height: auto;
-  width: 80%;
-  position: absolute;
-}
-
-.right_table_topCard {
-  padding: 0;
-  height: auto;
-  width: 90%;
-  border-radius: 3px;
-  border-bottom: 1px solid #e6e6e6;
-  position: relative;
-  top: 2%;
-  left: 1%;
-}
-
-.describe_content {
-  display: inline-block;
-  width: 70%;
-}
-
-.buttom {
-  display: inline-block;
-  width: 20%;
-  position: relative;
-  right: -20%;
-  bottom: 10px;
-}
-
-.describe_content span {
-  margin: 10px;
 }
 </style>
