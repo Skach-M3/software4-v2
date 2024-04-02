@@ -1,6 +1,12 @@
 <template>
   <div id="mainBox">
-    <el-form ref="taskInfoForm" :model="taskInfoForm" label-width="100px" class="form" label-position="top">
+    <el-form
+      ref="taskInfoForm"
+      :model="taskInfoForm"
+      label-width="100px"
+      class="form"
+      label-position="top"
+    >
       <el-form-item prop="taskName" class="inputBox shortItem">
         <template slot="label">
           <span class="lineStyle">▍</span>
@@ -37,9 +43,20 @@
           <span class="lineStyle">▍</span>
           <span>研究病种</span>
         </template>
-        <el-radio-group id="disGroup" v-model="taskInfoForm.disease" ref="disGroup">
-          <el-radio v-for="(dis, index) in disOptions" :key="index" :label="dis.name" class="disGroup-item" border
-            :disabled="dis.disable">{{ dis.name }}</el-radio>
+        <el-radio-group
+          id="disGroup"
+          v-model="taskInfoForm.disease"
+          ref="disGroup"
+        >
+          <el-radio
+            v-for="(dis, index) in disOptions"
+            :key="index"
+            :label="dis.name"
+            class="disGroup-item"
+            border
+            :disabled="dis.disable"
+            >{{ dis.name }}</el-radio
+          >
         </el-radio-group>
       </el-form-item> -->
       <el-form-item>
@@ -162,16 +179,13 @@ export default {
   width: 80vh;
   margin: auto;
 }
-
 .form .inputBox {
   width: 25%;
 }
-
 .form .shortItem {
   display: inline-block;
   margin-right: 12vh;
 }
-
 .form .inputBox:last-child {
   width: 50%;
 }
@@ -185,7 +199,6 @@ export default {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 }
-
 .disGroup-item {
   width: 180px;
   margin-bottom: 10px;

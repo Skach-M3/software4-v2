@@ -200,7 +200,6 @@ export default {
   padding-bottom: 10px;
   line-height: 15px;
 }
-
 #dataList .button {
   padding: 0;
   float: right;

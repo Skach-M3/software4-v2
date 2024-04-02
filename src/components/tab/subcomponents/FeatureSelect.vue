@@ -137,7 +137,6 @@
 <script>
 import { getRequest } from "@/api/user.js";
 import vuex_mixin from "@/components/mixins/vuex_mixin";
-import { featureSelectTree } from "@/components/tab/featureSelectTree";
 export default {
   name: "FeatureSelect",
   props: {
@@ -401,15 +400,13 @@ export default {
 }
 
 /* 使用popover以后省略号就没用了 */
-.el-checkbox-group>>>.el-checkbox__label {
+.el-checkbox-group >>> .el-checkbox__label {
   margin-top: 5px;
   line-height: 10px;
   width: 80px;
   overflow: hidden;
-  white-space: nowrap;
-  /* 防止文本换行 */
-  text-overflow: ellipsis;
-  /* 显示省略号 */
+  white-space: nowrap; /* 防止文本换行 */
+  text-overflow: ellipsis; /* 显示省略号 */
 }
 
 .lineStyle {
