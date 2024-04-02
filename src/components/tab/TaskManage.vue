@@ -63,7 +63,6 @@
               size="mini"
               type="primary"
               @click="handleCheck(item)"
-              @click="handleCheck(item)"
               style="margin-right: 20px"
               >查看</el-button
             >
@@ -71,7 +70,6 @@
               title="删除后无法恢复"
               icon="el-icon-warning"
               icon-color="red"
-              @confirm="handleDelete(item)"
               @confirm="handleDelete(item)"
             >
               <el-button slot="reference" size="mini" type="danger"
