@@ -12,8 +12,16 @@ export default {
       type: String,
       default: "柱状图",
     },
-    data: {
-      type: Object,
+    bar_x: {
+      type: Array,
+      default: () => { },
+    },
+    bar_neg: {
+      type: Array,
+      default: () => { },
+    },
+    bar_pos: {
+      type: Array,
       default: () => { },
     },
   },
@@ -58,12 +66,12 @@ export default {
           }
         },
         legend: {
-          data: ['Evaporation', 'Precipitation', 'Temperature']
+           data: ['正例', '负例']
         },
         xAxis: [
           {
             type: 'category',
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            data: this.bar_x,
             axisPointer: {
               type: 'shadow'
             }
@@ -72,61 +80,36 @@ export default {
         yAxis: [
           {
             type: 'value',
-            name: 'Precipitation',
+            name: '样本数量',
             min: 0,
-            max: 250,
+            // max: 1000,
             interval: 50,
             axisLabel: {
-              formatter: '{value} ml'
+              formatter: '{value} 个'
             }
           },
-          {
-            type: 'value',
-            name: 'Temperature',
-            min: 0,
-            max: 25,
-            interval: 5,
-            axisLabel: {
-              formatter: '{value} °C'
-            }
-          }
         ],
         series: [
           {
-            name: 'Evaporation',
+            name: '正例',
             type: 'bar',
             tooltip: {
               valueFormatter: function (value) {
-                return value + ' ml';
+                return value + ' 个';
               }
             },
-            data: [
-              2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3
-            ]
+            data: this.bar_pos
           },
           {
-            name: 'Precipitation',
+            name: '负例',
             type: 'bar',
             tooltip: {
               valueFormatter: function (value) {
-                return value + ' ml';
+                return value + ' 个';
               }
             },
-            data: [
-              2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3
-            ]
+            data: this.bar_neg
           },
-          {
-            name: 'Temperature',
-            type: 'line',
-            yAxisIndex: 1,
-            tooltip: {
-              valueFormatter: function (value) {
-                return value + ' °C';
-              }
-            },
-            data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
-          }
         ]
       };
       option && myChart.setOption(option);

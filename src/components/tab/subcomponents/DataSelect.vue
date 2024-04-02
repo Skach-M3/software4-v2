@@ -2,132 +2,55 @@
   <div>
     <div class="content">
       <div class="left_tree">
-        <el-tree :data="dataSelectTree" show-checkbox default-expand-all node-key="id" ref="tree" highlight-current
-          @check-change="handleCheckChange">
+
+        <el-tree ref="tree" :data="treeData" :show-checkbox="false" node-key="id" default-expand-all
+          :expand-on-click-node="false" :check-on-click-node="true" :highlight-current="true" @node-click="changeData"
+          @check="changeData" @check-change="handleCheckChange">
+          <span class="custom-tree-node" slot-scope="{ node, data }">
+            <span>{{ node.label }}</span>
+          </span>
         </el-tree>
+
       </div>
       <div class="right_table">
         <el-card class="right_table_topCard">
           <div class="describe_content">
-            <h3>数据集名称</h3>
+            <h3>数据集信息</h3>
             <p style="margin-top:0.5%">
-              <i class="el-icon-user"></i>创建人: <span>张三</span>
-              <i class="el-icon-time"></i>创建时间: <span>2023.12.13</span>
-              <i class="el-icon-data"></i>所属类别: <span>糖尿病/一型糖尿病</span>
+              <i class="el-icon-user"></i>创建人: <span>{{ showDataForm.createUser }}</span>
+              <i class="el-icon-time"></i>创建时间: <span>{{ showDataForm.createTime }}</span>
+              <i class="el-icon-folder-opened"></i>所属类别: <span>{{ showDataForm.classPath }}</span>
+              <i class="el-icon-folder-opened"></i>数据集名称: <span>{{ showDataForm.tablename }}</span>
             </p>
           </div>
           <div class="buttom">
-            <el-button type=success>确认</el-button>
+            <el-button type=success @click="next(showDataForm.classPath, showDataForm.tablename)">确认</el-button>
           </div>
-          <el-table :data="tableData" stripe style="width: 100%">
-            <el-table-column prop="date" label="特征1" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征2" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征3" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征4" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征5" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征6" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征7" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征8" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征9" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征10" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征11" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征12" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征13" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征1" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征1" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征1" width="80">
-            </el-table-column>
-            <el-table-column prop="date" label="特征1" width="80">
-            </el-table-column>
 
+          <el-table :data="tableData" stripe style="width: 100%" class="custom-table" max-height="700" :fit="false" v-if="tableData.length>0">
+            <el-table-column v-for="(value, key) in tableData[0]" :key="key" :prop="key" :label="key" :width="colWidth">
+              <template slot-scope="{ row }">
+                <div class="truncate-text">{{ row[key] }}</div>
+              </template>
+            </el-table-column>
           </el-table>
         </el-card>
+
+        <div class="buttonGroup">
+          <el-button @click="backStep()" round>上一步</el-button>
+        </div>
       </div>
     </div>
-    <div id="dataList">
-      <el-card
-        :body-style="{ padding: '0px' }"
-        v-for="(item, index) in showList"
-        :key="index"
-        :shadow="chosenData === item.table_name ? 'always' : 'hover'"
-        style="width: 210px"
-        @click.native="chosenData = item.table_name"
-      >
-        <img src="@/assets/dataset.png" class="image" object-fit="contain" />
-        <div style="padding: 14px">
-          <span>{{ item.table_name }}</span>
-          <div class="bottom clearfix">
-            <el-button type="text" class="button" @click="next(item.table_name)"
-              >确认</el-button
-            >
-            <el-button
-              type="text"
-              class="button"
-              @click="getData(item.table_name)"
-              style="float: left; margin-left: -5px"
-              >数据预览</el-button
-            >
-          </div>
-        </div>
-      </el-card>
-    </div>
-    <el-pagination
-      @current-change="currentPageChange()"
-      :current-page.sync="currentPage"
-      :page-size.sync="pageSize"
-      layout="total, prev, pager, next"
-      :total="dataTotal"
-      :hide-on-single-page="true"
-      style="margin-left: 40%; margin-top: 20px"
-    >
-    </el-pagination>
-    <el-table
-      :data="patientTable"
-      v-if="dataTableVision"
-      style="width: 100%; margin-top: 20px"
-      max-height="450px"
-      border
-      stripe
-      v-loading="getData_loading"
-      element-loading-text="正在获取数据"
-      element-loading-spinner="el-icon-loading"
-    >
-      <el-table-column type="index"> </el-table-column>
-      <el-table-column
-        v-for="(key, index) in Object.keys(patientTable[0])"
-        :key="index"
-        :label="key"
-        :prop="key"
-      >
-      </el-table-column>
-    </el-table>
-    <div class="buttonGroup">
-      <el-button @click="backStep()" round>上一步</el-button>
-    </div>
+
   </div>
 </template>
 
 <script>
 // TODO:大数据预览卡顿， 需要做虚拟列表，动态渲染
-import { getRequest } from "@/api/user.js";
+
+import { getCategory } from "@/api/category";
+import { getTableDes, getTableData } from "@/api/tableDescribe.js";
 import vuex_mixin from "@/components/mixins/vuex_mixin";
-import { dataSelectTree } from "@/components/tab/dataSelectTree"; //虚拟数据选择树
-import { tableData } from "@/components/tab/dataSelectTableData"; //虚拟表格数据
 export default {
   name: "DataSelect",
   mixins: [vuex_mixin],
@@ -137,105 +60,127 @@ export default {
       default: "disFactor",
     },
   },
-  computed: {},
+  computed: {
+    colWidth() {
+      let arr = Object.keys(this.tableData[0])
+      if (arr.length <= 15) {
+        return 90;
+      }
+      else {
+        return 65;
+      }
+    }
+  },
 
   data() {
     return {
-      chosenData: "",
-      pageSize: 4,
-      currentPage: 1,
-      dataTotal: 0,
-      getData_loading: false,
-      dataTableVision: false,
-      patientTable: [],
-      list: [],
-      showList: [],
-      dataSelectTree: [],
-      tableData:[]
+      treeData: [],
+      nodeData: {},
+      tableData: [],
+      showDataForm: {
+        createUser: '',
+        createTime: '',
+        classPath: '',
+        tablename: ''
+      },
     };
   },
 
   created() {
-    this.init();
+    this.getCatgory();
+    // this.getTableDescribe("1005")
+    // this.getTableData("1005", "copd");
+    this.$notify.success({
+      title: '提示',
+      message: '请选择数据集进行下一步操作！',
+      showClose: false
+    });
   },
 
   methods: {
-    init() {
-      for (const item of this.m_dataList) {
-        if (item.disease === this.m_disease) {
-          this.list.push(item);
-        }
+
+
+    next(classPath, name) {
+      let path = classPath.split("/");
+      if (path[0] != "公共数据集") {
+        this.m_changeTaskInfo({ disease: path[0], dataset: name ,is_common: false });
       }
-      if (this.list.length < 1) {
-        this.$message({
-          message: '该病种没有数据，请上传',
-          type: 'warning'
-        })
-        return false;
+      else {
+        this.m_changeTaskInfo({ disease: path[path.length - 1], dataset: name, is_common: true });
       }
-      this.dataTotal = this.list.length;
-      //设置要显示的数据列表
-      if (this.dataTotal > 4) {
-        for (let i = 0; i < 4; i++) {
-          this.showList.push(this.list[i]);
-        }
-      } else {
-        for (let i = 0; i < this.list.length; i++) {
-          this.showList.push(this.list[i]);
-        }
-      }
-
-      //获得虚拟数据树和表格数据
-      this.dataSelectTree = dataSelectTree
-      this.tableData = tableData
-    },
-
-    getData(tablename) {
-      this.getData_loading = true;
-      getRequest("/DataTable/getInfoByTableName", {
-        tableName: tablename,
-      }).then((res) => {
-        this.patientTable = res.data;
-        this.getData_loading = false;
-        this.dataTableVision = true;
-      });
-    },
-
-    // pageSizeChange() {
-    //   for (let i = 0; i < this.pageSize; i++) {
-    //     this.showList.push(this.list[i]);
-    //   }
-    // },
-
-    currentPageChange() {
-      let start = (this.currentPage - 1) * this.pageSize;
-      let end = start + this.pageSize - 1;
-      this.showList.length = 0;
-      if (this.list.length >= end + 1) {
-        for (let i = start; i <= end; i++) {
-          this.showList.push(this.list[i]);
-        }
-      } else {
-        for (let j = start; j < this.list.length; j++) {
-          this.showList.push(this.list[j]);
-        }
-      }
-    },
-
-    next(name) {
-      this.chosenData = name;
       this.m_changeStep(3);
-      this.m_changeTaskInfo({ dataset: this.chosenData });
     },
 
     backStep() {
       this.m_changeStep(this.m_step - 1);
     },
-    handleCheckChange(data, checked, indeterminate) {
+
+
+    handleCheckChange(data, checked) {
       if (checked) {
         this.$refs.tree.setCheckedKeys([data.id])
       }
     },
+
+
+    changeData(data) {
+      if (data.isLeafs == 1) {
+        this.tableData=[];
+        //获取描述信息
+        let that=this;
+        that.getTableDescribe(data.id)
+        //获取数据信息
+        that.getTableData(data.id, data.label)
+        
+      }
+    },
+    getTableDescribe(id) {
+      getTableDes("/api/tableDescribe", id).then(response => {
+        if (response.data != null) {
+          let res = JSON.parse(response.data);
+          this.showDataForm.createUser = res.createUser;
+          this.showDataForm.createTime = res.createTime;
+          this.showDataForm.classPath = res.classPath;
+          this.showDataForm.tablename = res.tableName;
+        }
+      })
+        .catch(error => {
+          console.log("错误", error)
+        });
+    },
+    getTableData(tableId, tableName) {
+      getTableData("/api/getTableData", tableId, tableName).then(response => {   // 获取表数据
+        this.tableData = response.data;
+        console.log(this.tableData);
+      })
+        .catch(error => {
+          console.log(error);
+        })
+    },
+
+    getCatgory() {
+      getCategory("/api/category").then((response) => {
+        console.log(response.data);
+        this.treeData = this.filterTree(response.data);
+
+      })
+    },
+
+    // 递归过滤树结构
+    filterTree(nodes) {
+      return nodes.filter(node => {
+        if (node.isLeafs === 1) {
+          return true;
+        } else if (node.children && node.children.length > 0) {
+          node.children = this.filterTree(node.children);
+          return node.children.length > 0;
+        }
+        return false;
+      });
+    }
+
+
+
 
   },
 };
@@ -263,7 +208,7 @@ export default {
 
 .buttonGroup {
   width: 200px;
-  margin-top: 5vh;
+  margin-top: 18px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -275,8 +220,9 @@ export default {
 
 .left_tree {
   display: inline-block;
-  height: auto;
+  height: 80%;
   width: 15%;
+  overflow: auto;
   border-radius: 3px;
   border-left: 1px solid #e6e6e6;
   border-right: 1px solid #e6e6e6;
@@ -284,9 +230,16 @@ export default {
 
 .right_table {
   display: inline-block;
-  height: auto;
-  width: 80%;
+  width: 75%;
   position: absolute;
+  overflow: auto;
+  margin-top: -2%;
+}
+
+.truncate-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .right_table_topCard {

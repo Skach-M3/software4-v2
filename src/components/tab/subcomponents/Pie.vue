@@ -10,11 +10,11 @@ export default {
   props: {
     title_text: {
       type: String,
-      default: "饼图",
+      default: "专病集疾病占比",
     },
-    data: {
-      type: Object,
-      default: () => { },
+    pieObject: {
+      type: Array,
+      default: () => {},
     },
   },
   data() {
@@ -37,8 +37,8 @@ export default {
       var option;
       option = {
         title: {
-          text: 'Referer of a Website',
-          subtext: 'Fake Data',
+          text: this.title_text,
+          subtext: '样本数据',
           left: 'center'
         },
         tooltip: {
@@ -53,13 +53,7 @@ export default {
             name: 'Access From',
             type: 'pie',
             radius: '50%',
-            data: [
-              { value: 1048, name: 'Search Engine' },
-              { value: 735, name: 'Direct' },
-              { value: 580, name: 'Email' },
-              { value: 484, name: 'Union Ads' },
-              { value: 300, name: 'Video Ads' }
-            ],
+            data: this.pieObject,
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,

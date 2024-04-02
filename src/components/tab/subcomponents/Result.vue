@@ -1,93 +1,119 @@
 <template>
   <div>
     <div id="pdf_1">
-      <div class="taskBox1">
-        <div class="taskInfoBox taskname">
-          <span class="lineStyle">▍</span><span class="featureTitle">任务名称：</span>
-          <span>{{ m_taskName }}</span>
+      <el-card class="taskInfo_box_card">
+        <div slot="header" class="">
+          <h2>任务信息:</h2>
         </div>
-        <div class="taskInfoBox principal">
-          <span class="lineStyle">▍</span><span class="featureTitle">任务负责人：</span>
-          <span>{{ m_principal }}</span>
-        </div>
-        <div class="taskInfoBox participants" v-if="m_participants.length > 0">
-          <span class="lineStyle">▍</span><span class="featureTitle">参与人：</span>
-          <span>{{ m_participants }}</span>
-        </div>
-      </div>
-      <div class="taskBox1">
-        <div class="taskInfoBox disease">
-          <span class="lineStyle">▍</span><span class="featureTitle">研究病种：</span>
-          <span>{{ m_disease }}</span>
-        </div>
-        <div class="taskInfoBox dataset">
-          <span class="lineStyle">▍</span><span class="featureTitle">所用数据：</span>
-          <span>{{ m_dataset }}</span>
-        </div>
-        <div class="taskInfoBox algorithm">
-          <span class="lineStyle">▍</span><span class="featureTitle">所用算法：</span>
-          <span>{{ m_algorithm }}</span>
-        </div>
-      </div>
+        <div class="taskInfo_box_card_group">
+          <div class="taskInfo_box_card_item">
+            <i class="el-icon-folder-checked" style="font-size: 25px;"></i><span class="featureTitle">任务名称：</span>
+            <span>{{ m_taskName }}</span>
+          </div>
 
-      <div class="taskInfoBox use_features">
-        <span class="lineStyle">▍</span><span class="featureTitle">所用特征：</span>
-        <span>{{ m_use_features.toString() }}</span>
-      </div>
-    </div>
-    <div id="pdf_2">
-      <div class="taskInfoBox result">
-        <span class="lineStyle">▍</span><span class="featureTitle">特征分布：</span>
-      </div>
+          <div class="taskInfo_box_card_item">
+            <i class="el-icon-user" style="font-size: 25px;"></i><span class="featureTitle">任务负责人：</span>
+            <span>{{ m_principal }}</span>
+          </div>
 
-      <div id="table">
-        <div id="creatorFilter">
-          <span>特征类型：</span>
-          <el-select v-model="type" clearable placeholder="请选择">
-            <el-option key="人口学" label="人口学" value="人口学"> </el-option>
-            <el-option key="社会学" label="社会学" value="社会学"> </el-option>
-            <el-option key="行为学" label="行为学" value="行为学"> </el-option>
-          </el-select>
+          <div class="taskInfo_box_card_item">
+            <i class="el-icon-info" style="font-size: 25px;"></i><span class="featureTitle">参与人：</span>
+            <span>{{ m_participants }}</span>
+          </div>
+
+          <div class="taskInfo_box_card_item">
+            <i class="el-icon-collection-tag" style="font-size: 25px;"></i><span class="featureTitle">任务备注：</span>
+            <span>{{ m_tips }}</span>
+          </div>
+
         </div>
-        <el-table :data="distribution.filter((data) => !type || data.type.includes(type))"
-          style="width: 95%; margin-top: 20px; margin-bottom: 50px" stripe max-height="800"
-          :header-cell-style="{ background: '#eef1f6', color: '#606266' }"   id="out-table">
-          <el-table-column label="特征名" prop="feature_name"> </el-table-column>
-          <el-table-column label="样本量" prop="num"> </el-table-column>
-          <el-table-column label="特征类型" prop="type"> </el-table-column>
-          <el-table-column label="平均值" prop="average"> </el-table-column>
-          <el-table-column label="标准差" prop="bzc"></el-table-column>
-          <el-table-column label="偏度" prop="skewness"> </el-table-column>
-          <el-table-column label="峰度" prop="kurtosis"> </el-table-column>
-          <el-table-column label="Shapiro-Wilk">
-            <el-table-column label="统计量D值" prop="s_w_d"> </el-table-column>
-            <el-table-column label="P值" prop="s_w_p"> </el-table-column>
-          </el-table-column>
-          <el-table-column label="Kolmogorov-Smirnov">
-            <el-table-column label="统计量D值" prop="k_s_d"> </el-table-column>
-            <el-table-column label="P值" prop="k_s_p"> </el-table-column>
-          </el-table-column>
-        </el-table>
-      </div>
+      </el-card>
+
+      <el-card class="taskInfo_box_card">
+        <div slot="header" class="">
+          <h2>研究对象:</h2>
+        </div>
+        <div class="taskInfo_box_card_group">
+          <div class="taskInfo_box_card_item">
+            <i class="el-icon-takeaway-box" style="font-size: 25px;"></i><span class="featureTitle">研究病种：</span>
+            <span>{{ m_disease }}</span>
+          </div>
+
+          <div class="taskInfo_box_card_item">
+            <i class="el-icon-s-grid" style="font-size: 25px;"></i><span class="featureTitle">所用数据：</span>
+            <span>{{ m_dataset }}</span>
+          </div>
+
+          <div class="taskInfo_box_card_item">
+            <i class="el-icon-cpu" style="font-size: 25px;"></i><span class="featureTitle">所用算法：</span>
+            <span>{{ m_algorithm }}</span>
+          </div>
+
+          <div class="taskInfo_box_card_item">
+            <i class="el-icon-star-off" style="font-size: 25px;"></i><span class="featureTitle">所用特征：</span>
+            <span>{{ m_use_features.toString() }}</span>
+          </div>
+
+        </div>
+        <div class="table_statistic" style="margin-top: 1.5%;">
+          <div class="taskInfoBox result">
+            <i class="el-icon-data-line" style="font-size: 25px;"></i><span class="featureTitle">特征分布：</span>
+          </div>
+          <div id="table">
+            <!-- <div id="creatorFilter">
+              <span>特征类型：</span>
+              <el-select v-model="type" clearable placeholder="请选择">
+                <el-option key="人口学" label="人口学" value="人口学"> </el-option>
+                <el-option key="社会学" label="社会学" value="社会学"> </el-option>
+                <el-option key="行为学" label="行为学" value="行为学"> </el-option>
+              </el-select>
+            </div> -->
+            <el-table :data="distribution.filter((data) => !type || data.type.includes(type))"
+              style="width: 100%; margin-top: 20px; margin-bottom: 50px" stripe max-height="800"
+              :header-cell-style="{ background: '#eef1f6', color: '#606266' }" id="out_table">
+              <el-table-column label="特征名" prop="column_name"> </el-table-column>
+              <!-- <el-table-column label="样本量" prop="num"> </el-table-column> -->
+              <!-- <el-table-column label="特征类型" prop="type"> </el-table-column> -->
+              <el-table-column label="平均值" prop="mean"> </el-table-column>
+              <el-table-column label="标准差" prop="std"></el-table-column>
+              <el-table-column label="偏度" prop="skew"> </el-table-column>
+              <el-table-column label="峰度" prop="kur"> </el-table-column>
+              <el-table-column label="Shapiro-Wilk">
+                <el-table-column label="统计量D值" prop="Shapiro_Wilk_D"> </el-table-column>
+                <el-table-column label="P值" prop="Shapiro_Wilk_p"> </el-table-column>
+              </el-table-column>
+              <el-table-column label="Kolmogorov-Smirnov">
+                <el-table-column label="统计量D值" prop="Kolmogorov_Smirnov_D"> </el-table-column>
+                <el-table-column label="P值" prop="Kolmogorov_Smirnov_p"> </el-table-column>
+              </el-table-column>
+            </el-table>
+          </div>
+        </div>
+      </el-card>
+
+      <el-card class="taskInfo_box_card" id="pdf_graph">
+        <div slot="header" class="">
+          <h2>任务结果:</h2>
+        </div>
+        <h3>专家知识匹配度：{{ ratio }}</h3>
+        <h3 v-if="m_result.time">运算时间：{{ m_result.time }} 秒</h3>
+        <h3 v-if="m_result.ci">独立性检验次数：{{ m_result.ci }}次</h3>
+        <el-card style="margin-top: 0.8%;">
+          <div class="graphBox">
+            <GraphVue v-if="initFlag" :title_text="graphTitile" :node="node" :links="links"></GraphVue>
+          </div>
+        </el-card>
+        <!-- <el-card style="margin-top: 0.8%;">
+          <div class="treeBox">
+            <Tree v-if="initFlag" :title_text="graphTitile" :data="data"></Tree>
+          </div>
+        </el-card> -->
+
+      </el-card>
     </div>
 
-    <div id="pdf_3">
-      <div class="taskInfoBox result">
-        <span class="lineStyle">▍</span><span class="featureTitle">任务结果：</span>
-      </div>
-      <h3>专家知识匹配度：{{ ratio }}</h3>
-      <h3 v-if="m_result.time">运算时间：{{ m_result.time }} 秒</h3>
-      <h3 v-if="m_result.ci">独立性检验次数：{{ m_result.ci }}次</h3>
-    </div>
-    <div id="pdf_4">
-      <div class="graphBox">
-        <GraphVue v-if="initFlag" :title_text="graphTitile" :node="node" :links="links"></GraphVue>
-      </div>
-      <div class="treeBox">
-        <Tree v-if="initFlag" :title_text="graphTitile" :data="data"></Tree>
-      </div>
-    </div>
     <div class="buttonGroup">
+      <el-button @click="backStep()" round>上一步</el-button>
       <el-button type="success" @click="exportRes()" round>导出结果</el-button>
       <el-button type="primary" @click="next()" round>保存任务</el-button>
     </div>
@@ -106,6 +132,7 @@ import Tree from "./Tree.vue";
 import { postRequest } from "@/api/user";
 import { mapMutations } from "vuex";
 import { time } from "echarts";
+import { getRequest } from "@/api/user.js";
 export default {
   name: "Result",
   mixins: [vuex_mixin],
@@ -134,262 +161,11 @@ export default {
       links: [],
       data: {},
       type: "",
-      distribution: [
-        {
-          feature_name: "age",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "sex",
-          num: 3200,
-          type: "社会学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "cp",
-          num: 3200,
-          type: "社会学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "trestbps",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "chol",
-          num: 3200,
-          type: "社会学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "fbs",
-          num: 3200,
-          type: "行为学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "restcq",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "thalach",
-          num: 3200,
-          type: "社会学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "wxanq",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "oldpeak",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "slope",
-          num: 3200,
-          type: "社会学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "ca",
-          num: 3200,
-          type: "行为学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "thal",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "chcol",
-          num: 3200,
-          type: "行为学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "sodc",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "cakr",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "bdre",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "age",
-          num: 3200,
-          type: "行为学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "age",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-      ],
+      distribution: []
     };
   },
 
   created() {
-    console.log("console.log(this.m_target_feature);" + this.m_target_feature);
-    console.log("this.m_result" + JSON.stringify(this.m_result.res));
-    console.log("this.tree" + JSON.stringify(this.m_result.treeRes));
     var treeData = {
       name: "结果统计",
       children: [],
@@ -606,7 +382,19 @@ export default {
       default:
         break;
     }
+
+    getRequest(`scripts/get_stastic?tablename=${this.m_dataset}`, {
+      tableName: this.m_dataset,
+    }).then((res) => {
+      if (res.code == 200) {
+        this.distribution = JSON.parse(res.data[0]);
+        console.log(this.distribution);
+        // this.distribution = res.data[0];
+        // console.log(typeof(this.distribution));
+      }
+    });
     this.initFlag = true;
+
   },
 
   methods: {
@@ -617,6 +405,7 @@ export default {
         taskName: this.m_taskName,
         leader: this.m_principal,
         participant: this.m_participants,
+        tips: this.m_tips,
         disease: this.m_disease,
         model: this.m_algorithm,
         feature: this.m_use_features,
@@ -680,43 +469,59 @@ export default {
           return false;
         });
     },
-    exportExcel() {
-        /* 从表生成工作簿对象 */
-        this.type="";
-        setTimeout(() => {
+    backStep() {
+      this.m_changeStep(this.m_step - 1);
+    },
+    exportToCSV() {
+      // 将表格数据转化为CSV格式
+      const csvContent = this.convertArrayOfObjectsToCSV(this.distribution);
+      console.log(csvContent);
+      // 创建 Blob 对象
+      const blob = new Blob([csvContent], { type: 'text/csv' });
 
-          var wb = XLSX?.utils.table_to_book(document.querySelector("#out-table"));
-        /* 获取二进制字符串作为输出 */
-        var wbout = XLSX?.write(wb, {
-            bookType: "xlsx",
-            bookSST: true,
-            type: "array"
+      // 创建 URL
+      const url = window.URL.createObjectURL(blob);
+
+      // 创建 a 标签
+      const link = document.createElement('a');
+
+      // 设置下载属性
+      link.href = url;
+      link.download = this.m_dataset + '.csv';
+
+      // 模拟点击下载
+      link.click();
+
+      // 释放资源
+      window.URL.revokeObjectURL(url);
+    },
+    convertArrayOfObjectsToCSV(data) {
+      const csvRows = [];
+      const headers = Object.keys(data[0]);
+
+      // 添加表头
+      csvRows.push(headers.join(','));
+
+      // 添加表格数据
+      data.forEach(row => {
+        const values = headers.map(header => {
+          const escaped = ('' + row[header]).replace(/"/g, '\\"');
+          return `"${escaped}"`;
         });
-        try {
-            FileSaver.saveAs(
-            //Blob 对象表示一个不可变、原始数据的类文件对象。
-            //Blob 表示的不一定是JavaScript原生格式的数据。
-            //File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
-            //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
-            new Blob([wbout], { type: "application/octet-stream" }),
-            //设置导出文件名称
-            `${this.m_taskName}-特征分布表格.xlsx`
-            );
-        } catch (e) {
-            if (typeof console !== "undefined") console.log(e, wbout);
-        }
-        return wbout;
-        }, 1000);
-        },
+        csvRows.push(values.join(','));
+      });
+
+      // 将 CSV 行组合成 CSV 文本
+      const csvText = csvRows.join('\n');
+      return csvText;
+    },
 
     async exportRes() {
-      
-      this.exportExcel()
-      const divsToExport = ['pdf_1', 'pdf_3', 'pdf_4'];
+
+      this.exportToCSV()
+      const divsToExport = ['pdf_graph'];
       const pdf_positions = [
-        { x: 5, y: 10 },
-        { x: 5, y: 40 },
-        { x: 2, y: 55 },
+        { x: 5, y: 10 }
       ];
       const pdf = new jsPDF();
 
@@ -741,6 +546,20 @@ export default {
 
       await Promise.all(renderPromises);
       pdf.save(`${this.m_taskName}.pdf`);
+    },
+
+    getSatisticTableData() {
+      getRequest(`scripts/get_stastic?tablename=${this.m_dataset}`).then(
+        (res) => {
+          if (res.code == 200) {
+            console.log(res.data[0]);
+            console.log(typeof (res.data));
+          }
+          else {
+            this.$message.error("获取数据失败");
+          }
+        }
+      );
     }
   },
 };
@@ -763,7 +582,7 @@ export default {
 }
 
 .featureTitle {
-  font-size: 25px;
+  font-size: 20px;
   margin-right: 30px;
   margin-bottom: 20px;
 }
@@ -797,5 +616,15 @@ h3 {
 span {
   white-space: pre-wrap;
   word-wrap: break-word;
+}
+
+.taskInfo_box_card {
+  margin: 1%;
+}
+
+.taskInfo_box_card_group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>

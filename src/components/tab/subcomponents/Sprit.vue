@@ -8,12 +8,16 @@ import * as echarts from "echarts";
 export default {
   name: "Sprit",
   props: {
-    title_text: {
+    title: {
       type: String,
-      default: "进度图",
+      default: "缺失比率图",
     },
-    data: {
-      type: Object,
+    sprit_names: {
+      type: Array,
+      default: () => { },
+    },
+    sprit_values: {
+      type: Array,
       default: () => { },
     },
   },
@@ -34,101 +38,81 @@ export default {
     initMyChart() {
       var chartDom = this.$refs.sprit;
       var myChart = echarts.init(chartDom);
-      const spirit ='image:';
-      var maxData = 100;
+
+      // 提取dataZoom配置到变量中
+      var dataZoomOption = [
+        {
+          type: 'inside',
+
+        },
+        {
+          type: 'slider',
+          left: '0%', // 调整滑动条缩放组件的左侧位置
+          right: '22%', // 调整滑动条缩放组件的右侧位置
+        }
+      ];
+
       var option = {
-        tooltip: {},
-        xAxis: {
-          max: maxData,
-          splitLine: { show: false },
-          offset: 10,
-          axisLine: {
-            lineStyle: {
-              color: '#999'
-            }
-          },
-          axisLabel: {
-            margin: 10
+        title: {
+          text: this.title+"特征填充率",
+          left: 10
+        },
+        toolbox: {
+          left: '50%', // 设置工具箱距离容器左侧的距离
+          top: '0%', // 设置工具箱距离容器顶部的距离
+          width: '80%', // 设置工具箱的宽度
+          height: '80%', // 设置工具箱的高度
+          feature: {
+            dataZoom: {
+              yAxisIndex: false
+            },
+            saveAsImage: {
+              pixelRatio: 2
+            },
+            restore: { show: true },
           }
         },
-        yAxis: {
-          data: ['数据集1', '数据集2', '数据集3', '数据集4'],
-          inverse: true,
-          axisTick: { show: false },
-          axisLine: { show: false },
-          axisLabel: {
-            margin: 10,
-            color: '#999',
-            fontSize: 16
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
           }
         },
         grid: {
-          top: 'center',
-          height: 200,
-          left: 70,
-          right: 100
+          top: '10%', // 调整这些值以按比例缩小图表
+          right: '19%',
+          bottom: '15%',
+          left: '0%',
+          containLabel: true,
+        },
+        dataZoom: dataZoomOption, // 引用提取的dataZoom配置
+        xAxis: {
+          data: this.sprit_names,
+          silent: false,
+          splitLine: {
+            show: true
+          },
+          splitArea: {
+            show: true
+          }
+        },
+        yAxis: {
+          splitArea: {
+            show: false
+          }
         },
         series: [
           {
-            // current data
-            type: 'pictorialBar',
-            symbol: spirit,
-            symbolRepeat: 'fixed',
-            symbolMargin: '5%',
-            symbolClip: true,
-            symbolSize: 30,
-            symbolBoundingData: maxData,
-            data: [85, 65, 90, 100],
-            markLine: {
-              symbol: 'none',
-              label: {
-                formatter: 'max: {c}',
-                position: 'start'
-              },
-              lineStyle: {
-                color: 'green',
-                type: 'dotted',
-                opacity: 0.2,
-                width: 2
-              },
-              data: [
-                {
-                  type: 'max'
-                }
-              ]
-            },
-            z: 10
-          },
-          {
-            // full data
-            type: 'pictorialBar',
-            itemStyle: {
-              opacity: 0.2
-            },
-            label: {
-              show: true,
-              formatter: function (params) {
-                return ((params.value / maxData) * 100).toFixed(1) + ' %';
-              },
-              position: 'right',
-              offset: [10, 0],
-              color: 'green',
-              fontSize: 18
-            },
-            animationDuration: 0,
-            symbolRepeat: 'fixed',
-            symbolMargin: '5%',
-            symbol: spirit,
-            symbolSize: 30,
-            symbolBoundingData: maxData,
-            data: [891, 1220, 660, 1670],
-            z: 5
+            type: 'bar',
+            data: this.sprit_values,
+            large: true
           }
         ]
       };
       option && myChart.setOption(option);
     },
-  },
+  }
+
 };
 </script>
 

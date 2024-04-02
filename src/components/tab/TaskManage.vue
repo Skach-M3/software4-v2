@@ -1,64 +1,68 @@
 <template>
-  <div>
-    <!--==========================     头部按钮     ==============================================================-->
-    <div id="top_buttons">
-      <div id="task_disease">
-        <span>涉及病种：</span>
-        <el-select v-model="disease" placeholder="请选择">
-          <el-option
-            v-for="item in taskDiseaseList"
-            :key="item"
-            :label="item"
-            :value="item"
+  <div class="main">
+    <div class="left_tree">
+      <el-tree ref="tree" :data="treeData" :show-checkbox="false" node-key="id" default-expand-all
+          :expand-on-click-node="false" :check-on-click-node="true" :highlight-current="true" @node-click="changeData"
           >
-          </el-option>
-        </el-select>
-      </div>
-
-      <div id="task_leader">
-        <span>任务负责人：</span>
-        <el-select v-model="leader" placeholder="请选择">
-          <el-option
-            v-for="item in taskLeaderList"
-            :key="item"
-            :label="item"
-            :value="item"
-          >
-          </el-option>
-        </el-select>
-      </div>
-      <el-button @click="clearFilter">清除</el-button>
+          <span class="custom-tree-node" slot-scope="{ node, data }">
+            <span>{{ node.label }}</span>
+          </span>
+        </el-tree>
+      <!-- <el-dialog title="提示" :visible.sync="dialogDiseaseVisible" width="30%">
+        <span>
+          请输入新病种名称：<el-input
+            placeholder="请输入内容"
+            v-model="diseaseName"
+            class="nameInput"
+          ></el-input>
+        </span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="cleanInput()">取 消</el-button>
+          <el-button type="primary" @click="() => append()">确 定</el-button>
+        </span>
+      </el-dialog> -->
     </div>
+    <div class="right">
+      <!--==========================     头部按钮     ==============================================================-->
+      <div id="top_buttons">
+        <div id="task_leader">
+          <span>任务负责人：</span>
+          <el-select v-model="leader" placeholder="请选择" @change="pagehelper()">
+            <el-option
+              v-for="item in taskLeaderList"
+              :key="item"
+              :label="item"
+              :value="item"
+            >
+            </el-option>
+          </el-select>
+        </div>
+        <el-button @click="clearFilter">清除</el-button>
+        <!-- <el-button type="success">新建任务</el-button> -->
+      </div>
 
-    <!--===============================    表格     ==============================================================-->
-    <div id="table">
-      <el-table
-        :data="
-          taskList.filter(
-            (data) =>
-              !(disease || leader) ||
-              (data.disease.includes(disease) && data.leader.includes(leader))
-          )
-        "
-        style="width: 100%"
-        stripe
-        :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
-      >
-        <el-table-column label="任务名称" prop="taskName"> </el-table-column>
-        <el-table-column label="涉及病种" prop="disease"> </el-table-column>
-        <el-table-column label="负责人" prop="leader"> </el-table-column>
-        <el-table-column label="数据集" prop="dataset"> </el-table-column>
-        <el-table-column label="使用模型" prop="model"> </el-table-column>
-        <el-table-column label="创建时间" prop="createtime"> </el-table-column>
-        <el-table-column align="center">
-          <template slot="header">
-            <span>操作</span>
-          </template>
-          <template slot-scope="scope">
+      <!--===============================    卡片组     ==============================================================-->
+      <div class="cardGroup">
+        <el-card
+          class="taskCard"
+          v-for="item in currentTaskList"
+          :key="item.id"
+          shadow="always"
+          v-show="!(disease || leader) || (disease == item.disease && !leader) || (leader == item.leader && !disease) || (disease == item.disease && leader == item.leader)"
+        >
+          <div class="cardInfo">
+            <div><span class="ttl">任务名称：</span>{{ item.taskname }}</div>
+            <div><span class="ttl">负责人：</span>{{ item.leader }}</div>
+            <div><span class="ttl">所属疾病：</span>{{ item.disease }}</div>
+            <div><span class="ttl">使用模型：</span>{{ item.model }}</div>
+            <div><span class="ttl">数据表：</span>{{ item.dataset }}</div>
+            <div><span class="ttl">创建时间：</span>{{ item.createtime }}</div>
+          </div>
+          <div class="editButton">
             <el-button
               size="mini"
               type="primary"
-              @click="handleCheck(scope.row)"
+              @click="handleCheck(item)"
               style="margin-right: 20px"
               >查看</el-button
             >
@@ -66,95 +70,34 @@
               title="删除后无法恢复"
               icon="el-icon-warning"
               icon-color="red"
-              @confirm="handleDelete(scope.row)"
+              @confirm="handleDelete(item)"
             >
               <el-button slot="reference" size="mini" type="danger"
                 >删除</el-button
               >
             </el-popconfirm>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-
-    <el-dialog
-      :title="result.taskName"
-      :visible.sync="resultDialogShow"
-      v-if="resultDialogShow"
-      width="32%"
-      center
-    >
-      <div class="taskInfoBox principal">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">任务负责人：</span>
-        <span>{{ result.leader }}</span>
-      </div>
-      <div
-        class="taskInfoBox participants"
-        v-if="result.participant.length > 0"
-      >
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">参与人：</span>
-        <span>{{ result.participant }}</span>
-      </div>
-      <div class="taskInfoBox disease">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">研究病种：</span>
-        <span>{{ result.disease }}</span>
-      </div>
-      <div class="taskInfoBox dataset">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">所用数据：</span>
-        <span>{{ result.dataset }}</span>
-      </div>
-      <div class="taskInfoBox algorithm">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">所用算法：</span>
-        <span>{{ result.model }}</span>
-      </div>
-      <div class="taskInfoBox algorithmValue">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">算法参数：</span>
-        <span v-if="result.para[0] == ''">本算法没有参数</span>
-        <div v-if="result.para[0] != ''">
-          <div v-for="(item, index) in result.para" :key="index">
-            <span>{{ result.para[index] }}：{{ result.paraValue[index] }}</span>
           </div>
-        </div>
+        </el-card>
       </div>
-      <div class="taskInfoBox target_features">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">目标因素：</span>
-        <span>{{ result.targetcolumn.toString() }}</span>
-      </div>
-      <div class="taskInfoBox use_features">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">所用特征：</span>
-        <span>{{ result.feature.toString() }}</span>
-      </div>
-      <div class="taskInfoBox result">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">挖掘结果：</span>
-        <div v-for="(item,index) in result.res" :key="index">
-          <span>{{result.targetcolumn[index]}} -> {{item.toString()}}</span>
-        </div>
-      </div>
-      <div class="taskInfoBox result">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">专家知识匹配度：</span>
-        <span>{{(result.ratio * 100).toFixed(2)}}%</span>
-      </div>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="resultDialogShow = false">关 闭</el-button>
-      </span>
-    </el-dialog>
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="this.params.page"
+        :page-sizes="[6,9,12,15,24]"
+        :page-size="this.params.size"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="this.total"
+        style="margin-top: 2%; margin-left: 3%;"
+      >
+      </el-pagination>
+    </div>
   </div>
 </template>
 
 <script>
 import { getRequest } from "@/utils/api";
-import { mapGetters, mapMutations, mapState ,mapActions} from "vuex";
+import { mapGetters, mapMutations, mapState, mapActions } from "vuex";
+import { getCategory } from "@/api/category";
 
 export default {
   computed: {
@@ -162,41 +105,150 @@ export default {
     ...mapGetters(["taskLeaderList", "taskDiseaseList"]),
   },
   created() {
-    this.getTaskList(sessionStorage.getItem("userid")-0);
+    this.getCatgory();
+    this.getTaskList();
+    this.getTreeData();
+    this.pagehelper();
   },
   data() {
     return {
       disease: "",
+      dataset:"",
       leader: "",
-      resultDialogShow: false,
       result: {},
+      total:0,
+      params: {
+        page: 1,
+        size: 9,
+      },
+      // dialogDiseaseVisible:false,
+      // diseaseName:'',
+      currentTaskList:[],
+      treeData:[]
     };
   },
 
   methods: {
-    ...mapActions(["getTaskList"]),
+    ...mapActions(["getTaskList","getTreeData"]),
     ...mapMutations(["SetTaskList"]),
+    // getTreeData()
+    // {
+    //   getRequest("nodes/all").then((res) => {
+    //     if(res.code == 200)
+    //     {
+    //       this.treeData = res.data;
+    //     }
+    //     else{
+    //       this.$message.error("获取树形结构数据失败");
+    //     }
+    //   });
+    // },
     handleCheck(row) {
       getRequest(`Task/result/${row.id}`).then((res) => {
-        this.result = res;
-        this.resultDialogShow = true;
+        if(res.code == 200)
+        {
+          this.result = res.data;
+          // if(this.result.parameters != null){
+          //   this.result.parameters = this.result.parameters.split(",");
+            
+          // }
+          sessionStorage.setItem("result",JSON.stringify(this.result));
+          this.$router.push("TaskResult")
+        }
+        else{
+          this.$message.error("查看任务失败");
+        }
       });
     },
     handleDelete(row) {
       getRequest(`Task/delete/${row.id}`).then((res) => {
-        console.log(res);
-        this.SetTaskList(res.reverse());
+       if(res.code == 200){
+        this.$message.success("删除任务成功");
+        this.pagehelper();
+       }
+       else{
+        this.$message.error("删除任务失败");
+       }
       });
     },
     clearFilter() {
       this.disease = "";
       this.leader = "";
     },
+    handleCheckChange(data, checked) {
+      if (checked) {
+        this.$refs.tree.setCheckedKeys([data.id])
+      }
+    },
+
+
+    changeData(data) {
+      if(data.isLeafs == 0)
+      {
+        this.dataset="";
+        this.disease=data.label;
+      }
+      if(data.isLeafs == 1){
+        this.dataset = data.label;
+        this.disease = "";
+      }
+      this.pagehelper();
+    },
+    handleSizeChange(val) {
+      this.params.size = val;
+      this.pagehelper();
+    },
+    handleCurrentChange(val) {
+      this.params.page = val;
+      this.pagehelper();
+    },
+    pagehelper() {
+      getRequest(`Task/selectByPage?pageNum=${this.params.page}&pageSize=${this.params.size}&leader=${this.leader}&disease=${this.disease}&dataset=${this.dataset}`
+      ).then((res) => {
+        if (res) {
+          this.total = res.data.total;
+          this.currentTaskList = res.data.list;
+        }
+      });
+    },
+    getCatgory() {
+      getCategory("/api/category").then((response) => {
+        this.treeData = response.data;
+      })
+    },
   },
 };
 </script>
 
 <style scoped>
+.main {
+  display: grid;
+  grid-template-columns: 12% 85%;
+}
+
+.left_tree {
+  display: inline-block;
+
+  border-radius: 3px;
+  border-left: 1px solid #e6e6e6;
+  border-right: 1px solid #e6e6e6;
+  border-top: 1px solid #e6e6e6;
+}
+
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+}
+
+#top_buttons {
+  margin-left: 3%;
+  margin-bottom: 20px;
+}
+
 #top_buttons > * {
   display: inline-block;
 }
@@ -215,10 +267,41 @@ export default {
 .featureTitle {
   font-weight: 800;
 }
-/*#importDataTable >>> .el-input__inner{*/
-/*    width: 85%;*/
-/*}*/
-/*#features >>> .el-input__inner{*/
-/*    margin-bottom: 24px;*/
-/*}*/
+.cardGroup {
+  width: 100%;
+  margin-left: 3%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 400px);
+  grid-row-gap: 40px;
+  grid-column-gap: 60px;
+}
+
+.cardInfo {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 定义两列，每列占用相等的空间 */
+  grid-template-rows: auto auto auto auto; /* 定义四行，高度根据内容自适应 */
+  gap: 10px; /* 定义网格行和列之间的间隙 */
+}
+
+.cardInfo > div:nth-child(5), /* 第五个子元素（数据表） */
+.cardInfo > div:nth-child(6) /* 第六个子元素（创建时间） */ {
+  grid-column: 1 / span 2; /* 这两个元素跨越两列 */
+}
+
+.ttl{
+  font-weight: 600;
+  color: #071135;
+}
+
+.editButton {
+  margin-left: 30%;
+  margin-top: 5%;
+}
+
+.icon {
+  justify-self: end;
+}
+.taskCard{
+  width: 110%;
+}
 </style>

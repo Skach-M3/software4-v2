@@ -7,6 +7,7 @@ export default {
       principal: "",
       participants: "",
       disease: "",
+      tips:"",
       dataset: "",
       use_features: [],
       known_features: [],
@@ -18,6 +19,7 @@ export default {
         K_and_SP: 0.75,
       },
       result: [],
+      is_common:false
     };
   },
   getters: {},

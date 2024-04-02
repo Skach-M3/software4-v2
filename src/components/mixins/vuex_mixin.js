@@ -19,6 +19,9 @@ export default {
     m_disease() {
       return this.$store.state[this.moduleName].disease;
     },
+    m_tips() {
+      return this.$store.state[this.moduleName].tips;
+    },
     m_dataset() {
       return this.$store.state[this.moduleName].dataset;
     },
@@ -39,6 +42,9 @@ export default {
     },
     m_result() {
       return this.$store.state[this.moduleName].result;
+    },
+    m_is_common() {
+      return this.$store.state[this.moduleName].is_common;
     },
   },
   methods: {

@@ -10,6 +10,7 @@ export default new Vuex.Store({
     dataList: [],
     taskList: [],
     modelList: [],
+    treeData:[]
   },
 
   getters: {
@@ -69,10 +70,10 @@ export default new Vuex.Store({
           console.log(err);
         });
     },
-    getTaskList(context,uid) {
-      getRequest(`/Task/all?uid=${uid}`)
+    getTaskList(context) {
+      getRequest("/Task/all")
         .then((res) => {
-          context.commit("SetTaskList", res.reverse());
+          context.commit("SetTaskList", res.data);
         })
         .catch((err) => {
           console.log("任务列表获取错误，请联系管理员。");
@@ -82,10 +83,20 @@ export default new Vuex.Store({
     getModelList(context) {
       getRequest("/Model/all")
         .then((res) => {
-          context.commit("SetModelList", res);
+          context.commit("SetModelList", res.data);
         })
         .catch((err) => {
           console.log("模型列表获取错误，请联系管理员。");
+          console.log(err);
+        });
+    },
+    getTreeData(context) {
+      getRequest("/nodes/all")
+        .then((res) => {
+          context.commit("SetTreeData", res.data);
+        })
+        .catch((err) => {
+          console.log("树形结构数据获取错误，请联系管理员。");
           console.log(err);
         });
     },
@@ -99,6 +110,9 @@ export default new Vuex.Store({
     },
     SetModelList(state, value) {
       state.modelList = value;
+    },
+    SetTreeData(state, value) {
+      state.treeData = value;
     },
   },
   modules: {

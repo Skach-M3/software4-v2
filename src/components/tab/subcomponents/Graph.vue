@@ -61,7 +61,9 @@ export default {
       option = {
         title: {
           text: this.title_text,
-          subtext: "下层是目标节点，上层为关联节点",
+          subtext: "下层为因变量，上层为自变量，数字代表权重",
+          left: 0,
+          top:0
         },
         toolbox: {
           show: true,
@@ -96,19 +98,20 @@ export default {
                 return this.ellipsis(labelText, maxLength);
               },
             },
-            // edgeSymbol: ["circle", "arrow"],//箭头形状
+            edgeSymbol: ["circle", "arrow"],//箭头形状
             // edgeSymbolSize: [4, 10],
             edgeLabel: {
               //边上标识
               fontSize: 15,
               formatter: "{c}", //显示links的value值
             },
+            // edgeSymbolSize: [3, 10],
             data: this.node,
             itemStyle:{
-                normal:{
+                
                       color: function(params) {
                         return params.data.color    //获取具体的参数
-                    },
+                   
                 }
         },
             // [
@@ -176,7 +179,7 @@ export default {
             // ],
             lineStyle: {
               opacity: 0.9,
-              width: 3,
+              width: 0.5,
               curveness: 0,
             },
           },

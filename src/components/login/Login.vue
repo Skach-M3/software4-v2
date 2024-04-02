@@ -154,12 +154,12 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["getTaskList"]),
+    ...mapActions(["getTaskList","getTreeData"]),
     submitlogin() {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.loading = true;
-          postRequest("/user/login", this.loginForm).then((resp) => {
+          postRequest("user/login", this.loginForm).then((resp) => {
             if (resp) {
               this.loading = false;
               console.log(resp);
@@ -168,6 +168,9 @@ export default {
                 sessionStorage.setItem("userid", resp.data.uid);
                 sessionStorage.setItem("userrole", resp.data.role);
                 this.$router.push("/sideBar/SoftwareIntro");
+                this.getTaskList();
+                this.getTreeData();
+                this.$message.success("登录成功");
               }
             } else {
               this.$message.error("用户不存在或者密码错误");

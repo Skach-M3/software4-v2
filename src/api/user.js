@@ -15,3 +15,13 @@ export function postRequest(url, data) {
     data
   })
 }
+
+export function saveParentDisease(url, diseaseName) {
+  return request({
+    method: "get",
+    url,
+    params: {
+      diseaseName: diseaseName
+    }
+  });
+}

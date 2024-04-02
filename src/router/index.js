@@ -11,6 +11,7 @@ import FactorDis from "@/components/tab/FactorDis.vue";
 import tableManage from "@/components/tab/tableManage.vue";
 import Login from "@/components/login/Login.vue";
 import Register from "@/components/login/register.vue";
+import TaskResult from "@/components/tab/subcomponents/TaskResult.vue";
 // import LogIn from "@/views/LogIn.vue"
 import SoftwareIntro from "@/components/tab/SoftwareIntro.vue";
 Vue.use(VueRouter)
@@ -62,6 +63,11 @@ const routes = [
         path: "TaskManage",
         name: "TaskManage",
         component: TaskManage,
+      },
+      {
+        path: "TaskResult",
+        name: "TaskResult",
+        component: TaskResult
       },
       {
         path: "DisFactor",

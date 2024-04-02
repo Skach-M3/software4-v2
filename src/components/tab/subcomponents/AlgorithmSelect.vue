@@ -2,8 +2,8 @@
   <div v-loading="loading" element-loading-text="拼命运算中">
     <el-container>
       <el-tabs id="modelList" v-model="model" tab-position="left">
-        <!-- tab-pane的name值必须与vuex里的算法名字一一对应 -->
-        <el-tab-pane
+      <!-- tab-pane的name值必须与vuex里的算法名字一一对应 -->
+      <el-tab-pane
           label="SF-DRMB"
           :disabled="moduleName !== 'disFactor'"
           name="SF_DRMB"
@@ -35,12 +35,12 @@
                     ></el-icon>
                   </el-popover>
                 </template>
-                <el-input v-model.trim="SF_DRMB_form.K_OR"></el-input>
-                <span class="valueRange">(取值范围为 0 - 1 )</span>
-              </el-form-item>
+<el-input v-model.trim="SF_DRMB_form.K_OR"></el-input>
+<span class="valueRange">(取值范围为 0 - 1 )</span>
+</el-form-item>
 
-              <el-form-item prop="K_and_PC">
-                <template slot="label">
+<el-form-item prop="K_and_PC">
+  <template slot="label">
                   <span class="paramTitle">K_and_PC</span>
                   <el-popover placement="right" trigger="hover">
                     <div>
@@ -52,12 +52,12 @@
                     ></el-icon>
                   </el-popover>
                 </template>
-                <el-input v-model.trim="SF_DRMB_form.K_and_PC"></el-input>
-                <span class="valueRange">(取值范围为 0.15 - 0.3 )</span>
-              </el-form-item>
+  <el-input v-model.trim="SF_DRMB_form.K_and_PC"></el-input>
+  <span class="valueRange">(取值范围为 0.15 - 0.3 )</span>
+</el-form-item>
 
-              <el-form-item prop="K_and_SP">
-                <template slot="label">
+<el-form-item prop="K_and_SP">
+  <template slot="label">
                   <span class="paramTitle">K_and_SP</span>
                   <el-popover placement="right" trigger="hover">
                     <div>
@@ -69,51 +69,43 @@
                     ></el-icon>
                   </el-popover>
                 </template>
-                <el-input v-model.trim="SF_DRMB_form.K_and_SP"></el-input>
-                <span class="valueRange">(取值范围为 0.4 - 0.8 )</span>
-              </el-form-item>
-            </el-form>
-            <div class="buttonBox">
-              <el-button round @click="backStep()">上一步</el-button>
-              <el-button round @click="resetForm('SF_DRMB_ref')"
-                >恢复默认</el-button
-              >
-              <el-button
-                type="primary"
-                round
-                @click="submit('/runtime_bus/submit')"
-                >提交运算</el-button
-              >
-            </div>
-          </div>
-        </el-tab-pane>
+  <el-input v-model.trim="SF_DRMB_form.K_and_SP"></el-input>
+  <span class="valueRange">(取值范围为 0.4 - 0.8 )</span>
+</el-form-item>
+</el-form>
+<div class="buttonBox">
+  <el-button round @click="backStep()">上一步</el-button>
+  <el-button round @click="resetForm('SF_DRMB_ref')">恢复默认</el-button>
+  <el-button type="primary" round @click="submit('/runtime_bus/sf_drmb')">提交运算</el-button>
+</div>
+</div>
+</el-tab-pane>
 
-        <el-tab-pane label="IAMB" name="IAMB">
-          <div class="titleBox">IAMB</div>
-          <div class="introBox">
-            <p>模型说明：</p>
-            <p>
-              IAMB是一种因果特征选择算法，可用于挖掘疾病和危险因素之间存在的因果关系。
-            </p>
-          </div>
-          <div class="buttonBox">
-            <el-button round @click="backStep()">上一步</el-button>
-            <el-button
-              type="primary"
-              round
-              @click="submit('/runtime_bus/submit_Task2')"
-              >提交运算</el-button
-            >
-          </div>
-          <div class="paramBox"></div>
-        </el-tab-pane>
+<el-tab-pane label="IAMB" name="IAMB">
+  <div class="titleBox">IAMB</div>
+  <div class="introBox">
+    <p>模型说明：</p>
+    <p>
+      IAMB是一种因果特征选择算法，可用于挖掘疾病和危险因素之间存在的因果关系。
+    </p>
+  </div>
+  <div class="buttonBox">
+    <el-button round @click="backStep()">上一步</el-button>
+    <el-button type="primary" round @click="submit('/runtime_bus/iamb')">提交运算</el-button>
+  </div>
+  <div class="paramBox"></div>
+</el-tab-pane>
 
-        <el-tab-pane label="SSP-Tree" :disabled="true">SSP-Tree</el-tab-pane>
-        <el-tab-pane label="FP-Growth" :disabled="true">FP-Growth</el-tab-pane>
-        <el-tab-pane label="Logistic Regression" :disabled="true"
-          >Logistic Regression</el-tab-pane
-        >
-      </el-tabs>
+<el-tab-pane label="SSP-Tree" :disabled="true">SSP-Tree</el-tab-pane>
+<el-tab-pane label="FP-Growth" :disabled="true">FP-Growth</el-tab-pane>
+<el-tab-pane label="Logistic Regression" :disabled="true">Logistic Regression</el-tab-pane>
+</el-tabs>
+      <!-- <el-switch v-model="value1">
+      </el-switch>
+      <el-switch v-model="value2" active-color="#13ce66" inactive-color="#ff4949"
+       >
+      </el-switch> -->
+
     </el-container>
   </div>
 </template>
@@ -177,23 +169,24 @@ export default {
       };
       postRequest(url, payload)
         .then((res) => {
-          console.log(res);
-          if(isNaN(res.ratio)){
+          console.log('res',res);
+          if (isNaN(res.data.ratio)) {
             console.log("ration:");
-            res.ratio = 0;
+            res.data.ratio = 0;
             console.log(res.ratio);
           }
-          
-          this.m_changeTaskInfo({ algorithm: this.model, result: res });
+
+          this.m_changeTaskInfo({ algorithm: this.model, result: res.data });
           this.loading = false;
+          console.log(this.m_result);
           this.m_changeStep(this.m_step + 1);
         })
         .catch((err) => {
           this.loading = false;
           this.$message({
-            showClose:true,
-            type:"error",
-            message:`发生错误：${err}`
+            showClose: true,
+            type: "error",
+            message: `发生错误：${err}`
           });
         });
     },
@@ -225,10 +218,12 @@ export default {
 .introBox p {
   margin-left: 15px;
 }
+
 .introBox p:first-child {
   font-size: 18px;
   font-weight: 600;
 }
+
 .introBox p:nth-child(2) {
   margin-left: 2em;
 }
@@ -237,6 +232,7 @@ export default {
   margin-top: 2vh;
   margin-left: 60vh;
 }
+
 .paramBox .el-form .el-input {
   width: 25vh;
   margin-top: -50px;
@@ -256,6 +252,7 @@ export default {
   margin-left: 10px;
   font-size: 20px;
 }
+
 .el-icon-warning-outline:hover {
   color: #368ce7;
 }
