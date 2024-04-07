@@ -6,7 +6,7 @@
         <el-tree ref="tree" :data="treeData" :show-checkbox="false" node-key="id" default-expand-all
           :expand-on-click-node="false" :check-on-click-node="true" :highlight-current="true" @node-click="changeData"
           @check="changeData" @check-change="handleCheckChange">
-          <span class="custom-tree-node" slot-scope="{ node, data }">
+          <span class="custom-tree-node" slot-scope="{ node }">
             <span>{{ node.label }}</span>
           </span>
         </el-tree>
@@ -27,7 +27,7 @@
             <el-button type=success @click="next(showDataForm.classPath, showDataForm.tablename)">确认</el-button>
           </div>
 
-          <el-table :data="tableData" stripe style="width: 100%" class="custom-table" max-height="700" :fit="false" v-if="tableData.length>0">
+          <el-table :data="tableData" stripe style="width: 100%" class="custom-table" max-height="580" :fit="false" v-if="tableData.length>0">
             <el-table-column v-for="(value, key) in tableData[0]" :key="key" :prop="key" :label="key" :width="colWidth">
               <template slot-scope="{ row }">
                 <div class="truncate-text">{{ row[key] }}</div>
@@ -88,8 +88,6 @@ export default {
 
   created() {
     this.getCatgory();
-    // this.getTableDescribe("1005")
-    // this.getTableData("1005", "copd");
     this.$notify.success({
       title: '提示',
       message: '请选择数据集进行下一步操作！',
@@ -161,13 +159,36 @@ export default {
     getCatgory() {
       getCategory("/api/category").then((response) => {
         console.log(response.data);
-        this.treeData = this.filterTree(response.data);
+        // 如果是多疾病任务，只能选择公共数据集
+        if(this.moduleName == "factorDis"){
+          const tempData = this.filterCommonAndMutiData(response.data);
+          // console.log(tempData);
+          this.treeData = tempData;
+          // 为什么find不能用
+          // const publicNode = response.data.find((node)=>{
+          //   node.id == '1010';
+          // })
+          // console.log(publicNode); 
+          // this.treeData = this.filterTree(publicNode)
+        }
+        else{
+          this.treeData = this.filterTree(response.data);
+        }
+        console.log(this.treeData);
+        if(this.treeData.length<1){
+          this.$message({
+            showClose: true,
+            type: "warning",
+            message: "暂无可用数据",
+          });
+        }
 
       })
     },
 
     // 递归过滤树结构
     filterTree(nodes) {
+      if(nodes.length < 1) return;
       return nodes.filter(node => {
         if (node.isLeafs === 1) {
           return true;
@@ -177,7 +198,16 @@ export default {
         }
         return false;
       });
-    }
+    },
+
+    filterCommonAndMutiData(data) {
+    // 过滤出"公共数据集下的多疾病"
+    const publicDatasets = data.filter(item => item.id === "1010");
+    const publicDatasets2 = publicDatasets[0].children.filter( item => item.id == "1775096840182611969")
+    return this.filterTree(publicDatasets2);
+
+}
+
 
 
 

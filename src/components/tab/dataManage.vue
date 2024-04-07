@@ -19,7 +19,7 @@
           <span>
             <!--公共数据集confirm-->
             <el-popconfirm v-if="data.isCommon" confirm-button-text='新病种' cancel-button-text='数据集' title="请选择添加的文件"
-              cancel-button-type="primary" @confirm="dialogDiseaseVisible = true;" @cancel="dialogFormVisible = true">
+              cancel-button-type="primary" @confirm="dialogDiseaseVisible = true;" @cancel="importData">
               <el-button v-if="!data.isLeafs" icon="el-icon-folder-add" size="mini" type="text" slot="reference"
                 @click="markNode(data)">
               </el-button>
@@ -34,7 +34,7 @@
 
             <el-popconfirm title="删除后无法恢复" icon="el-icon-warning" icon-color="red" confirm-button-text='确认'
               cancel-button-text='取消' @confirm="() => remove(node, data)">
-              <el-button icon="el-icon-delete" size="mini" type="text" slot="reference">
+              <el-button v-if="data.id!='1775096840182611969' && data.id!='1010'" icon="el-icon-delete" size="mini" type="text" slot="reference">
               </el-button>
             </el-popconfirm>
 
@@ -46,7 +46,7 @@
       </el-tree>
       <el-dialog title="提示" :visible.sync="dialogDiseaseVisible" width="30%">
         <span>
-          请输入新病种名称（a）：<el-input placeholder="请输入内容" v-model="diseaseName" class="nameInput"></el-input>
+          请输入新病种名称：<el-input placeholder="请输入内容" v-model="diseaseName" class="nameInput"></el-input>
         </span>
         <span slot="footer" class="dialog-footer">
           <el-button @click="cleanInput()">取 消</el-button>
@@ -197,10 +197,11 @@
           <el-input v-model="dialogForm.tableName" placeholder="请输入数据表名称"></el-input>
         </el-form-item>
         <el-form-item label="涉及疾病" prop="dataDisease">
-          <el-select v-model="dialogForm.dataDisease" filterable placeholder="请选择或搜索">
+          <!-- <el-select v-model="dialogForm.dataDisease" filterable placeholder="请选择或搜索">
             <el-option v-for="item in disOptions" :key="item.name" :label="item.name" :value="item.name">
             </el-option>
-          </el-select>
+          </el-select> -->
+          <el-input v-model="dialogForm.dataDisease" :disabled="true" style="width: 150px"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -209,13 +210,17 @@
       resetForm('dialogFormRef');
       ">取消</el-button>
         <el-button @click="resetForm('dialogFormRef')">重置</el-button>
-        <el-button type="primary" @click="uploadFile">下一步</el-button>
+        <el-button type="primary" @click="uploadFile">确定</el-button>
       </div>
 
-      <el-dialog v-loading="loading2" :element-loading-text="loadText2" append-to-body title="请选择特征类型"
+      <!-- 解析表后字段分类弹窗 -->
+      <el-dialog v-loading="loading2" :element-loading-text="loadText2" append-to-body title="请选择多个疾病标签字段"
         :visible.sync="featuresVision">
-        <el-form class="featureLabel" label-width="auto">
-          <el-form-item v-for="(name, index) in Object.keys(featuresMap)" :key="index" :label="name">
+        <!-- <el-form class="featureLabel" label-width="auto"> -->
+          <el-checkbox-group v-model="labelList">
+            <el-checkbox style="width: 250px;" border v-for="(name, index) in Object.keys(featuresMap)" :key="index" :label="name"></el-checkbox>
+          </el-checkbox-group>
+          <!-- <el-form-item v-for="(name, index) in Object.keys(featuresMap)" :key="index" :label="name">
             <el-select v-model="featuresMap[name]" placeholder="请选择特征类型" @change="changeLabel(name, featuresMap[name])">
               <el-option label="诊断" value="diagnosis" key="diagnosis"></el-option>
               <el-option label="检查" value="examine" key="examine"></el-option>
@@ -223,8 +228,8 @@
               <el-option label="生命特征" value="vital_signs" key="vital_signs"></el-option>
               <el-option label="标签" value="label" key="label"></el-option>
             </el-select>
-          </el-form-item>
-        </el-form>
+          </el-form-item> -->
+        <!-- </el-form> -->
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="compelete">完成上传</el-button>
         </div>
@@ -271,7 +276,7 @@
           <el-button @click="handleCloseCSV">取 消</el-button>
           <el-button type="primary" @click="toCSV">确 定</el-button>
           </span>
-          </el-dialog>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -434,7 +439,8 @@ export default {
       csvDialogVisible:false,
       selectedFields:[],
       selectAll:false,
-      fields:[]
+      fields:[],
+      labelList:[]
     };
   },
 
@@ -558,109 +564,51 @@ export default {
       return value;
     },
     compelete() {
-      // 判断多标签合理性
+      // 判断多标签合理性，并填写上传payload
       let labelCount = 0;
+      
+      const payload_feature = {
+        tableName: this.dialogForm.tableName,
+        tableHeaders: []
+      }
       for (const key in this.featuresMap) {
         if (Object.hasOwnProperty.call(this.featuresMap, key)) {
-          if (this.featuresMap[key] == "label") {
+          const tempObject = {
+            fieldName: key,
+            isLabel: 0,
+          }
+          if (this.labelList.includes(key)) {
+            tempObject.isLabel = 1;
             labelCount++;
           }
+          payload_feature.tableHeaders.push(tempObject);
         }
       }
-      if (labelCount < 1) {
+      if (labelCount < 2) {
         this.$message({
           showClose: true,
           type: "warning",
-          message: "请至少设置一个标签特征",
-        });
-        return false;
-      }
-      if (this.dialogForm.dataDisease != "多疾病" && labelCount > 1) {
-        this.$message({
-          showClose: true,
-          type: "warning",
-          message: "只有多病种数据集能设置多个标签特征",
+          message: "请至少设置两个标签特征",
         });
         return false;
       }
 
-      this.loadText2 = "正在添加字段类型";
+      this.loadText2 = "正在打标";
       this.loading2 = true;
-      let tableHeaders = [];
-      for (const key in this.featuresMap) {
-        if (Object.hasOwnProperty.call(this.featuresMap, key)) {
-          switch (this.featuresMap[key]) {
-            case "diagnosis":
-              tableHeaders.push({
-                fieldName: key,
-                isDiagnosis: "1",
-              });
-              break;
-            case "examine":
-              tableHeaders.push({
-                fieldName: key,
-                isExamine: "1",
-              });
-              break;
-            case "pathology":
-              tableHeaders.push({
-                fieldName: key,
-                isPathology: "1",
-              });
-              break;
-            case "vital_signs":
-              tableHeaders.push({
-                fieldName: key,
-                isVitalSigns: "1",
-              });
-              break;
-            case "label":
-              tableHeaders.push({
-                fieldName: key,
-                isLabel: "1",
-              });
-              break;
-            default:
-              break;
-          }
+
+      postRequest('/tTable/insertTableManager',payload_feature).then(res=>{
+        if(res.code == 200){
+          this.loading2 = false;
+          this.featuresVision = false;
+          this.$message({
+            showClose: true,
+            type: "success",
+            message: "完成",
+          });
+          this.getCatgory();
         }
-      }
-      // let userId = sessionStorage.getItem("userid")-0;
-      // 上传特征分类结果
-      postRequest("/api/feature/insertFeature", {
-        tableName: this.dialogForm.tableName,
-        tableHeaders
-        // userId
-      }).then((res) => {
-        console.log(res);
-        this.dialogFormVisible = false;
-      });
-
-      // 重新上传数据表，使其保存到数据列表中
-      // 此处上传时后台已有数据表，可和后台配合只发送保存通知已提高效率
-      // this.options.url = "/DataTable/uploadTable";
-      // this.$axios(this.options).then((res) => {
-
-      //   this.loading2 = false;
-      //   this.resetForm('dialogFormRef');
-      //   if (res?.code == "200") {
-      //     this.$message({
-      //       showClose: true,
-      //       type: "success",
-      //       message: "上传成功",
-      //     });
-      //     this.featuresVision = false;
-      //     this.dialogFormVisible = false;
-      //     this.getDataList();
-      //   } else {
-      //     this.$message({
-      //       showClose: true,
-      //       type: "error",
-      //       message: "上传失败",
-      //     });
-      //   }
-      // });
-      //this.getCategory(); // 更新目录结构
+      })
+      
     },
     changeLabel(name, label) {
       console.log("name: ")
@@ -713,6 +661,11 @@ export default {
           "Content-Type": "multipart/form-data",
         },
       };
+      // 多疾病下的上传文件需要打标签，用不同的接口
+      let paths = this.nodeData.path.split("/");
+      if(paths[1] === '多疾病'){
+        this.options.url = "api/dataTable/parseAndUpload"
+      }
 
       this.$axios(this.options).then((res) => { // 返回表头信息
         this.loading = false;
@@ -723,14 +676,14 @@ export default {
             type: "success",
             message: "解析成功",
           });
-          console.log("返回数据为：")
-          console.log(res);
           let featureList = res.data;
           // 把特征存为map的键
           for (const item of featureList) {
             this.$set(this.featuresMap, item, "diagnosis");
           }
-          // this.featuresVision = true;
+          if(paths[1] === '多疾病'){
+            this.featuresVision = true;
+          }
           this.dialogFormVisible = false;
           this.getCatgory();
         } else {
@@ -857,6 +810,7 @@ export default {
         this.getCatgory();
         this.cleanInput();
       }).catch(error => {
+        console.log(error);
       })
       // const newNode = { id: id++, label: this.diseaseName, children: [] , isLeafs: false};
       // this.treeData.push(newNode);
@@ -1030,6 +984,10 @@ export default {
       this.creator = "";
     },
     importData() {
+      // 涉及疾病填入上一级节点名
+      let paths = this.nodeData.path.split("/");
+      console.log(paths);
+      this.dialogForm.dataDisease = paths[paths.length-1]
       this.dialogFormVisible = true;
     },
 

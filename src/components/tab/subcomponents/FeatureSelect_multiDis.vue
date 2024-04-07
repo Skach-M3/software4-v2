@@ -1,169 +1,177 @@
 <template>
   <div class="Box">
-    <!-- ------------------------------------选择目标特征 ------------------------------->
-    <div>
-      <div class="top">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">想研究哪些因素与疾病的关系：</span>
-        <el-checkbox
-          v-model="checkAll_target"
-          @change="
-            (val) => {
-              this.targetFeature = val ? this.allFeatures : [];
-            }
-          "
-          border
-          size="small"
-          >全选</el-checkbox
+    <!-- 以下为V2.0 -->
+    <div class="content">
+      <div class="specify">
+        <p>特征下方进度条为特征填充度</p>
+      </div>
+
+      <!-- 选择参与运算的特征(因变量) -->
+      <div class="select_feature_var">
+        <div class="select_feature_var_top">
+          <h3 class="title">选择参与运算的特征(因变量)</h3>
+        </div>
+        <div class="select_feature_check_boxs">
+          <el-checkbox-group v-model="checked_dependent_variables">
+            <div v-for="item in all_features" :key="item.id">
+              <el-checkbox
+                :label="item"
+                @change="dependent_variables_groupCheck(item)"
+                >{{ item.label }}
+              </el-checkbox>
+              <el-progress
+                :percentage="item.fill_rate"
+                :color="changeProgressColor(item.fill_rate)"
+              ></el-progress>
+            </div>
+          </el-checkbox-group>
+        </div>
+        <el-pagination
+          @current-change="currentPageChange()"
+          :current-page.sync="currentPage"
+          :page-size.sync="pageSize"
+          layout="total, prev, pager, next"
+          :total="dataTotal"
+          style="margin-left: 5%; margin-top: 20px"
+          :hide-on-single-page="true"
         >
-      </div>
-      <div v-if="peopleFeatures.length > 0">
-        <h3 class="featureSubTitle">人口学特征</h3>
-        <el-checkbox-group v-model="targetFeature" @change="changeBox_target()">
-          <el-checkbox
-            v-for="item in peopleFeatures"
-            :label="item"
-            :key="item"
-            border
-            ><el-popover
-              placement="top-end"
-              width="150"
-              :title="item"
-              trigger="hover"
-              :content="getDeficiency(item)"
-              :open-delay=200
-            >
-              <span slot="reference">{{ item }}</span>
-            </el-popover></el-checkbox
-          >
-        </el-checkbox-group>
+        </el-pagination>
       </div>
 
-      <div v-if="physiologicalFeatures.length > 1">
-        <h3 class="featureSubTitle">生理学特征</h3>
-        <el-checkbox-group v-model="targetFeature" @change="changeBox_target()">
-          <el-checkbox
-            v-for="item in physiologicalFeatures"
-            :label="item"
-            :key="item"
-            border
-            ><el-popover
-              placement="top-end"
-              width="150"
-              :title="item"
-              trigger="hover"
-              :content="getDeficiency(item)"
-              :open-delay=200
-            >
-              <span slot="reference">{{ item }}</span>
-            </el-popover></el-checkbox
-          >
-        </el-checkbox-group>
-      </div>
-
-      <div v-if="socialFeatures.length > 1">
-        <h3 class="featureSubTitle">社会学特征</h3>
-        <el-checkbox-group v-model="targetFeature" @change="changeBox_target()">
-          <el-checkbox
-            v-for="item in socialFeatures"
-            :label="item"
-            :key="item"
-            border
-            ><el-popover
-              placement="top-end"
-              width="150"
-              :title="item"
-              trigger="hover"
-              :content="getDeficiency(item)"
-              :open-delay=200
-            >
-              <span slot="reference">{{ item }}</span>
-            </el-popover></el-checkbox
-          >
-        </el-checkbox-group>
-      </div>
-      <el-divider></el-divider>
-    </div>
-
-    <!-- ------------------------------------- 参与运算疾病 ---------------------------->
-    <div>
-      <div class="top">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">参与运算的疾病：</span>
-        <el-checkbox
-          v-model="checkAll_1"
-          @change="
-            (val) => {
-              this.computeFeatures = val ? this.labelList : [];
-            }
-          "
-          border
-          size="small"
-          >全选</el-checkbox
+      <!--  选择参与运算的疾病(自变量)-->
+      <div class="select_feature_var">
+        <div class="select_feature_var_top">
+          <h3 class="title">选择参与运算的疾病(自变量)</h3>
+        </div>
+        <div class="select_feature_check_boxs">
+          <el-checkbox-group v-model="checked_independent_variables">
+            <div v-for="item in label_list" :key="item.id">
+              <el-checkbox
+                :label="item"
+                @change="item.status = item.status == 2 ? 0 : 2"
+                >{{ item.label }}
+              </el-checkbox>
+              <el-progress
+                :percentage="item.fill_rate"
+                :color="changeProgressColor(item.fill_rate)"
+              ></el-progress>
+            </div>
+          </el-checkbox-group>
+        </div>
+        <el-pagination
+          @current-change="currentPageChange()"
+          :current-page.sync="currentPage"
+          :page-size.sync="pageSize"
+          layout="total, prev, pager, next"
+          :total="dataTotal"
+          style="margin-left: 5%; margin-top: 20px"
+          :hide-on-single-page="true"
         >
+        </el-pagination>
       </div>
 
-      <div>
-        <el-checkbox-group v-model="computeFeatures" @change="changeBox_1()">
-          <el-checkbox
-            v-for="item in labelList"
-            :label="item"
-            :key="item"
-            border
-            ><el-popover
-              placement="top-end"
-              width="150"
-              :title="item"
-              trigger="hover"
-              :content="getDeficiency(item)"
-              :open-delay=200
-            >
-              <span slot="reference">{{ item }}</span>
-            </el-popover></el-checkbox
-          >
-        </el-checkbox-group>
-      </div>
-    </div>
-
-    <el-divider></el-divider>
-
-    <!-- --------------------------------------------- 已知疾病 ----------------------------->
-    <div>
-      <div class="top">
-        <span class="lineStyle">▍</span
-        ><span class="featureTitle">已知相关疾病：</span>
-        <el-checkbox
-          v-model="checkAll_2"
-          @change="
-            (val) => {
-              this.knownFeatures = val ? this.labelList : [];
-            }
-          "
-          border
-          size="small"
-          >全选</el-checkbox
+      <!--  已选特征-->
+      <div class="select_feature_var">
+        <div class="select_feature_var_top">
+          <h3 class="title">已选特征</h3>
+        </div>
+        <div class="select_feature_check_boxs">
+          <el-checkbox-group v-model="checked_dependent_variables">
+            <div v-for="item in checked_dependent_variables" :key="item.id">
+              <el-checkbox :label="item" @change="item.status = 0"
+                >{{ item.label }}
+              </el-checkbox>
+              <el-progress
+                :percentage="item.fill_rate"
+                :color="changeProgressColor(item.fill_rate)"
+              ></el-progress>
+            </div>
+          </el-checkbox-group>
+        </div>
+        <el-pagination
+          @current-change="currentPageChange()"
+          :current-page.sync="currentPage"
+          :page-size.sync="pageSize"
+          layout="total, prev, pager, next"
+          :total="dataTotal"
+          style="margin-left: 5%; margin-top: 20px"
+          :hide-on-single-page="true"
         >
+        </el-pagination>
       </div>
 
-      <el-checkbox-group v-model="knownFeatures" @change="changeBox_2()">
-        <el-checkbox v-for="item in labelList" :label="item" :key="item" border
-          ><el-popover
-            placement="top-end"
-            width="150"
-            :title="item"
+      <!-- 已选疾病 -->
+      <div class="select_feature_var">
+        <div class="select_feature_var_top">
+          <h3 class="title">已选疾病</h3>
+        </div>
+        <div class="select_feature_check_boxs">
+          <el-checkbox-group v-model="checked_independent_variables">
+            <div v-for="item in checked_independent_variables" :key="item.id">
+              <el-checkbox :label="item" @change="item.status = 0"
+                >{{ item.label }}
+              </el-checkbox>
+              <el-progress
+                :percentage="item.fill_rate"
+                :color="changeProgressColor(item.fill_rate)"
+              ></el-progress>
+            </div>
+          </el-checkbox-group>
+        </div>
+        <el-pagination
+          @current-change="currentPageChange()"
+          :current-page.sync="currentPage"
+          :page-size.sync="pageSize"
+          layout="total, prev, pager, next"
+          :total="dataTotal"
+          style="margin-left: 5%; margin-top: 20px"
+          :hide-on-single-page="true"
+        >
+        </el-pagination>
+      </div>
+
+      <!-- 已知危险因素 -->
+      <div class="select_feature_var">
+        <div class="select_feature_var_top">
+          <h3 class="title">已知相关疾病</h3>
+          <el-popover
+            placement="top-start"
+            title="标题"
             trigger="hover"
-            :content="getDeficiency(item)"
-            :open-delay=200
+            content="这是医学专家已经查明的疾病危险因素"
           >
-            <span slot="reference">{{ item }}</span>
-          </el-popover></el-checkbox
+            <i
+              class="el-icon-question"
+              style="margin-left: 10px"
+              slot="reference"
+            ></i>
+          </el-popover>
+        </div>
+        <div class="select_feature_check_boxs">
+          <el-checkbox-group v-model="know_variables">
+            <div v-for="item in all_features" :key="item.index">
+              <el-checkbox :label="item">{{ item.label }} </el-checkbox>
+            </div>
+          </el-checkbox-group>
+        </div>
+        <el-pagination
+          @current-change="currentPageChange()"
+          :current-page.sync="currentPage"
+          :page-size.sync="pageSize"
+          layout="total, prev, pager, next"
+          :total="dataTotal"
+          style="margin-left: 5%; margin-top: 20px"
+          :hide-on-single-page="true"
         >
-      </el-checkbox-group>
-    </div>
-
-    <div class="buttonGroup">
-      <el-button @click="backStep()" round>上一步</el-button>
-      <el-button type="primary" @click="next()" round>确认</el-button>
+        </el-pagination>
+      </div>
+      <div class="buttonGroup">
+        <el-button @click="backStep()" round>上一步</el-button>
+        <el-button type="warning" @click="resetButton" round
+          >重置选项</el-button
+        >
+        <el-button type="primary" @click="next()" round>确认</el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -183,17 +191,28 @@ export default {
   computed: {},
   data() {
     return {
-      allFeatures: [],
-      peopleFeatures: [],
-      physiologicalFeatures: [],
-      socialFeatures: [],
-      checkAll_1: false,
-      checkAll_2: false,
-      checkAll_target: false,
       computeFeatures: [],
       knownFeatures: [],
       targetFeature: [],
-      labelList: [],
+      //用于存储左侧特征选择树值
+      featureSelectTree: [],
+      //特征选择数的备份，用于删除叶子节点
+      filteredTree: [],
+      //用于存储所有特征
+      all_features: [],
+      // 用于存储所有标签
+      label_list: [],
+      //用于存储已选的因变量（已选标签特征）
+      checked_dependent_variables: [],
+      //用于存储已选的因变量（已选危险因素）
+      checked_independent_variables: [],
+      know_variables: [],
+      //分页数据
+      pageSize: 10,
+      currentPage: 1,
+      dataTotal: 10,
+      value: "",
+      templist: [],
     };
   },
 
@@ -203,76 +222,84 @@ export default {
 
   methods: {
     init() {
-      getRequest("/tTableManager/tablemanager", {
-        tableName: this.m_dataset,
-      }).then((res) => {
-        res.forEach((item) => {
-          if (item) {
-            if (item.is_demography == 1) {
-              this.allFeatures.push(item.field_name);
-              this.peopleFeatures.push(item.field_name);
-            } else if (item.is_physiological == 1) {
-              this.allFeatures.push(item.field_name);
-              this.physiologicalFeatures.push(item.field_name);
-            } else if (item.is_sociology == 1) {
-              this.allFeatures.push(item.field_name);
-              this.socialFeatures.push(item.field_name);
-            } else if (item.is_label == 1) {
-              this.labelList.push(item.field_name);
-            }
+      if (this.m_is_common == false) {
+        getRequest(`api/feature/getTreeFeatures?tablename=${this.m_dataset}`, {
+          tableName: this.m_dataset,
+        }).then((res) => {
+          if (res.code == 200) {
+            this.featureSelectTree = res.data;
+            //获取dependent_variables
+            this.featureSelectTree.forEach((root) => {
+              this.extractLeafNodes(root);
+            });
+          }
+          // 同步vuex里的数据
+          this.checked_independent_variables = this.m_use_features;
+          this.know_variables = this.m_known_features;
+
+          if (this.moduleName !== "disFactor") {
+            this.checked_dependent_variables = this.m_target_feature;
+            // this.changeBox_target();
           }
         });
-        // 同步vuex里的数据
-        this.computeFeatures = this.m_use_features;
-        this.knownFeatures = this.m_known_features;
-        this.changeBox_1();
-        this.changeBox_2();
-        if (this.moduleName !== "disFactor") {
-          this.targetFeature = this.m_target_feature;
-          this.changeBox_target();
-        }
-      });
-    },
-
-    changeBox_1() {
-      if (this.computeFeatures.length === this.labelList.length) {
-        this.checkAll_1 = true;
       } else {
-        this.checkAll_1 = false;
-      }
-    },
+        getRequest(
+          `/api/feature/getCommonMutipleTableTreeFeatures?tablename=${this.m_dataset}`
+        ).then((res) => {
+          if (res.code == 200) {
+            for (let i = 0; i < res.data.length; i++) {
+              if (res.data[i].is_label == "0") {
+                this.all_features.push({
+                  label: res.data[i].field_name,
+                  fill_rate: res.data[i].fill_rate,
+                  id: i,
+                });
+              } else {
+                this.label_list.push({
+                  label: res.data[i].field_name,
+                  fill_rate: res.data[i].fill_rate,
+                  id: i,
+                });
+              }
+            }
 
-    changeBox_2() {
-      if (this.knownFeatures.length === this.labelList.length) {
-        this.checkAll_2 = true;
-      } else {
-        this.checkAll_2 = false;
+            //获取dependent_variables
+            this.featureSelectTree.forEach((root) => {
+              this.extractLeafNodes(root);
+            });
+          }
+          // 同步vuex里的数据
+          this.checked_independent_variables = this.m_use_features;
+          this.know_variables = this.m_known_features;
+          if (this.moduleName !== "disFactor") {
+            this.checked_dependent_variables = this.m_target_feature;
+            // this.changeBox_target();
+          }
+        });
       }
-    },
-
-    changeBox_target() {
-      if (this.targetFeature.length === this.allFeatures.length) {
-        this.checkAll_target = true;
-      } else {
-        this.checkAll_target = false;
-      }
-    },
-
-    getDeficiency() {
-      let rate = (Math.random() * 100).toFixed(3);
-      return `缺失率：${rate}%`;
     },
 
     next() {
-      if (this.targetFeature.length < 1) {
-        alert("该数据没有目标列，请重新选择数据表");
-        return;
-      }
-      if (this.computeFeatures.length < 5) {
-        alert("请选择至少5个疾病参与运算");
-        return;
-      }
+      console.log(this.checked_dependent_variables);
+      this.checked_dependent_variables.forEach((item) => {
+        this.targetFeature.push(item.label);
+      });
 
+      this.checked_independent_variables.forEach((item) => {
+        this.computeFeatures.push(item.label);
+      });
+
+      this.know_variables.forEach((item) => {
+        this.knownFeatures.push(item.label);
+      });
+
+      if (this.checked_independent_variables.length < 2) {
+        this.$message({
+          type: "warning",
+          message: "请选择至少2个自变量参与运算",
+        });
+        return;
+      }
       this.m_changeTaskInfo({
         use_features: this.computeFeatures,
         known_features: this.knownFeatures,
@@ -284,15 +311,101 @@ export default {
     backStep() {
       this.m_changeStep(this.m_step - 1);
     },
+
+    //获得dependent_variables
+    extractLeafNodes(tree) {
+      if (tree.children) {
+        tree.children.forEach((child) => {
+          this.extractLeafNodes(child);
+        });
+      } else {
+        // 叶子节点
+        // this.dependent_variables.push(tree);
+        // this.independent_variables.push(tree);
+        this.all_features.push(tree);
+      }
+    },
+
+    changeProgressColor(rate) {
+      if (rate < 30) {
+        return "RGB(230,162,60)";
+      } else if (rate < 60) {
+        return "RGB(245,108,108)";
+      } else if (rate < 90) {
+        return "RGB(64,158,255)";
+      } else {
+        return "RGB(103,194,58)";
+      }
+    },
+    //分页函数
+    currentPageChange() {},
+    filterNonLeafNodes(tree) {
+      if (tree.children) {
+        // 过滤掉没有子节点的非叶子节点
+        tree.children = tree.children.filter((child) => child.children);
+
+        // 递归处理子节点
+        tree.children.forEach((child) => {
+          this.filterNonLeafNodes(child);
+        });
+      }
+    },
+    getCheckedNodes() {
+      //获得所有选中的节点
+      const checkeList = this.$refs.tree.getCheckedNodes();
+      console.log(checkeList);
+      //如果没有节点选中，则让all_features恢复所有值
+      if (checkeList.length === 0) {
+        this.all_features = [];
+        this.featureSelectTree.forEach((root) => {
+          this.extractLeafNodes(root);
+        });
+      }
+      //或者过滤
+      else {
+        this.all_features = checkeList.filter((node) => node.isLeaf === true);
+      }
+    },
+    resetButton() {
+      for (let i = 0; i < this.checked_dependent_variables.length; i++) {
+        this.checked_dependent_variables[i].status = 0;
+      }
+      for (let i = 0; i < this.checked_independent_variables.length; i++) {
+        this.checked_independent_variables[i].status = 0;
+      }
+      this.checked_dependent_variables = [];
+      this.checked_independent_variables = [];
+    },
+    isEqual(obj1, obj2) {
+      if (obj1.name === obj2.name && obj1.status === obj2.status) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    dependent_variables_groupCheck(item) {
+      if (this.moduleName == "disFactor") {
+        for (const obj1 of this.checked_dependent_variables) {
+          for (const obj2 of this.all_features) {
+            if (this.isEqual(obj1, obj2)) {
+              obj2.status = 0;
+            }
+          }
+        }
+        item.status = item.status == 1 ? 0 : 1;
+        this.checked_dependent_variables = [];
+        if (item.status === 1) {
+          this.checked_dependent_variables.push(item);
+        }
+      } else {
+        item.status = item.status == 1 ? 0 : 1;
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
-.Box {
-  margin-left: 25vh;
-}
-
 .featureTitle {
   font-size: 30px;
   margin-right: 30px;
@@ -305,10 +418,6 @@ export default {
   font-size: 18px;
 }
 
-.el-checkbox--small {
-  padding-bottom: 10px;
-}
-
 .el-checkbox-group {
   padding-top: 10px;
   display: grid;
@@ -317,8 +426,12 @@ export default {
   grid-template-rows: 20px, 20px;
 }
 
+.el-checkbox--small {
+  padding-bottom: 10px;
+}
+
 .el-checkbox-group .el-checkbox {
-  width: 130px;
+  width: 120px;
 }
 
 .el-checkbox span {
@@ -344,5 +457,65 @@ export default {
 
 .buttonGroup {
   margin-top: 20px;
+  margin-left: 28%;
+}
+
+.content {
+  width: 100%;
+  height: auto;
+}
+
+.left_tree {
+  display: inline-block;
+  height: auto;
+  width: 13%;
+  border-radius: 3px;
+  border-left: 1px solid #e6e6e6;
+  border-right: 1px solid #e6e6e6;
+}
+
+.specify {
+  margin-top: 1px;
+  width: 90%;
+  height: 5%;
+  text-align: center;
+  line-height: 35px;
+  background-color: #e6e6e6;
+}
+
+.select_feature_var {
+  margin-top: 1px;
+  width: 90%;
+  height: auto;
+}
+
+.select_feature_var_top {
+  width: 100%;
+  /* position: absolute; */
+}
+
+.title {
+  display: inline-block;
+  margin-left: 3%;
+}
+
+.selection {
+  margin-left: 2%;
+  position: relative;
+  bottom: 5px;
+}
+
+.select_feature_check_boxs {
+  width: 100%;
+  height: auto;
+  margin-left: 5%;
+}
+
+.select_feature_check_boxs >>> .el-checkbox__label {
+  overflow: hidden;
+}
+
+.select_feature_check_boxs >>> .el-checkbox__label:hover {
+  overflow: visible;
 }
 </style>
