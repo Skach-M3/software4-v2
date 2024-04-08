@@ -20,14 +20,14 @@
             <!--公共数据集confirm-->
             <el-popconfirm v-if="data.isCommon" confirm-button-text='新病种' cancel-button-text='数据集' title="请选择添加的文件"
               cancel-button-type="primary" @confirm="dialogDiseaseVisible = true;" @cancel="importData">
-              <el-button v-if="!data.isLeafs" icon="el-icon-folder-add" size="mini" type="text" slot="reference"
+              <el-button v-if="!data.isLeafs" icon="el-icon-circle-plus-outline" size="mini" type="text" slot="reference"
                 @click="markNode(data)">
               </el-button>
             </el-popconfirm>
             <!--非公共数据集confirm-->
             <el-popconfirm v-else confirm-button-text='新病种' cancel-button-text='数据集' title="请选择添加的文件"
               cancel-button-type="primary" @confirm="dialogDiseaseVisible = true" @cancel="openAddDataForm(data.path)">
-              <el-button v-if="!data.isLeafs" icon="el-icon-folder-add" size="mini" type="text" slot="reference"
+              <el-button v-if="!data.isLeafs" icon="el-icon-circle-plus-outline" size="mini" type="text" slot="reference"
                 @click="markNode(data)">
               </el-button>
             </el-popconfirm>

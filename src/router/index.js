@@ -1,4 +1,5 @@
 import Vue from 'vue'
+// import store from '@/store'
 import VueRouter from 'vue-router'
 import SideBar from '@/components/sideBar/index.vue'
 import dash from '@/views/dash/index.vue'
@@ -97,7 +98,7 @@ const routes = [
 const router = new VueRouter({
   routes
 })
-router.beforeEach((to, from, next) => {
+router.beforeEach(function(to, from, next) {
   //to将要访问的路径
   //from代表从哪个路径跳转而来
   //next是一个函数，表示放行
@@ -108,6 +109,9 @@ router.beforeEach((to, from, next) => {
   //获取token
   const uid = window.sessionStorage.getItem('userid');
   if (!uid) return next('/');
+  
+  // store.commit("SetSideBarPath",to.path);
+  // console.log(router);
   next();
 });
 export default router

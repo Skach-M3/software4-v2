@@ -67,6 +67,10 @@ export default {
         },
         toolbox: {
           show: true,
+          feature: {
+          mark: { show: true },
+          saveAsImage: { show: true }
+    }
         },
         emphasis: {
               focus: 'adjacency',

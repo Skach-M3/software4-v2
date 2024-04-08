@@ -10,7 +10,8 @@ export default new Vuex.Store({
     dataList: [],
     taskList: [],
     modelList: [],
-    treeData:[]
+    treeData:[],
+    sideBarPath:''
   },
 
   getters: {
@@ -114,6 +115,9 @@ export default new Vuex.Store({
     SetTreeData(state, value) {
       state.treeData = value;
     },
+    SetSideBarPath(state,value){
+      state.sideBarPath = value;
+    }
   },
   modules: {
     disFactor: taskModule,

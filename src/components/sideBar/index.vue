@@ -48,12 +48,12 @@
             </el-menu-item>
             <el-menu-item index="/sideBar/taskManage">
               <i class="el-icon-menu"></i>
-              <span slot="title">任务管理</span>
+              <span slot="title">历史任务查看</span>
             </el-menu-item>
-            <el-menu-item index="/sideBar/tableManage">
+            <!-- <el-menu-item index="/sideBar/tableManage">
               <i class="el-icon-menu"></i>
               <span slot="title">字段管理</span>
-            </el-menu-item>
+            </el-menu-item> -->
             <el-menu-item index="/sideBar/DisFactor">
               <i class="el-icon-menu"></i>
               <span slot="title">疾病危险因素挖掘</span>
@@ -98,7 +98,7 @@ export default {
   // components: { AppMain },
   mounted() {
     this.LoginUserName = sessionStorage.getItem("username");
-    this.role = sessionStorage.getItem("role");
+    this.role = sessionStorage.getItem("userrole");
   },
   computed :{},
   data() {

@@ -58,6 +58,7 @@
         <div class="table_statistic" style="margin-top: 1.5%;">
           <div class="taskInfoBox result">
             <i class="el-icon-data-line" style="font-size: 25px;"></i><span class="featureTitle">特征分布：</span>
+            <el-button type="success" style="float:right;margin-right:50px;margin-buttom:20px" @click="exportRes">导出特征信息表</el-button>
           </div>
           <div id="table">
             <!-- <div id="creatorFilter">
@@ -114,8 +115,8 @@
 
     <div class="buttonGroup">
       <el-button @click="backStep()" round>上一步</el-button>
-      <el-button type="success" @click="exportRes()" round>导出结果</el-button>
-      <el-button type="primary" @click="next()" round>保存任务</el-button>
+      <el-button type="success" @click="exportRes" round>导出结果</el-button>
+      <el-button type="primary" @click="next" round>保存任务</el-button>
     </div>
   </div>
 </template>
@@ -274,6 +275,8 @@ export default {
         }
 
         this.graphTitile = `${this.m_disease}中部分危险因素间关联关系`;
+        console.log(this.m_disease,this.graphTitile);
+        
 
         for (let i = 0; i < this.m_result.res.length; i++) {
           for (let j = 0; j < this.m_result.res[i].length; j++) {
@@ -294,7 +297,7 @@ export default {
             this.links.push(JSON.parse(JSON.stringify(tempLink)));
           }
         }
-        var resTreedata = this.m_result.treeRes;
+        let resTreedata = this.m_result.treeRes;
         Object.entries(resTreedata).forEach(function ([key, value], index) {
           var firstChildren = { name: String(key), children: [] };
           treeData.children.push(firstChildren);
@@ -366,7 +369,7 @@ export default {
             this.links.push(JSON.parse(JSON.stringify(tempLink)));
           }
         }
-        var resTreedata = this.m_result.treeRes;
+        let resTreedata = this.m_result.treeRes;
         Object.entries(resTreedata).forEach(function ([key, value], index) {
           var firstChildren = { name: String(key), children: [] };
           treeData.children.push(firstChildren);
@@ -519,33 +522,33 @@ export default {
     async exportRes() {
 
       this.exportToCSV()
-      const divsToExport = ['pdf_graph'];
-      const pdf_positions = [
-        { x: 5, y: 10 }
-      ];
-      const pdf = new jsPDF();
+      // const divsToExport = ['pdf_graph'];
+      // const pdf_positions = [
+      //   { x: 5, y: 10 }
+      // ];
+      // const pdf = new jsPDF();
 
-      const renderPromises = divsToExport.map((divId, index) => {
-        const div = document.getElementById(divId);
-        return html2canvas(div).then((canvas) => {
-          const imgData = canvas.toDataURL('image/png');
-          const imgProps = pdf.getImageProperties(imgData);
-          const pdfWidth = pdf.internal.pageSize.getWidth();
-          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-          const position = pdf_positions[index] || { x: 0, y: 0 };
-          pdf.addImage(
-            imgData,
-            'PNG',
-            position.x,
-            position.y,
-            pdfWidth,
-            pdfHeight
-          );
-        });
-      });
+      // const renderPromises = divsToExport.map((divId, index) => {
+      //   const div = document.getElementById(divId);
+      //   return html2canvas(div).then((canvas) => {
+      //     const imgData = canvas.toDataURL('image/png');
+      //     const imgProps = pdf.getImageProperties(imgData);
+      //     const pdfWidth = pdf.internal.pageSize.getWidth();
+      //     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      //     const position = pdf_positions[index] || { x: 0, y: 0 };
+      //     pdf.addImage(
+      //       imgData,
+      //       'PNG',
+      //       position.x,
+      //       position.y,
+      //       pdfWidth,
+      //       pdfHeight
+      //     );
+      //   });
+      // });
 
-      await Promise.all(renderPromises);
-      pdf.save(`${this.m_taskName}.pdf`);
+      // await Promise.all(renderPromises);
+      // pdf.save(`${this.m_taskName}.pdf`);
     },
 
     getSatisticTableData() {

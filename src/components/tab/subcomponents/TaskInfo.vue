@@ -33,7 +33,7 @@
           <span class="lineStyle">▍</span>
           <span>备注</span>
         </template>
-        <el-input type="textarea" :autosize="{ minRows: 10, maxRows: 20 }" placeholder="请输入内容"
+        <el-input type="textarea" :autosize="{ minRows: 10, maxRows: 10 }" maxlength="200" show-word-limit placeholder="请输入内容"
           v-model="taskInfoForm.tips"></el-input>
       </el-form-item>
 

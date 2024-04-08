@@ -21,7 +21,7 @@
           </div>
           <div class="select_feature_check_boxs">
             <el-checkbox-group v-model="checked_dependent_variables">
-              <div v-for="item in all_features" :key="item.id" v-show="item.status == 0 || item.status == 1">
+              <div class="checkItem" v-for="item in all_features" :key="item.id" v-show="item.status == 0 || item.status == 1">
                 <el-checkbox :label="item" @change="dependent_variables_groupCheck(item)">{{ item.label }}
                 </el-checkbox> <el-progress :percentage="item.fill_rate"
                   :color="changeProgressColor(item.fill_rate)"></el-progress>
@@ -386,34 +386,33 @@ export default {
   grid-template-rows: 20px, 20px;
 }
 
-.el-checkbox--small {
-  padding-bottom: 10px;
-}
-
-.el-checkbox-group .el-checkbox {
-  width: 120px;
-}
-
-.el-checkbox span {
-  display: block;
-  width: 100px;
-}
-
 /* 使用popover以后省略号就没用了 */
 .el-checkbox-group >>> .el-checkbox__label {
-  margin-top: 5px;
-  line-height: 10px;
-  width: 80px;
+  /* padding-top: 5px; */
+  line-height: 15px;
+  vertical-align: text-bottom;
+  width: 90px;
   overflow: hidden;
   white-space: nowrap; /* 防止文本换行 */
   text-overflow: ellipsis; /* 显示省略号 */
 }
 
-.lineStyle {
+.el-checkbox-group>>>.el-checkbox__label:hover {
+  overflow: visible;
+}
+
+.select_feature_check_boxs {
+  width: 100%;
+  height: auto;
+  margin-left: 5%;
+}
+
+/* .lineStyle {
   color: rgb(100, 172, 231);
   font-weight: 100;
   font-size: 25px;
-}
+} */
+
 
 .buttonGroup {
   margin-top: 20px;
@@ -471,19 +470,5 @@ export default {
   margin-left: 2%;
   position: relative;
   bottom: 5px;
-}
-
-.select_feature_check_boxs {
-  width: 100%;
-  height: auto;
-  margin-left: 5%;
-}
-
-.select_feature_check_boxs>>>.el-checkbox__label {
-  overflow: hidden;
-}
-
-.select_feature_check_boxs>>>.el-checkbox__label:hover {
-  overflow: visible;
 }
 </style>
