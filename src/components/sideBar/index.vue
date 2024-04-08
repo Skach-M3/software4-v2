@@ -38,7 +38,10 @@
               <i class="el-icon-menu"></i>
               <span slot="title">首页</span>
             </el-menu-item>
-
+            <el-menu-item index="/sideBar/userManage" v-if="role==0">
+              <i class="el-icon-menu"></i>
+              <span slot="title">用户管理</span>
+            </el-menu-item>
             <el-menu-item index="/sideBar/dataManage">
               <i class="el-icon-menu"></i>
               <span slot="title">数据管理</span>
@@ -95,13 +98,15 @@ export default {
   // components: { AppMain },
   mounted() {
     this.LoginUserName = sessionStorage.getItem("username");
+    this.role = sessionStorage.getItem("role");
   },
   computed :{},
   data() {
     return {
       activeIndex: "0",
       // describVision: false,
-      LoginUserName:''
+      LoginUserName:'',
+      role:''
     };
   },
   methods: {

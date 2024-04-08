@@ -9,6 +9,7 @@ import DisFactor from "@/components/tab/DisFactor.vue"
 import F_Factor from "@/components/tab/F_Factor.vue";
 import FactorDis from "@/components/tab/FactorDis.vue";
 import tableManage from "@/components/tab/tableManage.vue";
+import userManage from "@/components/tab/userManage.vue";
 import Login from "@/components/login/Login.vue";
 import Register from "@/components/login/register.vue";
 import TaskResult from "@/components/tab/subcomponents/TaskResult.vue";
@@ -48,6 +49,11 @@ const routes = [
         path: "dataManage",
         name: "dataManage",
         component: dataManage,
+      },
+      {
+        path: "userManage",
+        name: "userManage",
+        component: userManage,
       },
       {
         path: "modelManage",

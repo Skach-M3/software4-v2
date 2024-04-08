@@ -30,7 +30,7 @@
             class="loginContainer"
             style="font-size: 30px"
           >
-            <h3 class="loginTitle">软件登陆</h3>
+            <h3 class="loginTitle">用户登陆</h3>
             <el-form-item prop="username">
               <el-input
                 type="text"
