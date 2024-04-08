@@ -3,7 +3,6 @@
     <el-container class="con">
       <el-header class="header">
         <el-menu
-        :default-active="activeIndex"
           background-color="#071135"
           text-color="#fff"
           active-text-color="#fff"
@@ -26,7 +25,7 @@
       <el-container>
         <el-aside width="200px" class="side">
           <el-menu
-            default-active="1"
+            :default-active=activeIndex
             router
             class="el-menu-vertical-demo"
             background-color="#071135"
@@ -103,7 +102,7 @@ export default {
   computed :{},
   data() {
     return {
-      activeIndex: "0",
+      activeIndex: this.$store.state.sideBarPath,
       // describVision: false,
       LoginUserName:'',
       role:''

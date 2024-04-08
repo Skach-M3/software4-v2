@@ -1,5 +1,5 @@
 import Vue from 'vue'
-// import store from '@/store'
+import store from '../store/index'
 import VueRouter from 'vue-router'
 import SideBar from '@/components/sideBar/index.vue'
 import dash from '@/views/dash/index.vue'
@@ -110,8 +110,7 @@ router.beforeEach(function(to, from, next) {
   const uid = window.sessionStorage.getItem('userid');
   if (!uid) return next('/');
   
-  // store.commit("SetSideBarPath",to.path);
-  // console.log(router);
+  store.commit("SetSideBarPath",to.path);
   next();
 });
 export default router
