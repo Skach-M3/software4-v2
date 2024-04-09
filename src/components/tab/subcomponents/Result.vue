@@ -58,7 +58,8 @@
         <div class="table_statistic" style="margin-top: 1.5%;">
           <div class="taskInfoBox result">
             <i class="el-icon-data-line" style="font-size: 25px;"></i><span class="featureTitle">特征分布：</span>
-            <el-button type="success" style="float:right;margin-right:50px;margin-buttom:20px" @click="exportRes">导出特征信息表</el-button>
+            <el-button type="success" style="float:right;margin-right:50px;margin-buttom:20px"
+              @click="exportRes">导出特征信息表</el-button>
           </div>
           <div id="table">
             <!-- <div id="creatorFilter">
@@ -275,7 +276,7 @@ export default {
         }
 
         this.graphTitile = `${this.m_disease}中部分危险因素间关联关系`;
-        console.log(this.m_disease,this.graphTitile);
+        console.log(this.m_disease, this.graphTitile);
 
         for (let i = 0; i < this.m_result.res.length; i++) {
           for (let j = 0; j < this.m_result.res[i].length; j++) {
@@ -389,10 +390,10 @@ export default {
       tableName: this.m_dataset,
     }).then((res) => {
       if (res.code == 200) {
-        this.distribution = JSON.parse(res.data[0]);
-        console.log(this.distribution);
-        // this.distribution = res.data[0];
-        // console.log(typeof(this.distribution));
+        var jsonString = res.data[0].replace(/'/g, '"');
+
+        // 将 JSON 字符串解析为对象数组
+        this.distribution = JSON.parse(jsonString);
       }
     });
     this.initFlag = true;
@@ -418,7 +419,7 @@ export default {
         res: this.m_result?.res,
         dataset: this.m_dataset,
         uid: sessionStorage.getItem("userid") - 0,
-        taskType: this.moduleName
+        tasktype: this.moduleName
       };
       let alghName = "m_" + this.m_algorithm;
       let para = [];
@@ -551,19 +552,19 @@ export default {
       // pdf.save(`${this.m_taskName}.pdf`);
     },
 
-    getSatisticTableData() {
-      getRequest(`scripts/get_stastic?tablename=${this.m_dataset}`).then(
-        (res) => {
-          if (res.code == 200) {
-            console.log(res.data[0]);
-            console.log(typeof (res.data));
-          }
-          else {
-            this.$message.error("获取数据失败");
-          }
-        }
-      );
-    }
+    // getSatisticTableData() {
+    //   getRequest(`scripts/get_stastic?tablename=${this.m_dataset}`).then(
+    //     (res) => {
+    //       if (res.code == 200) {
+    //         console.log(res.data[0]);
+    //         console.log(typeof (res.data));
+    //       }
+    //       else {
+    //         this.$message.error("获取数据失败");
+    //       }
+    //     }
+    //   );
+    // }
   },
 };
 </script>

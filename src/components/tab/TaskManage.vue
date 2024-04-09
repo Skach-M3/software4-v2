@@ -2,12 +2,11 @@
   <div class="main">
     <div class="left_tree">
       <el-tree ref="tree" :data="treeData" :show-checkbox="false" node-key="id" default-expand-all
-          :expand-on-click-node="false" :check-on-click-node="true" :highlight-current="true" @node-click="changeData"
-          >
-          <span class="custom-tree-node" slot-scope="{ node, data }">
-            <span>{{ node.label }}</span>
-          </span>
-        </el-tree>
+        :expand-on-click-node="false" :check-on-click-node="true" :highlight-current="true" @node-click="changeData">
+        <span class="custom-tree-node" slot-scope="{ node, data }">
+          <span>{{ node.label }}</span>
+        </span>
+      </el-tree>
       <!-- <el-dialog title="提示" :visible.sync="dialogDiseaseVisible" width="30%">
         <span>
           请输入新病种名称：<el-input
@@ -28,40 +27,34 @@
         <div class="filter">
           <span>任务负责人：</span>
           <el-select v-model="leader" placeholder="请选择" @change="pagehelper()">
-            <el-option
-              v-for="item in taskLeaderList"
-              :key="item"
-              :label="item"
-              :value="item"
-            >
+            <el-option v-for="item in taskLeaderList" :key="item" :label="item" :value="item">
             </el-option>
           </el-select>
         </div>
         <div class="filter">
           <span>任务类型：</span>
-          <el-select v-model="taskType" placeholder="请选择" @change="pagehelper()">
-            <el-option
-              v-for="item in taskTypeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.label"
-            >
+          <el-select v-model="tasktype" placeholder="请选择" @change="pagehelper()">
+            <el-option v-for="item in taskTypeOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </div>
-        <el-button @click="clearFilter">清除</el-button>
-        <el-button class="addTask" type="success" :disabled="taskType.length<1">新建{{taskType}}任务</el-button>
+        <el-button @click="clearFilter()">清除</el-button>
+        <el-dropdown style="margin-left: 1%;"  @command="handleCommand">
+          <el-button type="success">
+            新建任务<i class="el-icon-arrow-down el-icon--right"></i>
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="/sideBar/DisFactor">疾病危险因素挖掘</el-dropdown-item>
+            <el-dropdown-item command="/sideBar/F_Factor">危险因素相关因素挖掘</el-dropdown-item>
+            <el-dropdown-item command="/sideBar/FactorDis">危险因素相关疾病挖掘</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </div>
 
       <!--===============================    卡片组     ==============================================================-->
       <div class="cardGroup">
-        <el-card
-          class="taskCard"
-          v-for="item in currentTaskList"
-          :key="item.id"
-          shadow="always"
-          v-show="!(disease || leader) || (disease == item.disease && !leader) || (leader == item.leader && !disease) || (disease == item.disease && leader == item.leader)"
-        >
+        <el-card class="taskCard" v-for="item in currentTaskList" :key="item.id" shadow="always"
+          v-show="!(disease || leader) || (disease == item.disease && !leader) || (leader == item.leader && !disease) || (disease == item.disease && leader == item.leader)">
           <div class="cardInfo">
             <div><span class="ttl">任务名称：</span>{{ item.taskname }}</div>
             <div><span class="ttl">负责人：</span>{{ item.leader }}</div>
@@ -71,36 +64,16 @@
             <div><span class="ttl">创建时间：</span>{{ item.createtime }}</div>
           </div>
           <div class="editButton">
-            <el-button
-              size="mini"
-              type="primary"
-              @click="handleCheck(item)"
-              style="margin-right: 20px"
-              >查看</el-button
-            >
-            <el-popconfirm
-              title="删除后无法恢复"
-              icon="el-icon-warning"
-              icon-color="red"
-              @confirm="handleDelete(item)"
-            >
-              <el-button slot="reference" size="mini" type="danger"
-                >删除</el-button
-              >
+            <el-button size="mini" type="primary" @click="handleCheck(item)" style="margin-right: 20px">查看</el-button>
+            <el-popconfirm title="删除后无法恢复" icon="el-icon-warning" icon-color="red" @confirm="handleDelete(item)">
+              <el-button slot="reference" size="mini" type="danger">删除</el-button>
             </el-popconfirm>
           </div>
         </el-card>
       </div>
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="this.params.page"
-        :page-sizes="[6,9,12,15,24]"
-        :page-size="this.params.size"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="this.total"
-        style="margin-top: 2%; margin-left: 3%;"
-      >
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+        :current-page="this.params.page" :page-sizes="[6, 9, 12, 15, 24]" :page-size="this.params.size"
+        layout="total, sizes, prev, pager, next, jumper" :total="this.total" style="margin-top: 2%; margin-left: 3%;">
       </el-pagination>
     </div>
   </div>
@@ -125,10 +98,10 @@ export default {
   data() {
     return {
       disease: "",
-      dataset:"",
+      dataset: "",
       leader: "",
       result: {},
-      total:0,
+      total: 0,
       buttonText: "新建任务",
       params: {
         page: 1,
@@ -136,16 +109,16 @@ export default {
       },
       // dialogDiseaseVisible:false,
       // diseaseName:'',
-      currentTaskList:[],
-      treeData:[],
-      taskType:"",
+      currentTaskList: [],
+      treeData: [],
+      tasktype: "",
       taskTypeOptions: [{
         label: "疾病危险因素挖掘",
-        value: "DisFactor"
-      },{
+        value: "disFactor"
+      }, {
         label: "危险因素相关因素挖掘",
-        value: "F_Factor"
-      },{
+        value: "f_Factor"
+      }, {
         label: "危险因素相关疾病挖掘",
         value: "factorDis"
       }
@@ -154,52 +127,44 @@ export default {
   },
 
   methods: {
-    ...mapActions(["getTaskList","getTreeData"]),
+    ...mapActions(["getTaskList", "getTreeData"]),
     ...mapMutations(["SetTaskList"]),
-    // getTreeData()
-    // {
-    //   getRequest("nodes/all").then((res) => {
-    //     if(res.code == 200)
-    //     {
-    //       this.treeData = res.data;
-    //     }
-    //     else{
-    //       this.$message.error("获取树形结构数据失败");
-    //     }
-    //   });
-    // },
+    handleCommand(command) {
+      this.$router.push(command);
+    },
     handleCheck(row) {
       getRequest(`Task/result/${row.id}`).then((res) => {
-        if(res.code == 200)
-        {
+        if (res.code == 200) {
           this.result = res.data;
           // if(this.result.parameters != null){
           //   this.result.parameters = this.result.parameters.split(",");
-            
+
           // }
-          sessionStorage.setItem("result",JSON.stringify(this.result));
+          sessionStorage.setItem("result", JSON.stringify(this.result));
           this.$router.push("TaskResult")
         }
-        else{
+        else {
           this.$message.error("查看任务失败");
         }
       });
     },
     handleDelete(row) {
       getRequest(`Task/delete/${row.id}`).then((res) => {
-       if(res.code == 200){
-        this.$message.success("删除任务成功");
-        this.pagehelper();
-       }
-       else{
-        this.$message.error("删除任务失败");
-       }
+        if (res.code == 200) {
+          this.$message.success("删除任务成功");
+          this.pagehelper();
+        }
+        else {
+          this.$message.error("删除任务失败");
+        }
       });
     },
     clearFilter() {
       this.disease = "";
       this.leader = "";
-      this.taskType = "";
+      this.tasktype = "";
+      this.dataset = "";
+      this.pagehelper();
     },
     handleCheckChange(data, checked) {
       if (checked) {
@@ -209,12 +174,11 @@ export default {
 
 
     changeData(data) {
-      if(data.isLeafs == 0)
-      {
-        this.dataset="";
-        this.disease=data.label;
+      if (data.isLeafs == 0) {
+        this.dataset = "";
+        this.disease = data.label;
       }
-      if(data.isLeafs == 1){
+      if (data.isLeafs == 1) {
         this.dataset = data.label;
         this.disease = "";
       }
@@ -229,7 +193,7 @@ export default {
       this.pagehelper();
     },
     pagehelper() {
-      getRequest(`Task/selectByPage?pageNum=${this.params.page}&pageSize=${this.params.size}&leader=${this.leader}&disease=${this.disease}&dataset=${this.dataset}`
+      getRequest(`Task/selectByPage?pageNum=${this.params.page}&pageSize=${this.params.size}&leader=${this.leader}&disease=${this.disease}&dataset=${this.dataset}&tasktype=${this.tasktype}`
       ).then((res) => {
         if (res) {
           this.total = res.data.total;
@@ -276,24 +240,30 @@ export default {
   margin-bottom: 20px;
 }
 
-#top_buttons > * {
+#top_buttons>* {
   display: inline-block;
 }
+
 #task_disease {
   margin-right: 40px;
 }
+
 .filter {
   margin-right: 20px;
 }
+
 #table {
   margin-top: 10px;
 }
+
 .lineStyle {
   color: rgb(100, 172, 231);
 }
+
 .featureTitle {
   font-weight: 800;
 }
+
 .cardGroup {
   width: 100%;
   margin-left: 3%;
@@ -305,17 +275,25 @@ export default {
 
 .cardInfo {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* 定义两列，每列占用相等的空间 */
-  grid-template-rows: auto auto auto auto; /* 定义四行，高度根据内容自适应 */
-  gap: 10px; /* 定义网格行和列之间的间隙 */
+  grid-template-columns: 1fr 1fr;
+  /* 定义两列，每列占用相等的空间 */
+  grid-template-rows: auto auto auto auto;
+  /* 定义四行，高度根据内容自适应 */
+  gap: 10px;
+  /* 定义网格行和列之间的间隙 */
 }
 
-.cardInfo > div:nth-child(5), /* 第五个子元素（数据表） */
-.cardInfo > div:nth-child(6) /* 第六个子元素（创建时间） */ {
-  grid-column: 1 / span 2; /* 这两个元素跨越两列 */
+.cardInfo>div:nth-child(5),
+/* 第五个子元素（数据表） */
+.cardInfo>div:nth-child(6)
+
+/* 第六个子元素（创建时间） */
+  {
+  grid-column: 1 / span 2;
+  /* 这两个元素跨越两列 */
 }
 
-.ttl{
+.ttl {
   font-weight: 600;
   color: #071135;
 }
@@ -328,24 +306,33 @@ export default {
 .icon {
   justify-self: end;
 }
-.taskCard{
+
+.taskCard {
   width: 110%;
 }
 
-.addTask{
-
+.addTask[disabled]:hover::after {
+  position: absolute;
+  right: 28vw;
+  top: 12vh;
+  padding: 5px;
+  background-color: #444444;
+  border-radius: 5px;
+  color: #fff;
+  z-index: 2;
+  width: 120px;
+  content: "请先选择任务类型";
 }
 
-.addTask[disabled]:hover::after{
-    position: absolute;
-    right: 28vw;
-    top: 12vh;
-    padding: 5px;
-    background-color: #444444;
-    border-radius: 5px;
-    color: #fff;
-    z-index: 2;
-    width: 120px;
-    content: "请先选择任务类型";
+.el-dropdown {
+  vertical-align: top;
+}
+
+.el-dropdown+.el-dropdown {
+  margin-left: 15px;
+}
+
+.el-icon-arrow-down {
+  font-size: 12px;
 }
 </style>

@@ -93,16 +93,22 @@
 <script>
 import { mapMutations } from 'vuex';
 // import AppMain from "@/components/AppMain";
+import store from '@/store';
 export default {
   // components: { AppMain },
   mounted() {
     this.LoginUserName = sessionStorage.getItem("username");
     this.role = sessionStorage.getItem("userrole");
   },
-  computed :{},
+  computed :{
+    // 写在data里使用router.push时更改vuex后该值不会响应式更新
+    activeIndex() {
+			return this.$store.state.sideBarPath;
+		}
+  },
   data() {
     return {
-      activeIndex: this.$store.state.sideBarPath,
+      // activeIndex: this.$store.state.sideBarPath,
       // describVision: false,
       LoginUserName:'',
       role:''

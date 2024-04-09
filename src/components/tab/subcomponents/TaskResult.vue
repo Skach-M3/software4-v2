@@ -1,8 +1,8 @@
 <template>
   <div>
     <div style="width:100%;height:20px;" class="header">
-         <el-page-header @back="goBack" content="任务结果页面">
-    </el-page-header>
+      <el-page-header @back="goBack" content="任务结果页面">
+      </el-page-header>
     </div>
     <div id="pdf_1">
       <el-card class="taskInfo_box_card">
@@ -37,9 +37,9 @@
         <div slot="header" class="">
           <h2>研究对象:</h2>
         </div>
-        
+
         <!-- 两种不同展示方式 -->
-        <div class="taskInfo_box_card_group" v-if="res.feature.length<=15">
+        <div class="taskInfo_box_card_group" v-if="res.feature.length <= 15">
           <div class="taskInfo_box_card_item">
             <i class="el-icon-takeaway-box" style="font-size: 25px;"></i><span class="featureTitle">研究病种：</span>
             <span>{{ res.disease }}</span>
@@ -52,44 +52,46 @@
 
           <div class="taskInfo_box_card_item">
             <i class="el-icon-cpu" style="font-size: 25px;"></i><span class="featureTitle">所用算法：</span>
-            <span>{{ res.model }}    </span>
-            <span v-if="res.para.length!==0" v-for="(item,index) in res.para">  {{ item }}:{{ res.paraValue[index] }};</span>
+            <span>{{ res.model }} </span>
+            <span v-if="res.para.length !== 0" v-for="(item, index) in res.para"> {{ item }}:{{ res.paraValue[index]
+              }};</span>
           </div>
-         
+
           <div class="taskInfo_box_card_item">
-              <i class="el-icon-star-off" style="font-size: 25px;"></i><span class="featureTitle">所用特征：</span>
+            <i class="el-icon-star-off" style="font-size: 25px;"></i><span class="featureTitle">所用特征：</span>
             <span>{{ res.feature.toString() }}</span>
           </div>
 
         </div>
-        
+
         <div v-else>
           <div class="taskInfo_box_card_group">
 
             <div class="taskInfo_box_card_item">
-            <i class="el-icon-takeaway-box" style="font-size: 25px;"></i><span class="featureTitle">研究病种：</span>
-            <span>{{ res.disease }}</span>
+              <i class="el-icon-takeaway-box" style="font-size: 25px;"></i><span class="featureTitle">研究病种：</span>
+              <span>{{ res.disease }}</span>
+            </div>
+
+            <div class="taskInfo_box_card_item">
+              <i class="el-icon-s-grid" style="font-size: 25px;"></i><span class="featureTitle">所用数据：</span>
+              <span>{{ res.dataset }}</span>
+            </div>
+
+            <div class="taskInfo_box_card_item">
+              <i class="el-icon-cpu" style="font-size: 25px;"></i><span class="featureTitle">所用算法：</span>
+              <span>{{ res.model }} </span>
+              <span v-if="res.para.length !== 0" v-for="(item, index) in res.para"> {{ item }}:{{ res.paraValue[index]
+                }};</span>
+            </div>
+
           </div>
 
-          <div class="taskInfo_box_card_item">
-            <i class="el-icon-s-grid" style="font-size: 25px;"></i><span class="featureTitle">所用数据：</span>
-            <span>{{ res.dataset }}</span>
-          </div>
-
-          <div class="taskInfo_box_card_item">
-            <i class="el-icon-cpu" style="font-size: 25px;"></i><span class="featureTitle">所用算法：</span>
-            <span>{{ res.model }}    </span>
-            <span v-if="res.para.length!==0" v-for="(item,index) in res.para">  {{ item }}:{{ res.paraValue[index] }};</span>
-          </div>
-
-          </div>
-        
           <div class="taskInfo_box_card_group">
-         
-          <div class="taskInfo_box_card_item">
+
+            <div class="taskInfo_box_card_item">
               <i class="el-icon-star-off" style="font-size: 25px;"></i><span class="featureTitle">所用特征：</span>
-            <span style="white-space: pre-wrap;">{{ res.feature.toString() }}</span>
-          </div>
+              <span style="white-space: pre-wrap;">{{ res.feature.toString() }}</span>
+            </div>
           </div>
         </div>
 
@@ -182,255 +184,7 @@ export default {
       links: [],
       data: {},
       type: "",
-      distribution: [
-        {
-          feature_name: "age",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "sex",
-          num: 3200,
-          type: "社会学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "cp",
-          num: 3200,
-          type: "社会学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "trestbps",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "chol",
-          num: 3200,
-          type: "社会学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "fbs",
-          num: 3200,
-          type: "行为学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "restcq",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "thalach",
-          num: 3200,
-          type: "社会学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "wxanq",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "oldpeak",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "slope",
-          num: 3200,
-          type: "社会学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "ca",
-          num: 3200,
-          type: "行为学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "thal",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "chcol",
-          num: 3200,
-          type: "行为学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "sodc",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "cakr",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "bdre",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "age",
-          num: 3200,
-          type: "行为学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-        {
-          feature_name: "age",
-          num: 3200,
-          type: "人口学",
-          average: 32.66,
-          bzc: 7.858,
-          skewness: 3.299,
-          kurtosis: 41.529,
-          s_w_d: 0.114,
-          s_w_p: 0.0,
-          k_s_d: 0.116,
-          k_s_p: 0.0,
-        },
-      ],
+      distribution: [],
     };
   },
 
@@ -515,8 +269,8 @@ export default {
         this.links.push(JSON.parse(JSON.stringify(tempLink)));
       }
     }
-    console.log('links',this.links);
-    console.log('nodes',this.node);
+    console.log('links', this.links);
+    console.log('nodes', this.node);
     // var resTreedata = this.res.treeRes;
     // Object.entries(resTreedata).forEach(function ([key, value], index) {
     //   var firstChildren = { name: String(key), children: [] };
@@ -532,8 +286,9 @@ export default {
       tableName: this.res.dataset,
     }).then((res) => {
       if (res.code == 200) {
-        this.distribution= JSON.parse(res.data[0]);
-        console.log(this.distribution);
+        var jsonString = res.data[0].replace(/'/g, '"');
+        // 将 JSON 字符串解析为对象数组
+        this.distribution = JSON.parse(jsonString);
         // this.distribution = res.data[0];
         // console.log(typeof(this.distribution));
       }
@@ -614,5 +369,4 @@ span {
   justify-content: space-between;
   align-items: center;
 }
-
 </style>

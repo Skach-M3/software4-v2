@@ -111,6 +111,7 @@ router.beforeEach(function(to, from, next) {
   if (!uid) return next('/');
   
   store.commit("SetSideBarPath",to.path);
+  // console.log(store.state.sideBarPath);
   next();
 });
 export default router
