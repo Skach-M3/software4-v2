@@ -430,30 +430,40 @@ export default {
   padding-bottom: 10px;
 }
 
-.el-checkbox-group .el-checkbox {
-  width: 120px;
-}
-
-.el-checkbox span {
-  display: block;
-  width: 100px;
+.el-checkbox-group {
+  padding-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(7, 150px);
+  grid-gap: 20px;
+  grid-template-rows: 20px, 20px;
 }
 
 /* 使用popover以后省略号就没用了 */
 .el-checkbox-group >>> .el-checkbox__label {
-  margin-top: 5px;
-  line-height: 10px;
-  width: 80px;
+  /* padding-top: 5px; */
+  line-height: 15px;
+  vertical-align: text-bottom;
+  width: 90px;
   overflow: hidden;
   white-space: nowrap; /* 防止文本换行 */
   text-overflow: ellipsis; /* 显示省略号 */
 }
 
-.lineStyle {
+.el-checkbox-group>>>.el-checkbox__label:hover {
+  overflow: visible;
+}
+
+.select_feature_check_boxs {
+  width: 100%;
+  height: auto;
+  margin-left: 5%;
+}
+
+/* .lineStyle {
   color: rgb(100, 172, 231);
   font-weight: 100;
   font-size: 25px;
-}
+} */
 
 .buttonGroup {
   margin-top: 20px;
@@ -503,19 +513,5 @@ export default {
   margin-left: 2%;
   position: relative;
   bottom: 5px;
-}
-
-.select_feature_check_boxs {
-  width: 100%;
-  height: auto;
-  margin-left: 5%;
-}
-
-.select_feature_check_boxs >>> .el-checkbox__label {
-  overflow: hidden;
-}
-
-.select_feature_check_boxs >>> .el-checkbox__label:hover {
-  overflow: visible;
 }
 </style>

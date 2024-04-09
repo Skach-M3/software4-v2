@@ -123,23 +123,23 @@
 
 <script>
 
-import FileSaver from "file-saver";
-import XLSX from "xlsx";
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+// import FileSaver from "file-saver";
+// import XLSX from "xlsx";
+// import jsPDF from 'jspdf';
+// import html2canvas from 'html2canvas';
 import vuex_mixin from "@/components/mixins/vuex_mixin";
 import GraphVue from "./Graph.vue";
-import Tree from "./Tree.vue";
+// import Tree from "./Tree.vue";
 import { postRequest } from "@/api/user";
 import { mapMutations } from "vuex";
-import { time } from "echarts";
+// import { time } from "echarts";
 import { getRequest } from "@/api/user.js";
 export default {
   name: "Result",
   mixins: [vuex_mixin],
   components: {
     GraphVue,
-    Tree,
+    // Tree,
   },
   props: {
     moduleName: {
@@ -276,7 +276,6 @@ export default {
 
         this.graphTitile = `${this.m_disease}中部分危险因素间关联关系`;
         console.log(this.m_disease,this.graphTitile);
-        
 
         for (let i = 0; i < this.m_result.res.length; i++) {
           for (let j = 0; j < this.m_result.res[i].length; j++) {
@@ -419,6 +418,7 @@ export default {
         res: this.m_result?.res,
         dataset: this.m_dataset,
         uid: sessionStorage.getItem("userid") - 0,
+        taskType: this.moduleName
       };
       let alghName = "m_" + this.m_algorithm;
       let para = [];

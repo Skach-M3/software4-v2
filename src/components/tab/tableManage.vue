@@ -198,7 +198,6 @@
 </template>
 <script>
 import { getRequest, postRequest } from "@/utils/api";
-// import { treeData, treeDataDialog } from "@/components/tab/treeTargetData.js";
 // import { tableInfoData } from "@/components/tab/TableData.js";
 import { getTableData } from "@/api/tableDescribe.js";
 import { getFetures } from "@/api/feature.js";

@@ -156,9 +156,9 @@
 
 
 import GraphVue from "./Graph.vue";
-import Tree from "./Tree.vue";
-import { postRequest } from "@/api/user";
-import { time } from "echarts";
+// import Tree from "./Tree.vue";
+// import { postRequest } from "@/api/user";
+// import { time } from "echarts";
 import { getRequest } from "@/api/user.js";
 export default {
   name: "TaskResult",

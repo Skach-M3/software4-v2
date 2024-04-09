@@ -326,12 +326,7 @@ export default {
 
   data() {
     return {
-
-      // 获取虚拟树形结构数据
-      // treeData: JSON.parse(JSON.stringify(treeData)),
       treeData: [],
-      // 获取虚拟表格数据
-      // tableData: JSON.parse(JSON.stringify(tableData)),
       tableData: [],
       fullData: '',
       showTooltip: false,

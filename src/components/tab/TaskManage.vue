@@ -25,7 +25,7 @@
     <div class="right">
       <!--==========================     头部按钮     ==============================================================-->
       <div id="top_buttons">
-        <div id="task_leader">
+        <div class="filter">
           <span>任务负责人：</span>
           <el-select v-model="leader" placeholder="请选择" @change="pagehelper()">
             <el-option
@@ -37,8 +37,20 @@
             </el-option>
           </el-select>
         </div>
+        <div class="filter">
+          <span>任务类型：</span>
+          <el-select v-model="taskType" placeholder="请选择" @change="pagehelper()">
+            <el-option
+              v-for="item in taskTypeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.label"
+            >
+            </el-option>
+          </el-select>
+        </div>
         <el-button @click="clearFilter">清除</el-button>
-        <!-- <el-button type="success">新建任务</el-button> -->
+        <el-button class="addTask" type="success" :disabled="taskType.length<1">新建{{taskType}}任务</el-button>
       </div>
 
       <!--===============================    卡片组     ==============================================================-->
@@ -117,6 +129,7 @@ export default {
       leader: "",
       result: {},
       total:0,
+      buttonText: "新建任务",
       params: {
         page: 1,
         size: 9,
@@ -124,7 +137,19 @@ export default {
       // dialogDiseaseVisible:false,
       // diseaseName:'',
       currentTaskList:[],
-      treeData:[]
+      treeData:[],
+      taskType:"",
+      taskTypeOptions: [{
+        label: "疾病危险因素挖掘",
+        value: "DisFactor"
+      },{
+        label: "危险因素相关因素挖掘",
+        value: "F_Factor"
+      },{
+        label: "危险因素相关疾病挖掘",
+        value: "factorDis"
+      }
+      ],
     };
   },
 
@@ -174,6 +199,7 @@ export default {
     clearFilter() {
       this.disease = "";
       this.leader = "";
+      this.taskType = "";
     },
     handleCheckChange(data, checked) {
       if (checked) {
@@ -228,11 +254,12 @@ export default {
 
 .left_tree {
   display: inline-block;
-
+  height: 80vh;
   border-radius: 3px;
   border-left: 1px solid #e6e6e6;
   border-right: 1px solid #e6e6e6;
   border-top: 1px solid #e6e6e6;
+  overflow: auto;
 }
 
 .custom-tree-node {
@@ -255,7 +282,7 @@ export default {
 #task_disease {
   margin-right: 40px;
 }
-#task_leader {
+.filter {
   margin-right: 20px;
 }
 #table {
@@ -303,5 +330,22 @@ export default {
 }
 .taskCard{
   width: 110%;
+}
+
+.addTask{
+
+}
+
+.addTask[disabled]:hover::after{
+    position: absolute;
+    right: 28vw;
+    top: 12vh;
+    padding: 5px;
+    background-color: #444444;
+    border-radius: 5px;
+    color: #fff;
+    z-index: 2;
+    width: 120px;
+    content: "请先选择任务类型";
 }
 </style>
