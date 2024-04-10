@@ -13,7 +13,7 @@
       </el-dialog> -->
       <div class="tipInfo">
         <h3>可选数据</h3>
-        <div class="statistic">当前共有 {{diseaseNum}} 个总病种，{{datasetNum}} 个数据表</div>
+        <div class="statistic">当前共有 {{diseaseNum}} 个一级病种，{{datasetNum}} 个数据表</div>
       </div>
       <hr class="hr-dashed">
       <el-tree ref="tree" :data="treeData" :show-checkbox="false" node-key="id" default-expand-all

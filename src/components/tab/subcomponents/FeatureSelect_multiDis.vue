@@ -12,6 +12,7 @@
           <h3 class="title">选择参与运算的特征(因变量)</h3>
         </div>
         <div class="select_feature_check_boxs">
+          <el-skeleton :row="6" animated :loading="all_features.length < 1"/>
           <el-checkbox-group v-model="checked_dependent_variables">
             <div v-for="item in all_features" :key="item.id">
               <el-checkbox
@@ -44,6 +45,7 @@
           <h3 class="title">选择参与运算的疾病(自变量)</h3>
         </div>
         <div class="select_feature_check_boxs">
+          <el-skeleton :row="6" animated :loading="label_list.length < 1"/>
           <el-checkbox-group v-model="checked_independent_variables">
             <div v-for="item in label_list" :key="item.id">
               <el-checkbox
@@ -148,6 +150,7 @@
           </el-popover>
         </div>
         <div class="select_feature_check_boxs">
+          <el-skeleton :row="6" animated :loading="all_features.length < 1"/>
           <el-checkbox-group v-model="know_variables">
             <div v-for="item in all_features" :key="item.index">
               <el-checkbox :label="item">{{ item.label }} </el-checkbox>

@@ -10,7 +10,8 @@
           <span>(点击类别进行字段筛选)</span>
           <!-- <div class="statistic">当前共有 {{diseaseNum}} 个总病种，{{datasetNum}} 个数据表</div> -->
         </div>
-        <el-tree :data="featureSelectTree" show-checkbox node-key="id" ref="tree" highlight-current
+        <el-skeleton animated :loading="featureSelectTree.length < 1"/>
+        <el-tree v-if="featureSelectTree.length > 0" :data="featureSelectTree" show-checkbox node-key="id" ref="tree" highlight-current
           @check="getCheckedNodes" default-expend-keys=[1]>
           <span class="custom-tree-node" slot-scope="{ node,data }">
             <span v-if="!data.isLeaf">{{ node.label }}</span>
@@ -30,6 +31,7 @@
             <h3 class="title">选择作为标签的特征(因变量)</h3>
           </div>
           <div class="select_feature_check_boxs">
+            <el-skeleton :row="6" animated :loading="all_features.length < 1"/>
             <el-checkbox-group v-model="checked_dependent_variables">
               <div class="checkItem" v-for="item in all_features" :key="item.id" v-show="item.status == 0 || item.status == 1">
                 <el-checkbox :label="item" @change="dependent_variables_groupCheck(item)">{{ item.label }}
@@ -50,6 +52,7 @@
             <h3 class="title">选择危险因素(自变量)</h3>
           </div>
           <div class="select_feature_check_boxs">
+            <el-skeleton :row="6" animated :loading="all_features.length < 1"/>
             <el-checkbox-group v-model="checked_independent_variables">
               <div v-for="item in all_features" :key="item.id" v-show="item.status == 0 || item.status == 2">
                 <el-checkbox :label="item" @change="item.status = (item.status == 2) ? 0 : 2">{{ item.label }}
@@ -116,8 +119,9 @@
             </el-popover>
           </div>
           <div class="select_feature_check_boxs">
+            <el-skeleton :row="6" animated :loading="all_features.length < 1"/>
             <el-checkbox-group v-model="know_variables">
-              <div v-for="item in all_features">
+              <div v-for="item in all_features" :key="item.index">
                 <el-checkbox :label="item">{{ item.label }}
                 </el-checkbox>
               </div>
@@ -414,7 +418,7 @@ export default {
 .select_feature_check_boxs {
   width: 100%;
   height: auto;
-  margin-left: 5%;
+  margin-left: 2.5%;
 }
 
 /* .lineStyle {
