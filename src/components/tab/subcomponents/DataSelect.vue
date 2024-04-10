@@ -2,38 +2,53 @@
   <div>
     <div class="content">
       <div class="left_tree">
-
+        <div class="tipInfo">
+          <h3>可选数据</h3>
+          <div class="statistic">当前共有 {{diseaseNum}} 个总病种，{{datasetNum}} 个数据表</div>
+        </div>
+        <hr class="hr-dashed">
         <el-tree ref="tree" :data="treeData" :show-checkbox="false" node-key="id" default-expand-all
           :expand-on-click-node="false" :check-on-click-node="true" :highlight-current="true" @node-click="changeData"
           @check="changeData" @check-change="handleCheckChange">
-          <span class="custom-tree-node" slot-scope="{ node }">
-            <span>{{ node.label }}</span>
+          <span class="custom-tree-node" slot-scope="{ node,data }">
+            <span v-if="data.catLevel == 1" style="font-weight:bold;font-size:15px;color:#252525">{{ node.label }}</span>
+            <span v-else>{{ node.label }}</span>
           </span>
         </el-tree>
 
       </div>
       <div class="right_table">
         <el-card class="right_table_topCard">
+          <div style="height: 30px;padding-left:5px">
+            <h3 style="margin:-20px">数据预览</h3>
+          </div>
           <div class="describe_content">
-            <h3>数据集信息</h3>
-            <p style="margin-top:0.5%">
-              <i class="el-icon-user"></i>创建人: <span>{{ showDataForm.createUser }}</span>
-              <i class="el-icon-time"></i>创建时间: <span>{{ showDataForm.createTime }}</span>
-              <i class="el-icon-folder-opened"></i>所属类别: <span>{{ showDataForm.classPath }}</span>
-              <i class="el-icon-folder-opened"></i>数据集名称: <span>{{ showDataForm.tablename }}</span>
+            <p>
+              <i class="el-icon-folder"></i> 表名:<span style="font-weight:bold;font-size:18px;color:#252525">{{ showDataForm.tableName }}</span>
+              <i class="el-icon-user"></i> 创建人:<span>{{ showDataForm.createUser }}</span>
+              <i class="el-icon-time"></i> 创建时间:<span>{{ showDataForm.createTime }}</span>
+              <i class="el-icon-finished"></i> 样本个数:<span>{{ showDataForm.sampleNum }}</span>
+              <i class="el-icon-finished"></i> 特征个数:<span>{{ showDataForm.featureNum }}</span>
+              <!-- <i class="el-icon-folder-opened"></i> 所属类别:<span>{{ showDataForm.classPath }}</span> -->
             </p>
           </div>
           <div class="buttom">
-            <el-button type=success @click="next(showDataForm.classPath, showDataForm.tablename)">确认</el-button>
+            <el-button type=primary size="small" :disabled="tableData.length < 1" @click="next(showDataForm.classPath, showDataForm.tablename)">确认</el-button>
           </div>
-
-          <el-table :data="tableData" stripe style="width: 100%" class="custom-table" max-height="580" :fit="false" v-if="tableData.length>0">
-            <el-table-column v-for="(value, key) in tableData[0]" :key="key" :prop="key" :label="key" :width="colWidth">
-              <template slot-scope="{ row }">
-                <div class="truncate-text">{{ row[key] }}</div>
-              </template>
-            </el-table-column>
-          </el-table>
+          
+          <div class="tableDataCSS" v-loading="table_loading" element-loading-text="拼命加载中"
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(0, 0, 0, 0.05)">
+            <div class="tablePlaceholder" v-if="tableData.length <1 && !table_loading">请在左侧选择数据</div>
+            <el-table :data="tableData" stripe class="custom-table" max-height="550" :fit="false" v-if="tableData.length>0" :header-cell-style="{background:'#eee',color:'#606266'}">
+              <el-table-column v-for="(value, key) in tableData[0]" :key="key" :prop="key" :label="key" :width="colWidth">
+                <template slot-scope="{ row }">
+                  <div class="truncate-text">{{ row[key] }}</div>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+          
         </el-card>
 
         <div class="buttonGroup">
@@ -51,6 +66,7 @@
 import { getCategory } from "@/api/category";
 import { getTableDes, getTableData } from "@/api/tableDescribe.js";
 import vuex_mixin from "@/components/mixins/vuex_mixin";
+import {getRequest} from "@/api/user"
 export default {
   name: "DataSelect",
   mixins: [vuex_mixin],
@@ -81,8 +97,13 @@ export default {
         createUser: '',
         createTime: '',
         classPath: '',
-        tablename: ''
+        tablename: '',
+        sampleNum: '',
+        featureNum: ''
       },
+      diseaseNum:0,
+      datasetNum:0,
+      table_loading:false,
     };
   },
 
@@ -123,6 +144,9 @@ export default {
 
     changeData(data) {
       if (data.isLeafs == 1) {
+        this.showDataForm.featureNum = ''
+        this.showDataForm.sampleNum = ''
+        this.table_loading = true;
         this.tableData=[];
         //获取描述信息
         let that=this;
@@ -150,6 +174,10 @@ export default {
       getTableData("/api/getTableData", tableId, tableName).then(response => {   // 获取表数据
         this.tableData = response.data;
         console.log(this.tableData);
+        const fields = Object.keys(this.tableData[0]);
+        this.showDataForm.sampleNum = this.tableData.length;
+        this.showDataForm.featureNum = fields.length;
+        this.table_loading = false;
       })
         .catch(error => {
           console.log(error);
@@ -175,6 +203,12 @@ export default {
           this.treeData = this.filterTree(response.data);
         }
         console.log(this.treeData);
+        // 获取病种和数据集总数
+        this.diseaseNum = response.data[0].children.length + response.data[1].children.length;
+        getRequest("/api/getTableNumber").then((res)=>{
+          if(res.code == 200)
+            this.datasetNum = res.data;
+        })
         if(this.treeData.length<1){
           this.$message({
             showClose: true,
@@ -217,24 +251,6 @@ export default {
 </script>
 
 <style scoped>
-#dataList {
-  width: 80%;
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-evenly;
-  margin-left: 100px;
-}
-
-.bottom {
-  margin-top: 13px;
-  padding-bottom: 10px;
-  line-height: 15px;
-}
-#dataList .button {
-  padding: 0;
-  float: right;
-}
-
 .buttonGroup {
   width: 200px;
   margin-top: 18px;
@@ -243,18 +259,39 @@ export default {
 }
 
 .content {
+  position: absolute;
   width: 100%;
-  height: auto;
+  height: 88%;
 }
 
 .left_tree {
   display: inline-block;
-  height: 80%;
+  height: 85%;
   width: 15%;
   overflow: auto;
   border-radius: 3px;
-  border-left: 1px solid #e6e6e6;
-  border-right: 1px solid #e6e6e6;
+  border: 1px solid #e6e6e6;
+  margin-top: -2%;
+}
+
+.tipInfo{
+  /* background-color: pink; */
+  height: 50px;
+  text-align: center;
+  margin-top: 1px;
+}
+.tipInfo .statistic{
+  font-size: 13px;
+  color: #585858;
+}
+.hr-dashed {
+  border: 0;
+  border-top: 1px dashed #899bbb;
+}
+  
+h3{
+  color: #3d3d3d;
+  text-align:center
 }
 
 .right_table {
@@ -262,7 +299,23 @@ export default {
   width: 75%;
   position: absolute;
   overflow: auto;
-  margin-top: -2%;
+  margin-top: -2.75%;
+  height: 88%;
+}
+
+.tablePlaceholder{
+  height: 100%;
+  text-align: center;
+  line-height: 600px;
+  background-color: rgba(179, 178, 178, 0.144);
+  font-weight: bold;
+  color: rgba(58, 57, 57, 0.651);
+  user-select:none;
+}
+
+.tableDataCSS {
+  width: 100%;
+  height: 550px;
 }
 
 .truncate-text {
@@ -275,7 +328,6 @@ export default {
   padding: 0;
   height: auto;
   width: 90%;
-  border-radius: 3px;
   border-bottom: 1px solid #e6e6e6;
   position: relative;
   top: 2%;
@@ -285,6 +337,7 @@ export default {
 .describe_content {
   display: inline-block;
   width: 70%;
+  margin-bottom: 20px;
 }
 
 .buttom {
@@ -292,7 +345,6 @@ export default {
   width: 20%;
   position: relative;
   right: -20%;
-  bottom: 10px;
 }
 
 .describe_content span {

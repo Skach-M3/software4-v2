@@ -37,10 +37,10 @@
               <i class="el-icon-menu"></i>
               <span slot="title">首页</span>
             </el-menu-item>
-            <el-menu-item index="/sideBar/userManage" v-if="role==0">
+            <!-- <el-menu-item index="/sideBar/userManage" v-if="role==0">
               <i class="el-icon-menu"></i>
               <span slot="title">用户管理</span>
-            </el-menu-item>
+            </el-menu-item> -->
             <el-menu-item index="/sideBar/dataManage">
               <i class="el-icon-menu"></i>
               <span slot="title">数据管理</span>
@@ -81,7 +81,7 @@
 
       <el-footer>
         <h1>
-          重庆邮电大学 大数据智能计算创新研发团队 @CopyRight 2020-2023 All Rights
+          重庆邮电大学 大数据智能计算创新研发团队 @CopyRight 2020-2024 All Rights
           Reserved
         </h1>
       </el-footer>
@@ -93,7 +93,6 @@
 <script>
 import { mapMutations } from 'vuex';
 // import AppMain from "@/components/AppMain";
-import store from '@/store';
 export default {
   // components: { AppMain },
   mounted() {

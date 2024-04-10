@@ -1,10 +1,27 @@
 <template>
   <div class="main">
     <div class="left_tree">
-      <el-tree ref="tree" :data="treeData" :show-checkbox="false" node-key="id" default-expand-all
-        :expand-on-click-node="false" :check-on-click-node="true" :highlight-current="true" @node-click="changeData">
+      <div class="tipInfo">
+        <h3>可选数据</h3>
+        <div class="statistic">
+          当前共有 {{ diseaseNum }} 个总病种，{{ datasetNum }} 个数据表
+        </div>
+      </div>
+      <hr class="hr-dashed" />
+      <el-tree
+        ref="tree"
+        :data="treeData"
+        :show-checkbox="false"
+        node-key="id"
+        default-expand-all
+        :expand-on-click-node="false"
+        :check-on-click-node="true"
+        :highlight-current="true"
+        @node-click="changeData"
+      >
         <span class="custom-tree-node" slot-scope="{ node, data }">
-          <span>{{ node.label }}</span>
+          <span v-if="data.catLevel == 1" style="font-weight:bold;font-size:15px;color:#252525">{{ node.label }}</span>
+          <span v-else>{{ node.label }}</span>
         </span>
       </el-tree>
       <!-- <el-dialog title="提示" :visible.sync="dialogDiseaseVisible" width="30%">
@@ -26,35 +43,69 @@
       <div id="top_buttons">
         <div class="filter">
           <span>任务负责人：</span>
-          <el-select v-model="leader" placeholder="请选择" @change="pagehelper()">
-            <el-option v-for="item in taskLeaderList" :key="item" :label="item" :value="item">
+          <el-select
+            v-model="leader"
+            placeholder="请选择"
+            @change="pagehelper()"
+          >
+            <el-option
+              v-for="item in taskLeaderList"
+              :key="item"
+              :label="item"
+              :value="item"
+            >
             </el-option>
           </el-select>
         </div>
         <div class="filter">
           <span>任务类型：</span>
-          <el-select v-model="tasktype" placeholder="请选择" @change="pagehelper()">
-            <el-option v-for="item in taskTypeOptions" :key="item.value" :label="item.label" :value="item.value">
+          <el-select
+            v-model="tasktype"
+            placeholder="请选择"
+            @change="pagehelper()"
+          >
+            <el-option
+              v-for="item in taskTypeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
             </el-option>
           </el-select>
         </div>
         <el-button @click="clearFilter()">清除</el-button>
-        <el-dropdown style="margin-left: 1%;"  @command="handleCommand">
+        <el-dropdown style="margin-left: 1%" @command="handleCommand">
           <el-button type="success">
             新建任务<i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="/sideBar/DisFactor">疾病危险因素挖掘</el-dropdown-item>
-            <el-dropdown-item command="/sideBar/F_Factor">危险因素相关因素挖掘</el-dropdown-item>
-            <el-dropdown-item command="/sideBar/FactorDis">危险因素相关疾病挖掘</el-dropdown-item>
+            <el-dropdown-item command="/sideBar/DisFactor"
+              >疾病危险因素挖掘</el-dropdown-item
+            >
+            <el-dropdown-item command="/sideBar/F_Factor"
+              >危险因素相关因素挖掘</el-dropdown-item
+            >
+            <el-dropdown-item command="/sideBar/FactorDis"
+              >危险因素相关疾病挖掘</el-dropdown-item
+            >
           </el-dropdown-menu>
         </el-dropdown>
       </div>
 
       <!--===============================    卡片组     ==============================================================-->
       <div class="cardGroup">
-        <el-card class="taskCard" v-for="item in currentTaskList" :key="item.id" shadow="always"
-          v-show="!(disease || leader) || (disease == item.disease && !leader) || (leader == item.leader && !disease) || (disease == item.disease && leader == item.leader)">
+        <el-card
+          class="taskCard"
+          v-for="item in currentTaskList"
+          :key="item.id"
+          shadow="always"
+          v-show="
+            !(disease || leader) ||
+            (disease == item.disease && !leader) ||
+            (leader == item.leader && !disease) ||
+            (disease == item.disease && leader == item.leader)
+          "
+        >
           <div class="cardInfo">
             <div><span class="ttl">任务名称：</span>{{ item.taskname }}</div>
             <div><span class="ttl">负责人：</span>{{ item.leader }}</div>
@@ -64,16 +115,36 @@
             <div><span class="ttl">创建时间：</span>{{ item.createtime }}</div>
           </div>
           <div class="editButton">
-            <el-button size="mini" type="primary" @click="handleCheck(item)" style="margin-right: 20px">查看</el-button>
-            <el-popconfirm title="删除后无法恢复" icon="el-icon-warning" icon-color="red" @confirm="handleDelete(item)">
-              <el-button slot="reference" size="mini" type="danger">删除</el-button>
+            <el-button
+              size="mini"
+              type="primary"
+              @click="handleCheck(item)"
+              style="margin-right: 20px"
+              >查看</el-button
+            >
+            <el-popconfirm
+              title="删除后无法恢复"
+              icon="el-icon-warning"
+              icon-color="red"
+              @confirm="handleDelete(item)"
+            >
+              <el-button slot="reference" size="mini" type="danger"
+                >删除</el-button
+              >
             </el-popconfirm>
           </div>
         </el-card>
       </div>
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-        :current-page="this.params.page" :page-sizes="[6, 9, 12, 15, 24]" :page-size="this.params.size"
-        layout="total, sizes, prev, pager, next, jumper" :total="this.total" style="margin-top: 2%; margin-left: 3%;">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="this.params.page"
+        :page-sizes="[6, 9, 12, 15, 24]"
+        :page-size="this.params.size"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="this.total"
+        style="margin-top: 2%; margin-left: 3%"
+      >
       </el-pagination>
     </div>
   </div>
@@ -112,16 +183,19 @@ export default {
       currentTaskList: [],
       treeData: [],
       tasktype: "",
-      taskTypeOptions: [{
-        label: "疾病危险因素挖掘",
-        value: "disFactor"
-      }, {
-        label: "危险因素相关因素挖掘",
-        value: "f_Factor"
-      }, {
-        label: "危险因素相关疾病挖掘",
-        value: "factorDis"
-      }
+      taskTypeOptions: [
+        {
+          label: "疾病危险因素挖掘",
+          value: "disFactor",
+        },
+        {
+          label: "危险因素相关因素挖掘",
+          value: "f_Factor",
+        },
+        {
+          label: "危险因素相关疾病挖掘",
+          value: "factorDis",
+        },
       ],
     };
   },
@@ -141,9 +215,8 @@ export default {
 
           // }
           sessionStorage.setItem("result", JSON.stringify(this.result));
-          this.$router.push("TaskResult")
-        }
-        else {
+          this.$router.push("TaskResult");
+        } else {
           this.$message.error("查看任务失败");
         }
       });
@@ -153,8 +226,7 @@ export default {
         if (res.code == 200) {
           this.$message.success("删除任务成功");
           this.pagehelper();
-        }
-        else {
+        } else {
           this.$message.error("删除任务失败");
         }
       });
@@ -168,10 +240,9 @@ export default {
     },
     handleCheckChange(data, checked) {
       if (checked) {
-        this.$refs.tree.setCheckedKeys([data.id])
+        this.$refs.tree.setCheckedKeys([data.id]);
       }
     },
-
 
     changeData(data) {
       if (data.isLeafs == 0) {
@@ -193,7 +264,8 @@ export default {
       this.pagehelper();
     },
     pagehelper() {
-      getRequest(`Task/selectByPage?pageNum=${this.params.page}&pageSize=${this.params.size}&leader=${this.leader}&disease=${this.disease}&dataset=${this.dataset}&tasktype=${this.tasktype}`
+      getRequest(
+        `Task/selectByPage?pageNum=${this.params.page}&pageSize=${this.params.size}&leader=${this.leader}&disease=${this.disease}&dataset=${this.dataset}&tasktype=${this.tasktype}`
       ).then((res) => {
         if (res) {
           this.total = res.data.total;
@@ -204,7 +276,12 @@ export default {
     getCatgory() {
       getCategory("/api/category").then((response) => {
         this.treeData = response.data;
-      })
+        // 获取病种和数据集总数
+        this.diseaseNum = response.data[0].children.length + response.data[1].children.length;
+        getRequest("/api/getTableNumber").then((res) => {
+          if (res.code == 200) this.datasetNum = res.data;
+        });
+      });
     },
   },
 };
@@ -213,17 +290,39 @@ export default {
 <style scoped>
 .main {
   display: grid;
-  grid-template-columns: 12% 85%;
+  grid-template-columns: 18% 82%;
 }
 
 .left_tree {
   display: inline-block;
   height: 80vh;
   border-radius: 3px;
-  border-left: 1px solid #e6e6e6;
-  border-right: 1px solid #e6e6e6;
-  border-top: 1px solid #e6e6e6;
+  border: 1px solid #e6e6e6;
   overflow: auto;
+  /* width: 250px; */
+}
+
+.tipInfo {
+  /* background-color: pink; */
+  height: 50px;
+  text-align: center;
+}
+.tipInfo .statistic {
+  font-size: 13px;
+  color: #585858;
+}
+.hr-dashed {
+  border: 0;
+  border-top: 1px dashed #899bbb;
+}
+
+h3 {
+  color: #3d3d3d;
+  text-align: center;
+}
+
+.right {
+  display: inline-block;
 }
 
 .custom-tree-node {
@@ -240,7 +339,7 @@ export default {
   margin-bottom: 20px;
 }
 
-#top_buttons>* {
+#top_buttons > * {
   display: inline-block;
 }
 
@@ -268,7 +367,7 @@ export default {
   width: 100%;
   margin-left: 3%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, 400px);
+  grid-template-columns: repeat(auto-fill, 380px);
   grid-row-gap: 40px;
   grid-column-gap: 60px;
 }
@@ -287,8 +386,7 @@ export default {
 /* 第五个子元素（数据表） */
 .cardInfo>div:nth-child(6)
 
-/* 第六个子元素（创建时间） */
-  {
+/* 第六个子元素（创建时间） */ {
   grid-column: 1 / span 2;
   /* 这两个元素跨越两列 */
 }
@@ -328,7 +426,7 @@ export default {
   vertical-align: top;
 }
 
-.el-dropdown+.el-dropdown {
+.el-dropdown + .el-dropdown {
   margin-left: 15px;
 }
 

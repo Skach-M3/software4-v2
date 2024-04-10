@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="left_tree">
-      <el-button type="success" class="add_button" @click="dialogDiseaseVisible2 = true">添加病种</el-button>
-      <el-dialog title="提示" :visible.sync="dialogDiseaseVisible2" width="30%">
+      <!-- <el-button type="success" class="add_button" @click="dialogDiseaseVisible2 = true">添加病种</el-button> -->
+      <!-- <el-dialog title="提示" :visible.sync="dialogDiseaseVisible2" width="30%">
         <span>
           请输入新病种名称：<el-input placeholder="请输入内容" v-model="diseaseName" class="nameInput"></el-input>
         </span>
@@ -10,12 +10,18 @@
           <el-button @click="cleanInput()">取 消</el-button>
           <el-button type="primary" @click="addDisease()">确 定</el-button>
         </span>
-      </el-dialog>
+      </el-dialog> -->
+      <div class="tipInfo">
+        <h3>可选数据</h3>
+        <div class="statistic">当前共有 {{diseaseNum}} 个总病种，{{datasetNum}} 个数据表</div>
+      </div>
+      <hr class="hr-dashed">
       <el-tree ref="tree" :data="treeData" :show-checkbox="false" node-key="id" default-expand-all
         :expand-on-click-node="false" :check-on-click-node="true" :highlight-current="true" @node-click="changeData"
         @check-change="handleCheckChange">
         <span class="custom-tree-node" slot-scope="{ node, data }">
-          <span>{{ node.label }}</span>
+          <span v-if="data.catLevel == 1" style="font-weight:bold;font-size:15px;color:#252525">{{ node.label }}</span>
+          <span v-else>{{ node.label }}</span>
           <span>
             <!--公共数据集confirm-->
             <el-popconfirm v-if="data.isCommon" confirm-button-text='新病种' cancel-button-text='数据集' title="请选择添加的文件"
@@ -34,12 +40,9 @@
 
             <el-popconfirm title="删除后无法恢复" icon="el-icon-warning" icon-color="red" confirm-button-text='确认'
               cancel-button-text='取消' @confirm="() => remove(node, data)">
-              <el-button v-if="data.id!='1775096840182611969' && data.id!='1010'" icon="el-icon-delete" size="mini" type="text" slot="reference">
+              <el-button v-if="data.id!='1775096840182611969' && data.id!='1010' && data.id!='1'" icon="el-icon-delete" size="mini" type="text" slot="reference">
               </el-button>
             </el-popconfirm>
-
-
-
 
           </span>
         </span>
@@ -135,7 +138,7 @@
           <button class="cool-button" @click="submitCharacterCondition">筛选病例</button>
         </div>
         <!-- 显示筛选出来的表数据 -->
-        <el-table :data="addTableData" stripe style="width: 100%" height="450" v-show="showAddTableData">
+        <el-table :data="addTableData" stripe style="width: 100%" height="450" v-show="showAddTableData" :header-cell-style="{background:'#eee',color:'#606266'}">
           <el-table-column v-for="(value, key) in addTableData[0]" :key="key" :prop="key" :label="key" width="80">
             <template slot-scope="{ row }">
               <div class="truncate-text">{{ row[key] }}</div>
@@ -237,19 +240,28 @@
     </el-dialog>
     <div class="right_table">
       <el-card class="right_table_topCard">
+        <div style="height: 30px;padding-left:5px">
+          <h3 style="margin:-20px">数据预览</h3>
+        </div>
         <div class="describe_content">
-          <h3>{{ showDataForm.tableName }}</h3>
+          <!-- <h3>{{ showDataForm.tableName }}</h3> -->
           <p style="margin-top:0.5%;width: 100%;">
-            <i class="el-icon-user"></i>创建人: <span>{{ showDataForm.createUser }}</span>
-            <i class="el-icon-time"></i>创建时间: <span>{{ showDataForm.createTime }}</span>
-            <i class="el-icon-folder-opened"></i>所属类别: <span>{{ showDataForm.classPath }}</span>
+            <i class="el-icon-folder"></i> 表名:<span style="font-weight:bold;font-size:18px;color:#252525">{{ showDataForm.tableName }}</span>
+            <i class="el-icon-user"></i> 创建人:<span>{{ showDataForm.createUser }}</span>
+            <i class="el-icon-time"></i> 创建时间:<span>{{ showDataForm.createTime }}</span>
+            <i class="el-icon-finished"></i> 样本个数:<span>{{ showDataForm.sampleNum }}</span>
+            <i class="el-icon-finished"></i> 特征个数:<span>{{ showDataForm.featureNum }}</span>
+            <!-- <i class="el-icon-folder-opened"></i> 所属类别:<span>{{ showDataForm.classPath }}</span> -->
             <el-button type="primary" @click="csvDialogVisible=true" size="mini" v-if="showDataForm.tableName"
               class="csv_btn">导出CSV</el-button>
           </p>
         </div>
         <!-- 显示表数据 -->
-        <div class="tableData">
-          <el-table :data="tableData" stripe style="width: 100%" class="custom-table" max-height="650" ref="data_table">
+        <div class="tableDataCSS" v-loading="table_loading" element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.05)">
+          <div class="tablePlaceholder" v-if="tableData.length <1 && !table_loading">请在左侧选择数据</div>
+          <el-table v-if="tableData.length > 0" :data="tableData" stripe style="width: 100%" class="custom-table" max-height="700" ref="data_table" :header-cell-style="{background:'#eee',color:'#606266'}">
             <el-table-column v-for="(value, key) in tableData[0]" :key="key" :prop="key" :label="key" :width="colWidth"
               sortable>
               <template slot-scope="{ row }">
@@ -328,6 +340,8 @@ export default {
     return {
       treeData: [],
       tableData: [],
+      diseaseNum:0,
+      datasetNum:0,
       fullData: '',
       showTooltip: false,
       hoverTimer: null,
@@ -340,7 +354,9 @@ export default {
         tableName: '',
         createUser: '',
         createTime: '',
-        classPath: ''
+        classPath: '',
+        sampleNum: '',
+        featureNum: ''
       },
 
       showFeatureDataForm: {
@@ -398,7 +414,6 @@ export default {
         tableName: "",
         isOnly: true,
         dataDisease: "",
-        featuresNum: 1,
         fields: [{ name: "", type: "" }],
         rules: {
           tableName: [
@@ -435,7 +450,8 @@ export default {
       selectedFields:[],
       selectAll:false,
       fields:[],
-      labelList:[]
+      labelList:[],
+      table_loading:false,
     };
   },
 
@@ -496,8 +512,6 @@ export default {
       });
     }, 200);
     this.getCatgory();
-    // this.getTableDescribe("1005","copd")
-    // this.getTableData("1005","copd");
   },
 
   methods: {
@@ -694,6 +708,12 @@ export default {
       getCategory("/api/category").then((response) => {
         this.treeData = response.data;
         console.log(response.data)
+        // 获取病种和数据集总数
+        this.diseaseNum = response.data[0].children.length + response.data[1].children.length;
+        getRequest("/api/getTableNumber").then((res)=>{
+          if(res.code == 200)
+            this.datasetNum = res.data;
+        })
       })
     },
     uploadFile() {
@@ -735,7 +755,9 @@ export default {
         this.tableData = response.data;
         const fields = Object.keys(this.tableData[0]);
         this.fields = fields
-        console.log("数据长度" + response.data.length)
+        this.showDataForm.sampleNum = this.tableData.length;
+        this.showDataForm.featureNum = this.fields.length;
+        this.table_loading = false;
       })
         .catch(error => {
           console.log(error);
@@ -743,9 +765,12 @@ export default {
     },
     changeData(data) {
       if (data.isLeafs == 1) {
+        this.showDataForm.featureNum = ''
+        this.showDataForm.sampleNum = ''
         //获取描述信息
         this.getTableDescribe(data.id, data.label);
         //获取数据信息
+        this.table_loading = true;
         this.tableData = [];
         this.getTableData(data.id, data.label);
       }
@@ -1067,8 +1092,37 @@ export default {
   margin-right: 100px;
 }
 
+.tipInfo{
+  /* background-color: pink; */
+  height: 50px;
+  text-align: center;
+}
+.tipInfo .statistic{
+  font-size: 13px;
+  color: #585858;
+}
+.hr-dashed {
+    border: 0;
+    border-top: 1px dashed #899bbb;
+  }
+  
+h3{
+  color: #3d3d3d;
+  text-align:center
+}
+
 #table {
   margin-top: 10px;
+}
+
+.tablePlaceholder{
+  height: 100%;
+  text-align: center;
+  line-height: 600px;
+  background-color: rgba(179, 178, 178, 0.144);
+  font-weight: bold;
+  color: rgba(58, 57, 57, 0.651);
+  user-select:none;
 }
 
 .featureLabel {
@@ -1089,10 +1143,7 @@ export default {
   height: 800px;
   width: 18%;
   border-radius: 3px;
-  border-left: 1px solid #e6e6e6;
-  border-right: 1px solid #e6e6e6;
-  border-top: 1px solid #e6e6e6;
-  border-bottom: none;
+  border: 1px solid #e6e6e6;
 }
 
 .custom-tree-node {
@@ -1106,10 +1157,10 @@ export default {
 
 .right_table {
   display: inline-block;
-  height: 85%;
+  /* height: 100%; */
   width: 72%;
   position: absolute;
-  border: none;
+  /* border: none; */
   /* overflow-y: auto; */
 }
 
@@ -1130,6 +1181,7 @@ export default {
   display: inline-block;
   position: relative;
   width: 100%;
+  margin-bottom: 20px;
 }
 
 .describe_content span {
@@ -1221,15 +1273,14 @@ export default {
   background-color: #dcf3fc !important;
 }
 
-.tableData {
+.tableDataCSS {
   width: 100%;
   height: 700px;
-  /* overflow-y: auto; */
 }
 
 .csv_btn {
   position: absolute;
-  right: 1%;
-  top: 1%;
+  right: 5%;
+  top: 5%;
 }
 </style>

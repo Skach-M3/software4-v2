@@ -5,8 +5,18 @@
     <!-- 以下为V2.0 -->
     <div class="content">
       <div class="left_tree">
+        <div class="tipInfo">
+          <div>字段分类:</div>
+          <span>(点击类别进行字段筛选)</span>
+          <!-- <div class="statistic">当前共有 {{diseaseNum}} 个总病种，{{datasetNum}} 个数据表</div> -->
+        </div>
         <el-tree :data="featureSelectTree" show-checkbox node-key="id" ref="tree" highlight-current
           @check="getCheckedNodes" default-expend-keys=[1]>
+          <span class="custom-tree-node" slot-scope="{ node,data }">
+            <span v-if="!data.isLeaf">{{ node.label }}</span>
+            <span v-if="!data.isLeaf"> ({{data.children.length}})</span>
+            <span v-else>{{ node.label }}</span>
+          </span>
         </el-tree>
       </div>
       <div class="right_table">
@@ -424,18 +434,39 @@ export default {
   height: auto;
 }
 
+.tipInfo{
+  /* background-color: pink; */
+  height: 50px;
+}
+.tipInfo div{
+  font-weight: bold;
+  font-size: 1.2em;
+  /* color: rgb(45, 105, 235); */
+}
+.tipInfo span{
+  color: grey;
+}
+
 .left_tree {
   display: inline-block;
   height: auto;
   width: 13%;
   border-radius: 3px;
-  border-left: 1px solid #e6e6e6;
-  border-right: 1px solid #e6e6e6;
+  /* border: 1px solid #e6e6e6; */
+  /* border-right: 1px solid #e6e6e6; */
+}
+
+.custom-tree-node span{
+  font-size: 0.9em;
+  color: #3a3a3a;
+}
+.custom-tree-node span:nth-child(2){
+  color: grey;
 }
 
 .right_table {
   display: inline-block;
-  height: 70vh;
+  height: 75vh;
   width: 75%;
   position: absolute;
   overflow: auto;

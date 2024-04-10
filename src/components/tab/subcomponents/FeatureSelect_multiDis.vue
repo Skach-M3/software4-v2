@@ -418,14 +418,6 @@ export default {
   font-size: 18px;
 }
 
-.el-checkbox-group {
-  padding-top: 10px;
-  display: grid;
-  grid-template-columns: repeat(7, 150px);
-  grid-gap: 20px;
-  grid-template-rows: 20px, 20px;
-}
-
 .el-checkbox--small {
   padding-bottom: 10px;
 }
@@ -433,7 +425,7 @@ export default {
 .el-checkbox-group {
   padding-top: 10px;
   display: grid;
-  grid-template-columns: repeat(7, 150px);
+  grid-template-columns: repeat(8, 150px);
   grid-gap: 20px;
   grid-template-rows: 20px, 20px;
 }
@@ -471,7 +463,7 @@ export default {
 }
 
 .content {
-  width: 100%;
+  width: 95%;
   height: auto;
 }
 
@@ -480,13 +472,11 @@ export default {
   height: auto;
   width: 13%;
   border-radius: 3px;
-  border-left: 1px solid #e6e6e6;
-  border-right: 1px solid #e6e6e6;
 }
 
 .specify {
   margin-top: 1px;
-  width: 90%;
+  width: 100%;
   height: 5%;
   text-align: center;
   line-height: 35px;
@@ -495,7 +485,7 @@ export default {
 
 .select_feature_var {
   margin-top: 1px;
-  width: 90%;
+  width: 100%;
   height: auto;
 }
 
