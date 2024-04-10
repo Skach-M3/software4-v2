@@ -189,7 +189,7 @@ export default {
   methods: {
     init() {
       if (this.m_is_common == false) {
-        getRequest(`api/feature/getTreeFeatures?tablename=${this.m_dataset}`, {
+        getRequest(`api/feature/getContinueFeatrue?tablename=${this.m_dataset}`, {
           tableName: this.m_dataset,
         }).then((res) => {
           if (res.code == 200) {
