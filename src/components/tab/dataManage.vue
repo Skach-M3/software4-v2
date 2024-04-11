@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="content">
     <div class="left_tree">
       <!-- <el-button type="success" class="add_button" @click="dialogDiseaseVisible2 = true">添加病种</el-button> -->
       <!-- <el-dialog title="提示" :visible.sync="dialogDiseaseVisible2" width="30%">
@@ -14,9 +14,9 @@
       <div class="tipInfo">
         <h3>可选数据</h3>
         <span class="statistic">
-          一级病种: {{ diseaseNum }} 个  
+          一级病种: {{ diseaseNum }} 个
         </span>
-        <span class="statistic"> 
+        <span class="statistic">
           数据表: {{ datasetNum }} 个
         </span>
       </div>
@@ -31,21 +31,22 @@
             <!--公共数据集confirm-->
             <el-popconfirm v-if="data.isCommon" confirm-button-text='新病种' cancel-button-text='数据集' title="请选择添加的文件"
               cancel-button-type="primary" @confirm="dialogDiseaseVisible = true;" @cancel="importData">
-              <el-button v-if="!data.isLeafs" icon="el-icon-circle-plus-outline" size="mini" type="text" slot="reference"
-                @click="markNode(data)">
+              <el-button v-if="!data.isLeafs" icon="el-icon-circle-plus-outline" size="mini" type="text"
+                slot="reference" @click="markNode(data)">
               </el-button>
             </el-popconfirm>
             <!--非公共数据集confirm-->
             <el-popconfirm v-else confirm-button-text='新病种' cancel-button-text='数据集' title="请选择添加的文件"
               cancel-button-type="primary" @confirm="dialogDiseaseVisible = true" @cancel="openAddDataForm(data.path)">
-              <el-button v-if="!data.isLeafs" icon="el-icon-circle-plus-outline" size="mini" type="text" slot="reference"
-                @click="markNode(data)">
+              <el-button v-if="!data.isLeafs" icon="el-icon-circle-plus-outline" size="mini" type="text"
+                slot="reference" @click="markNode(data)">
               </el-button>
             </el-popconfirm>
 
             <el-popconfirm title="删除后无法恢复" icon="el-icon-warning" icon-color="red" confirm-button-text='确认'
               cancel-button-text='取消' @confirm="() => remove(node, data)">
-              <el-button v-if="data.id!='1775096840182611969' && data.id!='1010' && data.id!='1'" icon="el-icon-delete" size="mini" type="text" slot="reference">
+              <el-button v-if="data.id != '1775096840182611969' && data.id != '1010' && data.id != '1'"
+                icon="el-icon-delete" size="mini" type="text" slot="reference">
               </el-button>
             </el-popconfirm>
 
@@ -116,7 +117,7 @@
             <el-option label="NOT" value="2"></el-option>
           </el-select>
           <el-button @click="chooseCharacter(characterItem)" style="width: 130px;margin-right: 8px;">{{
-        characterItem.button }}</el-button>
+            characterItem.button }}</el-button>
           <span v-if="characterItem.type === 'discrete'">
             <el-select :value="'='" slot="prepend" placeholder="运算符" style="width: 90px;margin-right: 8px" disabled>
               <el-option label="=" value="="></el-option>
@@ -143,8 +144,10 @@
           <button class="cool-button" @click="submitCharacterCondition">筛选病例</button>
         </div>
         <!-- 显示筛选出来的表数据 -->
-        <el-table :data="addTableData" stripe style="width: 100%" height="450" v-show="showAddTableData" :header-cell-style="{background:'#eee',color:'#606266'}">
-          <el-table-column v-for="(value, key) in addTableData[0]" :key="key" :prop="key" :label="key" width="80" sortable>
+        <el-table :data="addTableData" stripe style="width: 100%" height="450" v-show="showAddTableData"
+          :header-cell-style="{ background: '#eee', color: '#606266' }">
+          <el-table-column v-for="(value, key) in addTableData[0]" :key="key" :prop="key" :label="key" width="80"
+            sortable>
             <template slot-scope="{ row }">
               <div class="truncate-text">{{ row[key] }}</div>
             </template>
@@ -193,9 +196,9 @@
           <el-upload action="" class="upload" ref="uploadRef" :on-preview="handlePreview" :on-remove="handleRemove"
             :on-change="changeFile" :auto-upload="false" accept=".csv" :limit="1" :multiple="false"
             :file-list="dialogForm.filesInfo" :http-request="(data) => {
-        upRequest(data);
-      }
-        ">
+            upRequest(data);
+          }
+            ">
             <el-button slot="trigger" size="small" type="success">选取文件</el-button>
             <div slot="tip" class="el-upload__tip">只能上传csv文件</div>
           </el-upload>
@@ -214,9 +217,9 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="
-        dialogFormVisible = false;
-      resetForm('dialogFormRef');
-      ">取消</el-button>
+            dialogFormVisible = false;
+          resetForm('dialogFormRef');
+          ">取消</el-button>
         <el-button @click="resetForm('dialogFormRef')">重置</el-button>
         <el-button type="primary" @click="uploadFile">确定</el-button>
       </div>
@@ -225,10 +228,11 @@
       <el-dialog v-loading="loading2" :element-loading-text="loadText2" append-to-body title="请选择多个疾病标签字段"
         :visible.sync="featuresVision">
         <!-- <el-form class="featureLabel" label-width="auto"> -->
-          <el-checkbox-group v-model="labelList">
-            <el-checkbox style="width: 250px;" border v-for="(name, index) in Object.keys(featuresMap)" :key="index" :label="name"></el-checkbox>
-          </el-checkbox-group>
-          <!-- <el-form-item v-for="(name, index) in Object.keys(featuresMap)" :key="index" :label="name">
+        <el-checkbox-group v-model="labelList">
+          <el-checkbox style="width: 250px;" border v-for="(name, index) in Object.keys(featuresMap)" :key="index"
+            :label="name"></el-checkbox>
+        </el-checkbox-group>
+        <!-- <el-form-item v-for="(name, index) in Object.keys(featuresMap)" :key="index" :label="name">
             <el-select v-model="featuresMap[name]" placeholder="请选择特征类型" @change="changeLabel(name, featuresMap[name])">
               <el-option label="诊断" value="diagnosis" key="diagnosis"></el-option>
               <el-option label="检查" value="examine" key="examine"></el-option>
@@ -244,29 +248,32 @@
       </el-dialog>
     </el-dialog>
     <div class="right_table">
-      <el-card class="right_table_topCard">
+      <el-card class="right_table_topCard" :body-style="{height:'850px'}">
         <div style="height: 30px;padding-left:5px">
           <h3 style="margin:-20px">数据预览</h3>
         </div>
         <div class="describe_content">
-          <!-- <h3>{{ showDataForm.tableName }}</h3> -->
           <p style="margin-top:0.5%;width: 100%;">
-            <i class="el-icon-folder"></i> 数据集名称:<span style="font-weight:bold;font-size:18px;color:#252525">{{ showDataForm.tableName }}</span>
+            <i class="el-icon-folder"></i> 数据集名称:<span style="font-weight:bold;font-size:18px;color:#252525">{{
+            showDataForm.tableName }}</span>
             <i class="el-icon-user"></i> 创建人:<span>{{ showDataForm.createUser }}</span>
             <i class="el-icon-time"></i> 创建时间:<span>{{ showDataForm.createTime }}</span>
             <i class="el-icon-finished"></i> 样本个数:<span>{{ showDataForm.sampleNum }}</span>
             <i class="el-icon-finished"></i> 特征个数:<span>{{ showDataForm.featureNum }}</span>
             <!-- <i class="el-icon-folder-opened"></i> 所属类别:<span>{{ showDataForm.classPath }}</span> -->
-            <el-button type="primary" @click="csvDialogVisible=true" size="mini" v-if="showDataForm.tableName"
-              class="csv_btn">导出CSV</el-button>
+            <el-button type="primary" @click="csvDialogVisible = true" size="mini" v-if="showDataForm.tableName"
+              class="csv_btn">导出数据</el-button>
           </p>
         </div>
         <!-- 显示表数据 -->
+
         <div class="tableDataCSS" v-loading="table_loading" element-loading-text="拼命加载中"
-        element-loading-spinner="el-icon-loading"
-        element-loading-background="rgba(0, 0, 0, 0.05)">
-          <div class="tablePlaceholder" v-if="tableData.length <1 && !table_loading">请在左侧选择数据</div>
-          <el-table v-if="tableData.length > 0" :data="tableData" stripe style="width: 100%" class="custom-table" max-height="700" ref="data_table" :header-cell-style="{background:'#eee',color:'#606266'}">
+          element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.05)" ref="listWrap" @scroll="scrollListener">
+          <div class="tablePlaceholder" v-if="tableData.length < 1 && !table_loading">请在左侧选择数据
+          </div>
+          <div ref="list">
+            <el-table v-if="tableData.length > 0" :data="tableData" stripe style="width: 100%" class="custom-table"
+            max-height="800" ref="scrollTable" :header-cell-style="{ background: '#eee', color: '#606266' }">
             <el-table-column v-for="(value, key) in tableData[0]" :key="key" :prop="key" :label="key" :width="colWidth"
               sortable>
               <template slot-scope="{ row }">
@@ -274,25 +281,25 @@
               </template>
             </el-table-column>
           </el-table>
+          </div>
         </div>
-
-
-
       </el-card>
 
-      <el-dialog
-              title="请选择要导出的字段"
-              :visible.sync="csvDialogVisible"
-              width="60%"
-              :before-close="handleCloseCSV">
-            <el-checkbox v-model="selectAll" @change="handleSelectAll"/> 全选
-            <el-checkbox-group v-model="selectedFields">
-              <el-checkbox style="width: 150px;" v-for="field in fields" :key="field" :label="field">{{ field }}</el-checkbox>
-            </el-checkbox-group>
-            <span slot="footer" class="dialog-footer">
+      <el-dialog title="请选择要导出的字段" :visible.sync="csvDialogVisible" width="60%" :before-close="handleCloseCSV">
+        <div class="selectFeatrueDescribe" style="background-color: #f5f7fa;">
+          <i class="el-icon-s-help"></i> 字段个数:<span>{{ fields.length }}</span>
+          <i class="el-icon-finished" style="margin-left: 50%;"></i> 已选字段个数:<span>{{ selectedFields.length }}</span>
+        </div>
+        <el-divider></el-divider>
+        <el-checkbox v-model="selectAll" @change="handleSelectAll" /> 全选
+        <el-checkbox-group v-model="selectedFields">
+          <el-checkbox style="width: 150px;" v-for="field in fields" :key="field" :label="field">{{ field
+            }}</el-checkbox>
+        </el-checkbox-group>
+        <span slot="footer" class="dialog-footer">
           <el-button @click="handleCloseCSV">取 消</el-button>
           <el-button type="primary" @click="toCSV">确 定</el-button>
-          </span>
+        </span>
       </el-dialog>
     </div>
   </div>
@@ -316,18 +323,27 @@ export default {
     loginUserID() {
       return sessionStorage.getItem("userid")
     },
-    colWidth(){
+    colWidth() {
       let arr = Object.keys(this.tableData[0])
-      if(arr.length <= 15) 
-      {
+      if (arr.length <= 15) {
         return 90;
       }
-      else{
+      else {
         return 65;
       }
+    },
+     // 获取展示的列表
+     showList() {
+      return this.tableData.slice(this.start, this.end)
+    },
+    // 获取列表长度
+    length() {
+      return this.tableData.length || 0
     }
   },
-
+  mounted(){
+    this.$refs.listWrap.style.height = '800px' // 设置可视区域的高度
+  },
   watch: {
     "dialogForm.tableName"() {
       this.checkTableName();
@@ -335,21 +351,35 @@ export default {
     "addDataForm.dataName"() {
       this.checkAddTaleName();
     },
-    "diseaseName"(){
+    "diseaseName"() {
       this.checkDiseasename();
     },
     selectedFields(newValue) {
       // 如果一键全选框被取消选中，且 selectedFeatures 的长度大于 0，则将其置为 false
       this.selectAll = newValue.length === this.fields.length;
     },
+    length(val){
+      this.$refs.listWrap.style.height = '800px';
+        // // 超过10行数据，就按照最大40*10 400px高度的列表就行
+        // if (val >= 10) {
+        //   this.$refs.listWrap.style.height = '800px';
+        // } else {
+        // // 不足10行数据，这边 加57是因为表头的高度，具体情况
+        //   this.$refs.listWrap.style.height = this.itemHeight * val + 80 + 'px'
+        // }
+    }
   },
 
   data() {
     return {
       treeData: [],
-      tableData: [],
-      diseaseNum:0,
-      datasetNum:0,
+      tableData: [], //总共的列表数据
+      itemHeight: 48, // item高度
+      num: 10, // 展示的数据
+      start: 0, // 开始索引
+      end: 9, // 结束索引
+      diseaseNum: 0,
+      datasetNum: 0,
       fullData: '',
       showTooltip: false,
       hoverTimer: null,
@@ -404,7 +434,7 @@ export default {
       nodeData: {},
 
       diseaseName: '',
-      checkIsCommon:'',
+      checkIsCommon: '',
       diseaseNameisOnly: true,
       loading: false,
       loading2: false,
@@ -455,71 +485,71 @@ export default {
           "Content-Type": "multipart/form-data",
         },
       },
-      csvDialogVisible:false,
-      selectedFields:[],
-      selectAll:false,
-      fields:[],
-      labelList:[],
-      table_loading:false,
+      csvDialogVisible: false,
+      selectedFields: [],
+      selectAll: false,
+      fields: [],
+      labelList: [],
+      table_loading: false,
     };
   },
 
   created() {
     // 检查重名的防抖函数
-      this.checkDiseasename = this.debounce(() => {
+    this.checkDiseasename = this.debounce(() => {
       this.diseaseNameisOnly = true;
-      if(this.checkIsCommon == '0'){
+      if (this.checkIsCommon == '0') {
         getRequest("/api/inspectionOfIsNotCommon", {
-        newname: this.diseaseName,
-      }).then((res) => {
-        // 上一次重复了这一次不重复就要提醒一下
-        if (!this.diseaseNameisOnly) {
-          this.$message({
-            showClose: true,
-            message: "疾病名称可用",
-            type: "success",
-          });
-        }
-        if (typeof res.data === "boolean") {
-          this.diseaseNameisOnly = res.data;
-        }
-        if (!res.data) {
-          this.$message({
-            showClose: true,
-            message: "疾病名称重名，请重新填写",
-            type: "warning",
-          });
-          return false;
-        }
-        return true;
-      });
+          newname: this.diseaseName,
+        }).then((res) => {
+          // 上一次重复了这一次不重复就要提醒一下
+          if (!this.diseaseNameisOnly) {
+            this.$message({
+              showClose: true,
+              message: "疾病名称可用",
+              type: "success",
+            });
+          }
+          if (typeof res.data === "boolean") {
+            this.diseaseNameisOnly = res.data;
+          }
+          if (!res.data) {
+            this.$message({
+              showClose: true,
+              message: "疾病名称重名，请重新填写",
+              type: "warning",
+            });
+            return false;
+          }
+          return true;
+        });
       }
-      else if(this.checkIsCommon == '1'){
+      else if (this.checkIsCommon == '1') {
         getRequest("/api/inspectionOfIsCommon", {
-        newname: this.diseaseName,
-      }).then((res) => {
-       
-        // 上一次重复了这一次不重复就要提醒一下
-        if (this.diseaseNameisOnly) {
-          this.$message({
-            showClose: true,
-            message: "疾病名称可用",
-            type: "success",
-          });
-        }
-        if (typeof res.data === "boolean") {
-          this.diseaseNameisOnly = res.data;
-        }
-        if (!res.data) {
-          this.$message({
-            showClose: true,
-            message: "疾病名称重名，请重新填写",
-            type: "warning",
-          });
-          return false;
-        }
-        return true;
-      });
+          newname: this.diseaseName,
+        }).then((res) => {
+
+          // 上一次重复了这一次不重复就要提醒一下
+          if (this.diseaseNameisOnly) {
+            this.$message({
+              showClose: true,
+              message: "疾病名称可用",
+              type: "success",
+            });
+          }
+          if (typeof res.data === "boolean") {
+            this.diseaseNameisOnly = res.data;
+          }
+          if (!res.data) {
+            this.$message({
+              showClose: true,
+              message: "疾病名称重名，请重新填写",
+              type: "warning",
+            });
+            return false;
+          }
+          return true;
+        });
       }
     }, 200);
     this.checkTableName = this.debounce(() => {
@@ -580,7 +610,16 @@ export default {
   },
 
   methods: {
-    handleSelectAll(){
+    scrollListener() {
+      // 获取滚动高度
+      const scrollTop = this.$refs.listWrap.scrollTop
+      // 开始的数组索引
+      this.start = Math.floor(scrollTop / this.itemHeight)
+      // 结束索引
+      this.end = this.start + this.num
+      this.$refs.list.style.transform = `translateY(${this.start * this.itemHeight}px)`// 对列表项y轴偏移
+    },
+    handleSelectAll() {
       if (this.selectAll) {
         this.selectedFields = this.fields.filter((feature) => feature);
       } else {
@@ -588,13 +627,13 @@ export default {
         this.selectedFields = [];
       }
     },
-    handleCloseCSV(){
+    handleCloseCSV() {
       this.selectedFields = []
       this.csvDialogVisible = false
     },
-    toCSV(){
+    toCSV() {
       // 发送请求给后端，传递表名和选定的字段
-      getRequest(`/api/getInfoByTableName/${this.showDataForm.tableName}`).then(res =>{
+      getRequest(`/api/getInfoByTableName/${this.showDataForm.tableName}`).then(res => {
         const header = this.selectedFields.join(",") + "\n";
         const data = res.data
         // 构建数据行
@@ -619,14 +658,15 @@ export default {
 
         // 设置下载属性
         link.href = url;
-        link.download = this.showDataForm.tableName+'.csv';
+        link.download = this.showDataForm.tableName + '.csv';
 
         // 模拟点击下载
         link.click();
 
         // 释放资源
         window.URL.revokeObjectURL(url);
-         this.csvDialogVisible = false;
+        this.csvDialogVisible = false;
+        this.selectedFields = [];
       })
 
 
@@ -641,7 +681,7 @@ export default {
     compelete() {
       // 判断多标签合理性，并填写上传payload
       let labelCount = 0;
-      
+
       const payload_feature = {
         tableName: this.dialogForm.tableName,
         tableHeaders: []
@@ -671,8 +711,8 @@ export default {
       this.loadText2 = "正在打标";
       this.loading2 = true;
 
-      postRequest('/tTable/insertTableManager',payload_feature).then(res=>{
-        if(res.code == 200){
+      postRequest('/tTable/insertTableManager', payload_feature).then(res => {
+        if (res.code == 200) {
           this.loading2 = false;
           this.featuresVision = false;
           this.$message({
@@ -683,7 +723,7 @@ export default {
           this.getCatgory();
         }
       })
-      
+
     },
     changeLabel(name, label) {
       console.log("name: ")
@@ -738,7 +778,7 @@ export default {
       };
       // 多疾病下的上传文件需要打标签，用不同的接口
       let paths = this.nodeData.path.split("/");
-      if(paths[1] === '多疾病'){
+      if (paths[1] === '多疾病') {
         this.options.url = "api/dataTable/parseAndUpload"
       }
 
@@ -756,7 +796,7 @@ export default {
           for (const item of featureList) {
             this.$set(this.featuresMap, item, "diagnosis");
           }
-          if(paths[1] === '多疾病'){
+          if (paths[1] === '多疾病') {
             this.featuresVision = true;
           }
           this.dialogFormVisible = false;
@@ -776,8 +816,8 @@ export default {
         console.log(response.data)
         // 获取病种和数据集总数
         this.diseaseNum = response.data[0].children.length + response.data[1].children.length;
-        getRequest("/api/getTableNumber").then((res)=>{
-          if(res.code == 200)
+        getRequest("/api/getTableNumber").then((res) => {
+          if (res.code == 200)
             this.datasetNum = res.data;
         })
       })
@@ -842,7 +882,7 @@ export default {
       }
     },
     append(isLeaf) {
-         this.checkDiseasename();
+      this.checkDiseasename();
       if (this.diseaseNameisOnly == false) {
         return false;
       }
@@ -1078,7 +1118,7 @@ export default {
       // 涉及疾病填入上一级节点名
       let paths = this.nodeData.path.split("/");
       console.log(paths);
-      this.dialogForm.dataDisease = paths[paths.length-1]
+      this.dialogForm.dataDisease = paths[paths.length - 1]
       this.dialogFormVisible = true;
     },
 
@@ -1140,6 +1180,12 @@ export default {
 </script>
 
 <style scoped>
+.content {
+  position: relative;
+  width: 100%;
+  height: 900px;
+}
+
 #top_buttons>* {
   display: inline-block;
 }
@@ -1163,37 +1209,39 @@ export default {
   margin-right: 100px;
 }
 
-.tipInfo{
+.tipInfo {
   background-color: rgba(124, 124, 124, 0.1);
   height: 50px;
   text-align: center;
 }
-.tipInfo .statistic{
+
+.tipInfo .statistic {
   font-size: 13px;
   color: #585858;
 }
+
 .hr-dashed {
-    border: 0;
-    border-top: 1px dashed #899bbb;
-  }
-  
-h3{
+  border: 0;
+  border-top: 1px dashed #899bbb;
+}
+
+h3 {
   color: #3d3d3d;
-  text-align:center
+  text-align: center
 }
 
 #table {
   margin-top: 10px;
 }
 
-.tablePlaceholder{
+.tablePlaceholder {
   height: 100%;
   text-align: center;
   line-height: 600px;
   background-color: rgba(179, 178, 178, 0.144);
   font-weight: bold;
   color: rgba(58, 57, 57, 0.651);
-  user-select:none;
+  user-select: none;
 }
 
 .featureLabel {
@@ -1211,7 +1259,7 @@ h3{
 
 .left_tree {
   display: inline-block;
-  height: 800px;
+  height: 900px;
   width: 18%;
   border-radius: 3px;
   border: 1px solid #e6e6e6;
@@ -1228,8 +1276,8 @@ h3{
 
 .right_table {
   display: inline-block;
-  /* height: 100%; */
-  width: 72%;
+  height: 900px;
+  width: 82%;
   position: absolute;
   /* border: none; */
   /* overflow-y: auto; */
@@ -1237,7 +1285,7 @@ h3{
 
 .right_table_topCard {
   padding: 0;
-  height: auto;
+  height: 900px;
   width: 95%;
   border-radius: 3px;
   border-bottom: 1px solid #e6e6e6;
@@ -1346,7 +1394,8 @@ h3{
 
 .tableDataCSS {
   width: 100%;
-  height: 700px;
+  /* 因为listWrap设置高度，这里的height会失效 */
+  /* height: 900px; */
 }
 
 .csv_btn {

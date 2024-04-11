@@ -10,11 +10,16 @@
       <div class="select_feature_var">
         <div class="select_feature_var_top">
           <h3 class="title">选择参与运算的特征(因变量)</h3>
+          <div class="searchButton">
+            <el-input style="width:200px"  v-model="feature_input" placeholder="请输入搜索特征名称" clearable></el-input>
+            <el-button icon="el-icon-search" circle size="mini" style="margin-left: 1%;" type="success" @click="search_feature"></el-button>
+            <el-button icon="el-icon-delete" circle size="mini" style="margin-left: 1%;" type="info" @click="clear_feature"></el-button>
+          </div>
         </div>
         <div class="select_feature_check_boxs">
           <el-skeleton :row="6" animated :loading="all_features.length < 1"/>
           <el-checkbox-group v-model="checked_dependent_variables">
-            <div v-for="item in all_features" :key="item.id">
+            <div v-for="item in show_features" :key="item.id">
               <el-checkbox
                 :label="item"
                 @change="dependent_variables_groupCheck(item)"
@@ -47,7 +52,7 @@
         <div class="select_feature_check_boxs">
           <el-skeleton :row="6" animated :loading="label_list.length < 1"/>
           <el-checkbox-group v-model="checked_independent_variables">
-            <div v-for="item in label_list" :key="item.id">
+            <div v-for="item in show_labels" :key="item.id">
               <el-checkbox
                 :label="item"
                 @change="item.status = item.status == 2 ? 0 : 2"
@@ -134,7 +139,7 @@
 
       <!-- 已知危险因素 -->
       <div class="select_feature_var">
-        <div class="select_feature_var_top">
+        <div class="select_feature_var_top knowFeatures">
           <h3 class="title">已知相关疾病</h3>
           <el-popover
             placement="top-start"
@@ -205,6 +210,8 @@ export default {
       all_features: [],
       // 用于存储所有标签
       label_list: [],
+      show_features: [],
+      show_labels: [],
       //用于存储已选的因变量（已选标签特征）
       checked_dependent_variables: [],
       //用于存储已选的因变量（已选危险因素）
@@ -215,7 +222,7 @@ export default {
       currentPage: 1,
       dataTotal: 10,
       value: "",
-      templist: [],
+      feature_input: ""
     };
   },
 
@@ -265,6 +272,9 @@ export default {
                 });
               }
             }
+            // 赋值给展示用数组
+            this.show_features = this.all_features;
+            this.show_labels = this.label_list;
 
             //获取dependent_variables
             this.featureSelectTree.forEach((root) => {
@@ -404,6 +414,15 @@ export default {
         item.status = item.status == 1 ? 0 : 1;
       }
     },
+    search_feature(){
+      console.log(this.feature_input);
+      const filterFeature = this.all_features.filter(feature => feature.label.toLowerCase().includes(this.feature_input.toLowerCase()));
+      this.show_features = filterFeature;
+    },
+    clear_feature(){
+      this.feature_input = '';
+      this.show_features = this.all_features;
+    }
   },
 };
 </script>
@@ -436,7 +455,7 @@ export default {
 /* 使用popover以后省略号就没用了 */
 .el-checkbox-group >>> .el-checkbox__label {
   /* padding-top: 5px; */
-  line-height: 15px;
+  line-height: 16px;
   vertical-align: text-bottom;
   width: 90px;
   overflow: hidden;
@@ -494,7 +513,20 @@ export default {
 
 .select_feature_var_top {
   width: 100%;
-  /* position: absolute; */
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.knowFeatures {
+  width: 100%;
+  display: block;
+}
+
+.searchButton {
+  position: absolute;
+  right: 100px;
+  width: 300px;
 }
 
 .title {

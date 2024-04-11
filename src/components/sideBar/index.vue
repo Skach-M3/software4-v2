@@ -167,7 +167,7 @@ export default {
 }
 
 .el-footer {
-  height: 21px !important;
+  height: 20px !important;
   font-size: 10px;
   background-color: #a5a5a5bb;
   color: #252525;

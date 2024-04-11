@@ -28,10 +28,15 @@
         <!-- 选择作为标签的特征(因变量) -->
         <div class="select_feature_var">
           <div class="select_feature_var_top">
-            <h3 class="title">选择作为标签的特征(因变量)</h3>
+            <h3 class="title">选择作为标签的特征(因变量)</h3> 
+            <div class="searchButton">
+              <el-input style="width:200px"  v-model="feature_input" placeholder="请输入搜索特征名称" clearable></el-input>
+              <el-button icon="el-icon-search" circle size="mini" style="margin-left: 1%;" type="success" @click="search_feature"></el-button>
+              <el-button icon="el-icon-delete" circle size="mini" style="margin-left: 1%;" type="info" @click="clear_feature"></el-button>
+            </div>
           </div>
           <div class="select_feature_check_boxs">
-            <el-skeleton :row="6" animated :loading="all_features.length < 1"/>
+            <el-skeleton :row="6" animated :loading="featureSelectTree.length < 1"/>
             <el-checkbox-group v-model="checked_dependent_variables">
               <div class="checkItem" v-for="item in all_features" :key="item.id" v-show="item.status == 0 || item.status == 1">
                 <el-checkbox :label="item" @change="dependent_variables_groupCheck(item)">{{ item.label }}
@@ -52,7 +57,7 @@
             <h3 class="title">选择危险因素(自变量)</h3>
           </div>
           <div class="select_feature_check_boxs">
-            <el-skeleton :row="6" animated :loading="all_features.length < 1"/>
+            <el-skeleton :row="6" animated :loading="featureSelectTree.length < 1"/>
             <el-checkbox-group v-model="checked_independent_variables">
               <div v-for="item in all_features" :key="item.id" v-show="item.status == 0 || item.status == 2">
                 <el-checkbox :label="item" @change="item.status = (item.status == 2) ? 0 : 2">{{ item.label }}
@@ -112,14 +117,14 @@
 
         <!-- 已知危险因素 -->
         <div class="select_feature_var">
-          <div class="select_feature_var_top">
+          <div class="select_feature_var_top knowFeatures">
             <h3 class="title">已知危险因素</h3>
             <el-popover placement="top-start" title="标题" trigger="hover" content="这是医学专家已经查明的疾病危险因素">
               <i class="el-icon-question" style="margin-left: 10px;" slot="reference"></i>
             </el-popover>
           </div>
           <div class="select_feature_check_boxs">
-            <el-skeleton :row="6" animated :loading="all_features.length < 1"/>
+            <el-skeleton :row="6" animated :loading="featureSelectTree.length < 1"/>
             <el-checkbox-group v-model="know_variables">
               <div v-for="item in all_features" :key="item.index">
                 <el-checkbox :label="item">{{ item.label }}
@@ -182,7 +187,7 @@ export default {
       currentPage: 1,
       dataTotal: 10,
       value: '',
-      templist: []
+      feature_input:""
     };
   },
 
@@ -319,6 +324,8 @@ export default {
         });
       }
     },
+    
+    // 字段分类树的筛选
     getCheckedNodes() {
       //获得所有选中的节点
       const checkeList = this.$refs.tree.getCheckedNodes();
@@ -332,6 +339,7 @@ export default {
       }
       //或者过滤
       else {
+        console.log(checkeList);
         this.all_features = checkeList.filter(node => node.isLeaf === true);
       }
     },
@@ -374,6 +382,20 @@ export default {
       else {
         item.status = (item.status == 1) ? 0 : 1;
       }
+    },
+    search_feature(){
+      console.log(this.feature_input);
+      console.log(this.all_features);
+      const filterFeature = this.all_features.filter(feature => feature.label.toLowerCase().includes(this.feature_input.toLowerCase()));
+      this.all_features = filterFeature;
+    },
+    clear_feature(){
+      this.feature_input = '';
+      this.all_features = []
+      this.featureSelectTree.forEach(root => {
+        this.extractLeafNodes(root);
+      });
+      this.getCheckedNodes()
     }
   }
 };
@@ -403,12 +425,13 @@ export default {
 /* 使用popover以后省略号就没用了 */
 .el-checkbox-group >>> .el-checkbox__label {
   /* padding-top: 5px; */
-  line-height: 15px;
+  line-height: 16px;
   vertical-align: text-bottom;
   width: 90px;
   overflow: hidden;
   white-space: nowrap; /* 防止文本换行 */
   text-overflow: ellipsis; /* 显示省略号 */
+  
 }
 
 .el-checkbox-group>>>.el-checkbox__label:hover {
@@ -493,14 +516,26 @@ export default {
 
 .select_feature_var_top {
   width: 100%;
-  /* position: absolute; */
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.knowFeatures {
+  width: 100%;
+  display: block;
+}
+
+.searchButton {
+  position: absolute;
+  right: 100px;
+  width: 300px;
 }
 
 .title {
   display: inline-block;
-  margin-left: 3%;
+  margin-left: 3%; 
 }
-
 .selection {
   margin-left: 2%;
   position: relative;

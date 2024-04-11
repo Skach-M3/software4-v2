@@ -24,8 +24,8 @@
       </div>
       <div class="right_table">
         <el-card class="right_table_topCard">
-          <div style="height: 30px;padding-left:5px">
-            <h3 style="margin:-20px">数据预览</h3>
+          <div>
+            <h3>数据预览</h3>
           </div>
           <div class="describe_content">
             <p>
@@ -40,15 +40,19 @@
           
           <div class="tableDataCSS" v-loading="table_loading" element-loading-text="拼命加载中"
           element-loading-spinner="el-icon-loading"
-          element-loading-background="rgba(0, 0, 0, 0.05)">
-            <div class="tablePlaceholder" v-if="tableData.length <1 && !table_loading">请在左侧选择数据</div>
-            <el-table :data="tableData" stripe class="custom-table" max-height="550" :fit="false" v-if="tableData.length>0" :header-cell-style="{background:'#eee',color:'#606266'}">
-              <el-table-column v-for="(value, key) in tableData[0]" :key="key" :prop="key" :label="key" :width="colWidth" sortable>
-                <template slot-scope="{ row }">
-                  <div class="truncate-text">{{ row[key] }}</div>
-                </template>
-              </el-table-column>
-            </el-table>
+          element-loading-background="rgba(0, 0, 0, 0.05)" ref="listWrap" @scroll="scrollListener">
+            <div class="tablePlaceholder" v-if="tableData.length <1 && !table_loading">请在左侧选择数据
+            </div>
+            <div v-else ref="list">
+              <el-table :data="tableData" stripe class="custom-table" max-height="550" :fit="false" v-if="tableData.length>0" :header-cell-style="{background:'#eee',color:'#606266'}" ref="scrollTable">
+                <el-table-column v-for="(value, key) in tableData[0]" :key="key" :prop="key" :label="key" :width="colWidth" sortable>
+                  <template slot-scope="{ row }">
+                    <div class="truncate-text">{{ row[key] }}
+                    </div>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
           </div>
           
         </el-card>
@@ -88,6 +92,9 @@ export default {
       else {
         return 65;
       }
+    },
+    length() {
+      return this.tableData.length || 0
     }
   },
 
@@ -95,7 +102,11 @@ export default {
     return {
       treeData: [],
       nodeData: {},
-      tableData: [],
+      tableData: [], //总共的列表数据
+      itemHeight: 48, // item高度
+      num: 10, // 展示的数据
+      start: 0, // 开始索引
+      end: 9, // 结束索引
       showDataForm: {
         createUser: '',
         createTime: '',
@@ -118,10 +129,30 @@ export default {
       showClose: false
     });
   },
-
+  mounted(){
+    this.$refs.listWrap.style.height = '550px' // 设置可视区域的高度
+  },
+  watch: {
+    length(val){
+        // 超过10行数据，就按照最大40*10 400px高度的列表就行
+        if (val >= 10) {
+          this.$refs.listWrap.style.height = '550px';
+        } else {
+        // 不足10行数据，这边 加57是因为表头的高度，具体情况，你们加不加无所谓
+          this.$refs.listWrap.style.height = '550px'
+        }
+    }
+  },
   methods: {
-
-
+    scrollListener() {
+      // 获取滚动高度
+      const scrollTop = this.$refs.listWrap.scrollTop
+      // 开始的数组索引
+      this.start = Math.floor(scrollTop / this.itemHeight)
+      // 结束索引
+      this.end = this.start + this.num
+      this.$refs.list.style.transform = `translateY(${this.start * this.itemHeight}px)`// 对列表项y轴偏移
+    },
     next(classPath, name) {
       let path = classPath.split("/");
       if (path[0] != "公共数据集") {
@@ -262,9 +293,9 @@ export default {
 }
 
 .content {
-  position: absolute;
+  position: relative;
   width: 100%;
-  height: 88%;
+  height: 790px;
 }
 
 .left_tree {
@@ -274,7 +305,6 @@ export default {
   overflow: auto;
   border-radius: 3px;
   border: 1px solid #e6e6e6;
-  margin-top: -2%;
 }
 
 .tipInfo{
@@ -298,15 +328,19 @@ h3{
 
 .right_table {
   display: inline-block;
-  width: 75%;
+  width: 85%;
   position: absolute;
   overflow: auto;
-  margin-top: -2.75%;
-  height: 88%;
+  height: 100%;
+}
+
+.custom-table{
+  /* margin:0 auto; */
+  /* width: 100%; */
 }
 
 .tablePlaceholder{
-  height: 100%;
+  height: 550px;
   text-align: center;
   line-height: 550px;
   background-color: rgba(179, 178, 178, 0.144);
@@ -317,7 +351,8 @@ h3{
 
 .tableDataCSS {
   width: 100%;
-  height: 550px;
+  /* 因为listWrap设置高度，这里的height会失效 */
+  /* height: 550px; */
 }
 
 .truncate-text {
@@ -329,17 +364,15 @@ h3{
 .right_table_topCard {
   padding: 0;
   height: auto;
-  width: 90%;
-  border-bottom: 1px solid #e6e6e6;
+  width: 95%;
   position: relative;
-  top: 2%;
   left: 1%;
 }
 
 .describe_content {
   display: inline-block;
   width: 70%;
-  margin-bottom: 20px;
+  margin-bottom: 26px;
 }
 
 .describe_content span {
