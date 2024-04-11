@@ -13,7 +13,12 @@
       </el-dialog> -->
       <div class="tipInfo">
         <h3>可选数据</h3>
-        <div class="statistic">当前共有 {{diseaseNum}} 个一级病种，{{datasetNum}} 个数据表</div>
+        <span class="statistic">
+          一级病种: {{ diseaseNum }} 个  
+        </span>
+        <span class="statistic"> 
+          数据表: {{ datasetNum }} 个
+        </span>
       </div>
       <hr class="hr-dashed">
       <el-tree ref="tree" :data="treeData" :show-checkbox="false" node-key="id" default-expand-all
@@ -139,7 +144,7 @@
         </div>
         <!-- 显示筛选出来的表数据 -->
         <el-table :data="addTableData" stripe style="width: 100%" height="450" v-show="showAddTableData" :header-cell-style="{background:'#eee',color:'#606266'}">
-          <el-table-column v-for="(value, key) in addTableData[0]" :key="key" :prop="key" :label="key" width="80">
+          <el-table-column v-for="(value, key) in addTableData[0]" :key="key" :prop="key" :label="key" width="80" sortable>
             <template slot-scope="{ row }">
               <div class="truncate-text">{{ row[key] }}</div>
             </template>
@@ -246,7 +251,7 @@
         <div class="describe_content">
           <!-- <h3>{{ showDataForm.tableName }}</h3> -->
           <p style="margin-top:0.5%;width: 100%;">
-            <i class="el-icon-folder"></i> 表名:<span style="font-weight:bold;font-size:18px;color:#252525">{{ showDataForm.tableName }}</span>
+            <i class="el-icon-folder"></i> 数据集名称:<span style="font-weight:bold;font-size:18px;color:#252525">{{ showDataForm.tableName }}</span>
             <i class="el-icon-user"></i> 创建人:<span>{{ showDataForm.createUser }}</span>
             <i class="el-icon-time"></i> 创建时间:<span>{{ showDataForm.createTime }}</span>
             <i class="el-icon-finished"></i> 样本个数:<span>{{ showDataForm.sampleNum }}</span>
@@ -330,6 +335,9 @@ export default {
     "addDataForm.dataName"() {
       this.checkAddTaleName();
     },
+    "diseaseName"(){
+      this.checkDiseasename();
+    },
     selectedFields(newValue) {
       // 如果一键全选框被取消选中，且 selectedFeatures 的长度大于 0，则将其置为 false
       this.selectAll = newValue.length === this.fields.length;
@@ -396,7 +404,8 @@ export default {
       nodeData: {},
 
       diseaseName: '',
-
+      checkIsCommon:'',
+      diseaseNameisOnly: true,
       loading: false,
       loading2: false,
       getData_loading: false,
@@ -457,6 +466,62 @@ export default {
 
   created() {
     // 检查重名的防抖函数
+      this.checkDiseasename = this.debounce(() => {
+      this.diseaseNameisOnly = true;
+      if(this.checkIsCommon == '0'){
+        getRequest("/api/inspectionOfIsNotCommon", {
+        newname: this.diseaseName,
+      }).then((res) => {
+        // 上一次重复了这一次不重复就要提醒一下
+        if (!this.diseaseNameisOnly) {
+          this.$message({
+            showClose: true,
+            message: "疾病名称可用",
+            type: "success",
+          });
+        }
+        if (typeof res.data === "boolean") {
+          this.diseaseNameisOnly = res.data;
+        }
+        if (!res.data) {
+          this.$message({
+            showClose: true,
+            message: "疾病名称重名，请重新填写",
+            type: "warning",
+          });
+          return false;
+        }
+        return true;
+      });
+      }
+      else if(this.checkIsCommon == '1'){
+        getRequest("/api/inspectionOfIsCommon", {
+        newname: this.diseaseName,
+      }).then((res) => {
+       
+        // 上一次重复了这一次不重复就要提醒一下
+        if (this.diseaseNameisOnly) {
+          this.$message({
+            showClose: true,
+            message: "疾病名称可用",
+            type: "success",
+          });
+        }
+        if (typeof res.data === "boolean") {
+          this.diseaseNameisOnly = res.data;
+        }
+        if (!res.data) {
+          this.$message({
+            showClose: true,
+            message: "疾病名称重名，请重新填写",
+            type: "warning",
+          });
+          return false;
+        }
+        return true;
+      });
+      }
+    }, 200);
     this.checkTableName = this.debounce(() => {
       getRequest("/api/DataTable/inspection", {
         newname: this.dialogForm.tableName,
@@ -561,6 +626,7 @@ export default {
 
         // 释放资源
         window.URL.revokeObjectURL(url);
+         this.csvDialogVisible = false;
       })
 
 
@@ -776,6 +842,10 @@ export default {
       }
     },
     append(isLeaf) {
+         this.checkDiseasename();
+      if (this.diseaseNameisOnly == false) {
+        return false;
+      }
       // 发送请求新增一个病种信息（目录结构）
       let catagoryNode = {
         label: this.diseaseName,
@@ -846,6 +916,7 @@ export default {
     markNode(data) {
       console.log(data);
       this.nodeData = data;
+      this.checkIsCommon = this.nodeData.isCommon;
     },
 
     cleanInput() {
@@ -1093,7 +1164,7 @@ export default {
 }
 
 .tipInfo{
-  /* background-color: pink; */
+  background-color: rgba(124, 124, 124, 0.1);
   height: 50px;
   text-align: center;
 }

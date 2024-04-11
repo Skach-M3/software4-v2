@@ -2,10 +2,19 @@
   <div class="main">
     <div class="left_tree">
       <div class="tipInfo">
-        <h3>可选数据</h3>
-        <div class="statistic">
-          当前共有 {{ diseaseNum }} 个一级病种，{{ datasetNum }} 个数据表
+        <h3>任务所用数据集</h3>
+        <span class="statistic">
+          一级病种: {{ diseaseNum }} 个 
+        </span>
+        <span class="statistic"> 
+          数据表: {{ datasetNum }} 个
+        </span>
+        <!-- <div class="statistic">
+          一级病种: {{ diseaseNum }} 个
         </div>
+        <div class="statistic">
+          数据表: {{ datasetNum }} 个
+        </div> -->
       </div>
       <hr class="hr-dashed" />
       <el-tree
@@ -168,6 +177,8 @@ export default {
   },
   data() {
     return {
+      datasetNum: 0,
+      diseaseNum: 0,
       disease: "",
       dataset: "",
       leader: "",
@@ -302,8 +313,8 @@ export default {
   /* width: 250px; */
 }
 
-.tipInfo {
-  /* background-color: pink; */
+.tipInfo{
+  background-color: rgba(124, 124, 124, 0.1);
   height: 50px;
   text-align: center;
 }

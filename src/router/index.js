@@ -109,7 +109,6 @@ router.beforeEach(function(to, from, next) {
   //获取token
   const uid = window.sessionStorage.getItem('userid');
   if (!uid) return next('/');
-  
   store.commit("SetSideBarPath",to.path);
   // console.log(store.state.sideBarPath);
   next();

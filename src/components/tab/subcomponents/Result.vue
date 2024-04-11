@@ -7,7 +7,7 @@
         </div>
         <div class="taskInfo_box_card_group">
           <div class="taskInfo_box_card_item">
-            <i class="el-icon-folder-checked" style="font-size: 25px;"></i><span class="featureTitle">任务名称：</span>
+            <i class="el-icon-data-board" style="font-size: 25px;"></i><span class="featureTitle">任务名称：</span>
             <span>{{ m_taskName }}</span>
           </div>
 
@@ -40,7 +40,7 @@
           </div>
 
           <div class="taskInfo_box_card_item">
-            <i class="el-icon-s-grid" style="font-size: 25px;"></i><span class="featureTitle">所用数据：</span>
+            <i class="el-icon-folder" style="font-size: 25px;"></i><span class="featureTitle">所用数据：</span>
             <span>{{ m_dataset }}</span>
           </div>
 
@@ -97,12 +97,15 @@
         <div slot="header" class="">
           <h2>任务结果:</h2>
         </div>
-        <h3>专家知识匹配度：{{ ratio }}</h3>
+        <h3 v-if="initFlag && haveResult">专家知识匹配度：{{ ratio }}</h3>
         <h3 v-if="m_result.time">运算时间：{{ m_result.time }} 秒</h3>
         <h3 v-if="m_result.ci">独立性检验次数：{{ m_result.ci }}次</h3>
-        <el-card style="margin-top: 0.8%;">
+        <el-card style="margin-top: 0.8%" shadow="never">
           <div class="graphBox">
-            <GraphVue v-if="initFlag" :title_text="graphTitile" :node="node" :links="links"></GraphVue>
+            <div class="graphPlaceHolder" v-if="!haveResult">
+              未挖掘出相关关系
+            </div>
+            <GraphVue v-if="initFlag && haveResult" :title_text="graphTitile" :node="node" :links="links"></GraphVue>
           </div>
         </el-card>
         <!-- <el-card style="margin-top: 0.8%;">
@@ -116,7 +119,7 @@
 
     <div class="buttonGroup">
       <el-button @click="backStep()" round>上一步</el-button>
-      <el-button type="success" @click="exportRes" round>导出结果</el-button>
+      <!-- <el-button type="success" @click="exportRes" round>导出结果</el-button> -->
       <el-button type="primary" @click="next" round>保存任务</el-button>
     </div>
   </div>
@@ -163,7 +166,8 @@ export default {
       links: [],
       data: {},
       type: "",
-      distribution: []
+      distribution: [],
+      haveResult: true,
     };
   },
 
@@ -201,6 +205,7 @@ export default {
         tempNode.color = "#7B68EE";
         if (this.m_result.res.flat(Infinity).length < 1) {
           this.$message("未挖掘出相关关系");
+          this.haveResult = false;
           tempNode.x = 500;
           tempNode.y = 500;
           tempNode.color = "#c2b8fae1";
@@ -271,6 +276,7 @@ export default {
         if (resLength == 0) {
           {
             this.$message("未挖掘出相关关系");
+            this.haveResult = false;
             break;
           }
         }
@@ -344,6 +350,7 @@ export default {
         if (resLength == 0) {
           {
             this.$message("未挖掘出相关关系");
+            this.haveResult = false;
             break;
           }
         }
@@ -469,6 +476,7 @@ export default {
             type: "error",
             message: "新建任务失败",
           });
+          console.log(err);
           this.m_changeStep(this.m_step - 1);
           return false;
         });
@@ -586,9 +594,15 @@ export default {
 }
 
 .featureTitle {
-  font-size: 20px;
-  margin-right: 30px;
+  font-size: 18px;
   margin-bottom: 20px;
+  line-height: 30px;
+  vertical-align: top;
+}
+
+.taskInfo_box_card_item span{
+  line-height: 30px;
+  vertical-align: top;
 }
 
 h3 {
@@ -599,7 +613,6 @@ h3 {
 .graphBox {
   width: 100%;
   height: 40vh;
-
   margin-top: 20px;
 }
 
@@ -626,9 +639,24 @@ span {
   margin: 1%;
 }
 
+.taskInfo_box_card h2{
+  font-size: 20px;
+}
+
 .taskInfo_box_card_group {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.graphPlaceHolder{
+  width: 100%;
+  height: 380px;
+  text-align: center;
+  line-height: 350px;
+  /* background-color: rgba(179, 178, 178, 0.144); */
+  font-weight: bold;
+  color: rgba(58, 57, 57, 0.651);
+  user-select:none;
 }
 </style>

@@ -4,7 +4,12 @@
       <div class="left_tree">
         <div class="tipInfo">
           <h3>可选数据</h3>
-          <div class="statistic">当前共有 {{diseaseNum}} 个一级病种，{{datasetNum}} 个数据表</div>
+          <span class="statistic">
+            一级病种: {{ diseaseNum }} 个 
+          </span>
+          <span class="statistic"> 
+            数据表: {{ datasetNum }} 个
+          </span>
         </div>
         <hr class="hr-dashed">
         <el-tree ref="tree" :data="treeData" :show-checkbox="false" node-key="id" default-expand-all
@@ -24,7 +29,7 @@
           </div>
           <div class="describe_content">
             <p>
-              <i class="el-icon-folder"></i> 表名:<span style="font-weight:bold;font-size:18px;color:#252525">{{ showDataForm.tableName }}</span>
+              <i class="el-icon-folder"></i> 数据集名称:<span style="font-weight:bold;font-size:18px;color:#252525">{{ showDataForm.tableName }}</span>
               <i class="el-icon-user"></i> 创建人:<span>{{ showDataForm.createUser }}</span>
               <i class="el-icon-time"></i> 创建时间:<span>{{ showDataForm.createTime }}</span>
               <i class="el-icon-finished"></i> 样本个数:<span>{{ showDataForm.sampleNum }}</span>
@@ -32,16 +37,13 @@
               <!-- <i class="el-icon-folder-opened"></i> 所属类别:<span>{{ showDataForm.classPath }}</span> -->
             </p>
           </div>
-          <div class="buttom">
-            <el-button type=primary size="small" :disabled="tableData.length < 1" @click="next(showDataForm.classPath, showDataForm.tablename)">确认</el-button>
-          </div>
           
           <div class="tableDataCSS" v-loading="table_loading" element-loading-text="拼命加载中"
           element-loading-spinner="el-icon-loading"
           element-loading-background="rgba(0, 0, 0, 0.05)">
             <div class="tablePlaceholder" v-if="tableData.length <1 && !table_loading">请在左侧选择数据</div>
             <el-table :data="tableData" stripe class="custom-table" max-height="550" :fit="false" v-if="tableData.length>0" :header-cell-style="{background:'#eee',color:'#606266'}">
-              <el-table-column v-for="(value, key) in tableData[0]" :key="key" :prop="key" :label="key" :width="colWidth">
+              <el-table-column v-for="(value, key) in tableData[0]" :key="key" :prop="key" :label="key" :width="colWidth" sortable>
                 <template slot-scope="{ row }">
                   <div class="truncate-text">{{ row[key] }}</div>
                 </template>
@@ -53,6 +55,7 @@
 
         <div class="buttonGroup">
           <el-button @click="backStep()" round>上一步</el-button>
+          <el-button type=primary round :disabled="tableData.length < 1" @click="next(showDataForm.classPath, showDataForm.tablename)">下一步</el-button>
         </div>
       </div>
     </div>
@@ -253,7 +256,7 @@ export default {
 <style scoped>
 .buttonGroup {
   width: 200px;
-  margin-top: 18px;
+  margin-top: 35px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -275,10 +278,9 @@ export default {
 }
 
 .tipInfo{
-  /* background-color: pink; */
+  background-color: rgba(124, 124, 124, 0.1);
   height: 50px;
   text-align: center;
-  margin-top: 1px;
 }
 .tipInfo .statistic{
   font-size: 13px;
@@ -306,7 +308,7 @@ h3{
 .tablePlaceholder{
   height: 100%;
   text-align: center;
-  line-height: 600px;
+  line-height: 550px;
   background-color: rgba(179, 178, 178, 0.144);
   font-weight: bold;
   color: rgba(58, 57, 57, 0.651);
@@ -338,13 +340,6 @@ h3{
   display: inline-block;
   width: 70%;
   margin-bottom: 20px;
-}
-
-.buttom {
-  display: inline-block;
-  width: 20%;
-  position: relative;
-  right: -20%;
 }
 
 .describe_content span {
