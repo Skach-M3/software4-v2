@@ -51,7 +51,7 @@
 
           <div class="taskInfo_box_card_item">
             <i class="el-icon-star-off" style="font-size: 25px;"></i><span class="featureTitle">所用特征：</span>
-            <span>{{ m_use_features.toString() }}</span>
+            <span>{{ m_caculate_use_features.toString() }}</span>
           </div>
 
         </div>
@@ -172,12 +172,8 @@ export default {
   },
 
   created() {
-    var treeData = {
-      name: "结果统计",
-      children: [],
-    };
     let tempNode = {
-      name: this.m_target_feature[0],
+      name: this.m_caculate_target_feature[0],
       x: 300,
       y: 300,
       color: "#7B68EE",
@@ -186,7 +182,7 @@ export default {
     let tempLink = {
       source: "",
       target: "",
-      value: 1,
+      value: "",
       label: {
         show: true,
       },
@@ -199,7 +195,7 @@ export default {
     let bottom_y = 300;
     switch (this.moduleName) {
       case "disFactor": {
-        tempNode.name = this.m_target_feature[0];
+        tempNode.name = this.m_caculate_target_feature[0];
         tempNode.x = 500;
         tempNode.y = bottom_y;
         tempNode.color = "#7B68EE";
@@ -220,34 +216,23 @@ export default {
           tempNode.y = top_y;
           tempNode.color = "#FFDEAD";
           this.node.push(JSON.parse(JSON.stringify(tempNode)));
-          tempLink.source = this.m_target_feature[0];
+          tempLink.source = this.m_caculate_target_feature[0];
           tempLink.target = this.m_result.res[0][i];
           // 权重是随机数
-          tempLink.value = Number(Math.random().toFixed(3));
+          // tempLink.value = Number(Math.random().toFixed(3));
           tempLink.lineStyle.width += tempLink.value * 2;
           this.links.push(JSON.parse(JSON.stringify(tempLink)));
         }
 
-        var firstChildren = {
-          name: String(Object.keys(this.m_result.treeRes)),
-          children: [],
-        };
-        treeData.children.push(firstChildren);
-        var secondChildrenList = Array.from(this.m_result.treeRes[firstChildren.name]);
-        secondChildrenList.forEach((element) => {
-          var secondChildren = { name: String(element), children: [] };
-          treeData.children[0].children.push(secondChildren);
-        });
-        this.data = treeData;
         break;
       }
 
       case "f_Factor": {
         // 不能有重复的name，用map存储已有name进行去重
         let existedName = new Map();
-        let ref_x_t = 1000 / (this.m_target_feature.length + 1);
-        for (let i = 0; i < this.m_target_feature.length; i++) {
-          tempNode.name = this.m_target_feature[i];
+        let ref_x_t = 1000 / (this.m_caculate_target_feature.length + 1);
+        for (let i = 0; i < this.m_caculate_target_feature.length; i++) {
+          tempNode.name = this.m_caculate_target_feature[i];
           tempNode.x = ref_x_t * i;
           tempNode.y = bottom_y;
           if (
@@ -295,33 +280,22 @@ export default {
               this.node.push(JSON.parse(JSON.stringify(tempNode)));
               existedName.set(tempNode.name, 1);
             }
-            tempLink.source = this.m_target_feature[i];
+            tempLink.source = this.m_caculate_target_feature[i];
             tempLink.target = this.m_result.res[i][j];
             // 权重是随机数
-            tempLink.value = Number(Math.random().toFixed(3));
+            // tempLink.value = Number(Math.random().toFixed(3));
             tempLink.lineStyle.width = 3 + tempLink.value * 8;
             this.links.push(JSON.parse(JSON.stringify(tempLink)));
           }
         }
-        let resTreedata = this.m_result.treeRes;
-        Object.entries(resTreedata).forEach(function ([key, value], index) {
-          var firstChildren = { name: String(key), children: [] };
-          treeData.children.push(firstChildren);
-          var secondChildrenList = Array.from(value);
-          secondChildrenList.forEach((element) => {
-            var secondChildren = { name: String(element), children: [] };
-            treeData.children[index].children.push(secondChildren);
-          });
-        });
-        this.data = treeData;
         break;
       }
       case "factorDis": {
         // 不能有重复的name，用map存储已有name进行去重
         let existedName = new Map();
-        let ref_x_t = 1000 / (this.m_target_feature.length + 1);
-        for (let i = 0; i < this.m_target_feature.length; i++) {
-          tempNode.name = this.m_target_feature[i];
+        let ref_x_t = 1000 / (this.m_caculate_target_feature.length + 1);
+        for (let i = 0; i < this.m_caculate_target_feature.length; i++) {
+          tempNode.name = this.m_caculate_target_feature[i];
           tempNode.x = ref_x_t * i;
           tempNode.y = bottom_y;
           if (
@@ -355,7 +329,7 @@ export default {
           }
         }
 
-        this.graphTitile = `${this.m_target_feature[0]}因素相关疾病`;
+        this.graphTitile = `${this.m_caculate_target_feature[0]}因素相关疾病`;
 
         for (let i = 0; i < this.m_result.res.length; i++) {
           for (let j = 0; j < this.m_result.res[i].length; j++) {
@@ -368,7 +342,7 @@ export default {
               this.node.push(JSON.parse(JSON.stringify(tempNode)));
               existedName.set(tempNode.name, 1);
             }
-            tempLink.source = this.m_target_feature[i];
+            tempLink.source = this.m_caculate_target_feature[i];
             tempLink.target = this.m_result.res[i][j];
             // 权重是随机数
             tempLink.value = Number(Math.random().toFixed(3));
@@ -376,17 +350,6 @@ export default {
             this.links.push(JSON.parse(JSON.stringify(tempLink)));
           }
         }
-        let resTreedata = this.m_result.treeRes;
-        Object.entries(resTreedata).forEach(function ([key, value], index) {
-          var firstChildren = { name: String(key), children: [] };
-          treeData.children.push(firstChildren);
-          var secondChildrenList = Array.from(value);
-          secondChildrenList.forEach((element) => {
-            var secondChildren = { name: String(element), children: [] };
-            treeData.children[index].children.push(secondChildren);
-          });
-        });
-        this.data = treeData;
         break;
       }
       default:
@@ -418,8 +381,8 @@ export default {
         tips: this.m_tips,
         disease: this.m_disease,
         model: this.m_algorithm,
-        feature: this.m_use_features,
-        targetcolumn: this.m_target_feature,
+        feature: this.m_caculate_use_features,
+        targetcolumn: this.m_caculate_target_feature,
         time: this.m_result?.time,
         ratio: this.m_result?.ratio?.toFixed(5),
         ci: this.m_result?.ci,
@@ -453,20 +416,28 @@ export default {
           this.m_changeStep(1);
           let defaultValue = {
             step: 1,
-            taskName: "",
-            principal: "",
-            participants: "",
-            disease: "",
-            dataset: "",
-            use_features: [],
-            known_features: [],
-            target_feature: [],
-            SF_DRMB: {
-              K_OR: 0.15,
-              K_and_PC: 0.3,
-              K_and_SP: 0.75,
-            },
-            result: [],
+      taskName: "",
+      principal: "",
+      participants: "",
+      disease: "",
+      tips:"",
+      dataset: "",
+      use_features: [],
+      known_features: [],
+      target_feature: [],
+      all_featrues:[],
+      caculate_use_features:[],
+      caculate_known_features:[],
+      caculate_target_feature:[],
+      algorithm:'',
+      SF_DRMB: {
+        K_OR: 0.15,
+        K_and_PC: 0.3,
+        K_and_SP: 0.75,
+      },
+      result: [],
+      is_common:false,
+      node_data:''
           };
           // TODO:这个改不了深层参数，需要写一个深拷贝通用方法
           this.m_changeTaskInfo(defaultValue);

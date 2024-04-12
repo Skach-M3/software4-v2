@@ -160,12 +160,12 @@ export default {
       this.m_SF_DRMB_update(this.SF_DRMB_form);
       let payload = {
         tablename: this.m_dataset,
-        targetcolumn: this.m_target_feature,
-        fea: this.m_use_features,
+        targetcolumn: this.m_caculate_target_feature,
+        fea: this.m_caculate_use_features,
         K_OR: Number(this.m_SF_DRMB.K_OR),
         K_and_pc: Number(this.m_SF_DRMB.K_and_PC),
         K_and_sp: Number(this.m_SF_DRMB.K_and_SP),
-        knowledge: this.m_known_features,
+        knowledge: this.m_caculate_known_features,
       };
       postRequest(url, payload)
         .then((res) => {
@@ -175,7 +175,6 @@ export default {
             res.data.ratio = 0;
             console.log(res.ratio);
           }
-
           this.m_changeTaskInfo({ algorithm: this.model, result: res.data });
           this.loading = false;
           console.log(this.m_result);

@@ -12,6 +12,10 @@ export default {
       use_features: [],
       known_features: [],
       target_feature: [],
+      all_featrues:[],
+      caculate_use_features:[],
+      caculate_known_features:[],
+      caculate_target_feature:[],
       algorithm:'',
       SF_DRMB: {
         K_OR: 0.15,
@@ -19,7 +23,8 @@ export default {
         K_and_SP: 0.75,
       },
       result: [],
-      is_common:false
+      is_common:false,
+      node_data:''
     };
   },
   getters: {},

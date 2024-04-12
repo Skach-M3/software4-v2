@@ -46,6 +46,21 @@ export default {
     m_is_common() {
       return this.$store.state[this.moduleName].is_common;
     },
+    m_node_data() {
+      return this.$store.state[this.moduleName].node_data;
+    },
+    m_all_featrues() {
+      return this.$store.state[this.moduleName].all_featrues;
+    },
+    m_caculate_use_features() {
+      return this.$store.state[this.moduleName].caculate_use_features;
+    },
+    m_caculate_known_features() {
+      return this.$store.state[this.moduleName].caculate_known_features;
+    },
+    m_caculate_target_feature() {
+      return this.$store.state[this.moduleName].caculate_target_feature;
+    },
   },
   methods: {
     m_changeStep(newStep) {

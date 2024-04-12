@@ -267,7 +267,7 @@
         </div>
         <!-- 显示表数据 -->
 
-        <div class="tableDataCSS" v-loading="table_loading" element-loading-text="拼命加载中"
+        <div class="tableDataCSS" v-loading="table_loading" element-loading-text="数据量较大，拼命加载中"
           element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.05)" ref="listWrap" @scroll="scrollListener">
           <div class="tablePlaceholder" v-if="tableData.length < 1 && !table_loading">请在左侧选择数据
           </div>
@@ -983,8 +983,8 @@ export default {
         },
       };
       this.$axios(this.options).then(res => {
-        console.log("数据:")
-        console.log(res.data);
+        //console.log("数据:")
+        // console.log(res.data);
         this.getCatgory();
       });
 

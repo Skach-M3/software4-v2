@@ -29,7 +29,7 @@
           </div>
           <div class="describe_content">
             <p>
-              <i class="el-icon-folder"></i> 数据集名称:<span style="font-weight:bold;font-size:18px;color:#252525">{{ showDataForm.tableName }}</span>
+              <i class="el-icon-folder"></i> 数据集名称:<span style="font-weight:bold;font-size:18px;color:#252525">{{ showDataForm.tablename }}</span>
               <i class="el-icon-user"></i> 创建人:<span>{{ showDataForm.createUser }}</span>
               <i class="el-icon-time"></i> 创建时间:<span>{{ showDataForm.createTime }}</span>
               <i class="el-icon-finished"></i> 样本个数:<span>{{ showDataForm.sampleNum }}</span>
@@ -38,7 +38,7 @@
             </p>
           </div>
           
-          <div class="tableDataCSS" v-loading="table_loading" element-loading-text="拼命加载中"
+          <div class="tableDataCSS" v-loading="table_loading" element-loading-text="数据量较大，拼命加载中"
           element-loading-spinner="el-icon-loading"
           element-loading-background="rgba(0, 0, 0, 0.05)" ref="listWrap" @scroll="scrollListener">
             <div class="tablePlaceholder" v-if="tableData.length <1 && !table_loading">请在左侧选择数据
@@ -118,10 +118,12 @@ export default {
       diseaseNum:0,
       datasetNum:0,
       table_loading:false,
+      tempNode:{}
     };
   },
 
   created() {
+    this.init();
     this.getCatgory();
     this.$notify.success({
       title: '提示',
@@ -144,6 +146,12 @@ export default {
     }
   },
   methods: {
+    init(){
+      if(this.m_node_data !== ''){
+        var node  = JSON.parse(this.m_node_data);
+        this.changeData(node);
+      }
+    },
     scrollListener() {
       // 获取滚动高度
       const scrollTop = this.$refs.listWrap.scrollTop
@@ -156,10 +164,10 @@ export default {
     next(classPath, name) {
       let path = classPath.split("/");
       if (path[0] != "公共数据集") {
-        this.m_changeTaskInfo({ disease: path[0], dataset: name ,is_common: false });
+        this.m_changeTaskInfo({ disease: path[0], dataset: name ,is_common: false ,node_data:JSON.stringify(this.tempNode)});
       }
       else {
-        this.m_changeTaskInfo({ disease: path[path.length - 1], dataset: name, is_common: true });
+        this.m_changeTaskInfo({ disease: path[path.length - 1], dataset: name, is_common: true ,node_data:JSON.stringify(this.tempNode)});
       }
       this.m_changeStep(3);
     },
@@ -178,6 +186,7 @@ export default {
 
     changeData(data) {
       if (data.isLeafs == 1) {
+        this.tempNode = data;
         this.showDataForm.featureNum = ''
         this.showDataForm.sampleNum = ''
         this.table_loading = true;
@@ -187,7 +196,6 @@ export default {
         that.getTableDescribe(data.id)
         //获取数据信息
         that.getTableData(data.id, data.label)
-        
       }
     },
     getTableDescribe(id) {

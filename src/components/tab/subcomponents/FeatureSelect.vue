@@ -26,7 +26,32 @@
         </div>
 
         <!-- 选择作为标签的特征(因变量) -->
-        <div class="select_feature_var">
+        <div class="select_feature_var" v-if="this.moduleName=='f_Factor'">
+          <div class="select_feature_var_top">
+            <h3 class="title">选择作为标签的特征(因变量)</h3> 
+            <div class="searchButton">
+              <el-input style="width:200px"  v-model="feature_input" placeholder="请输入搜索特征名称" clearable></el-input>
+              <el-button icon="el-icon-search" circle size="mini" style="margin-left: 1%;" type="success" @click="search_feature"></el-button>
+              <el-button icon="el-icon-delete" circle size="mini" style="margin-left: 1%;" type="info" @click="clear_feature"></el-button>
+            </div>
+          </div>
+          <div class="select_feature_check_boxs">
+            <el-skeleton :row="6" animated :loading="featureSelectTree.length < 1"/>
+            <el-checkbox-group v-model="checked_dependent_variables">
+              <div class="checkItem" v-for="item in all_features" :key="item.id" v-show="item.status == 0 || item.status == 1">
+                <el-checkbox :label="item" @change="dependent_variables_groupCheck(item)">{{ item.label }}
+                </el-checkbox> <el-progress :percentage="item.fill_rate"
+                  :color="changeProgressColor(item.fill_rate)"></el-progress>
+              </div>
+            </el-checkbox-group>
+          </div>
+          <el-pagination @current-change="currentPageChange()" :current-page.sync="currentPage"
+            :page-size.sync="pageSize" layout="total, prev, pager, next" :total="dataTotal"
+            style="margin-left: 5%; margin-top: 20px" :hide-on-single-page="true">
+          </el-pagination>
+        </div>
+        
+        <div class="select_feature_var" v-else>
           <div class="select_feature_var_top">
             <h3 class="title">选择作为标签的特征(因变量)</h3> 
             <div class="searchButton">
@@ -168,9 +193,9 @@ export default {
   computed: {},
   data() {
     return {
-      computeFeatures: [],
-      knownFeatures: [],
-      targetFeature: [],
+      // computeFeatures: [],
+      // knownFeatures: [],
+      // targetFeature: [],
       //用于存储左侧特征选择树值
       featureSelectTree: [],
       //特征选择数的备份，用于删除叶子节点
@@ -187,7 +212,10 @@ export default {
       currentPage: 1,
       dataTotal: 10,
       value: '',
-      feature_input:""
+      feature_input:"",
+      caculate_use_features:[],
+      caculate_known_features:[],
+      caculate_target_feature:[],
     };
   },
 
@@ -204,14 +232,21 @@ export default {
           if (res.code == 200) {
             this.featureSelectTree = res.data;
             //获取dependent_variables
-            this.featureSelectTree.forEach(root => {
+            if(this.m_all_featrues.length == 0 ){
+              this.featureSelectTree.forEach(root => {
               this.extractLeafNodes(root);
             });
+            }
+            else{
+              this.all_features = this.m_all_featrues;
+            }
+            this.checked_dependent_variables = this.m_target_feature;
+            this.checked_independent_variables = this.m_use_features;
+            this.know_variables = this.m_known_features;
           }
           // 同步vuex里的数据
-          this.checked_independent_variables = this.m_use_features;
-          this.know_variables = this.m_known_features;
-
+  
+          
           if (this.moduleName !== "disFactor") {
             this.checked_dependent_variables = this.m_target_feature;
             // this.changeBox_target();
@@ -224,16 +259,20 @@ export default {
         }).then((res) => {
           if (res.code == 200) {
             this.featureSelectTree = res.data;
-
-            //获取dependent_variables
-            this.featureSelectTree.forEach(root => {
+            if(this.m_all_featrues.length == 0 ){
+              this.featureSelectTree.forEach(root => {
               this.extractLeafNodes(root);
             });
+            }
+            else{
+              this.all_features = this.m_all_featrues;
+            }
+            this.checked_dependent_variables = this.m_target_feature;
+            this.checked_independent_variables = this.m_use_features;
+            this.know_variables = this.m_known_features;
 
           }
-          // 同步vuex里的数据
-          this.checked_independent_variables = this.m_use_features;
-          this.know_variables = this.m_known_features;
+          
           if (this.moduleName !== "disFactor") {
             this.checked_dependent_variables = this.m_target_feature;
             // this.changeBox_target();
@@ -251,15 +290,15 @@ export default {
         return;
       }
       this.checked_dependent_variables.forEach((item) => {
-        this.targetFeature.push(item.name);
+        this.caculate_target_feature.push(item.name);
       })
 
       this.checked_independent_variables.forEach((item) => {
-        this.computeFeatures.push(item.name);
+        this.caculate_use_features.push(item.name);
       })
 
       this.know_variables.forEach((item) => {
-        this.knownFeatures.push(item.name);
+        this.caculate_known_features.push(item.name);
       })
 
       if (this.checked_independent_variables.length < 5) {
@@ -270,9 +309,13 @@ export default {
         return;
       }
       this.m_changeTaskInfo({
-        use_features: this.computeFeatures,
-        known_features: this.knownFeatures,
-        target_feature: this.targetFeature,
+        use_features: this.checked_independent_variables,
+        known_features: this.know_variables,
+        target_feature: this.checked_dependent_variables,
+        all_featrues:this.all_features,
+        caculate_target_feature:this.caculate_target_feature,
+        caculate_use_features:this.caculate_use_features,
+        caculate_known_features:this.caculate_known_features,
       });
       this.m_changeStep(this.m_step + 1);
     },
