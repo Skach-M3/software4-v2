@@ -360,10 +360,8 @@ export default {
       tableName: this.m_dataset,
     }).then((res) => {
       if (res.code == 200) {
-        var jsonString = res.data[0].replace(/'/g, '"');
-
-        // 将 JSON 字符串解析为对象数组
-        this.distribution = JSON.parse(jsonString);
+        var result_str = res.data[0].replace(/NaN/g, "null");
+        this.distribution = JSON.parse(result_str);
       }
     });
     this.initFlag = true;

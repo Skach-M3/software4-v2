@@ -51,6 +51,7 @@
           </el-pagination>
         </div>
         
+        <!-- 如果要做单选框 -->
         <div class="select_feature_var" v-else>
           <div class="select_feature_var_top">
             <h3 class="title">选择作为标签的特征(因变量)</h3> 

@@ -813,7 +813,6 @@ export default {
     getCatgory() {
       getCategory("/api/category").then((response) => {
         this.treeData = response.data;
-        console.log(response.data)
         // 获取病种和数据集总数
         this.diseaseNum = response.data[0].children.length + response.data[1].children.length;
         getRequest("/api/getTableNumber").then((res) => {

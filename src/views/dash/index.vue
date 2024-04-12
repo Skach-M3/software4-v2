@@ -52,6 +52,7 @@
         <el-card>
           <div slot="header" class="clearfix">
             <span class="lineStyle">▍</span><span>缺失占比</span>
+            <!-- <el-cascader v-model="table_value" :options="table_value_options" :props="{ expandTrigger: 'hover' }" size="mini" @change="table_val_change"></el-cascader> -->
             <el-select class="BarchartSelect" v-model="table_value" placeholder="请选择数据集" size="mini" @change="table_val_change">
               <el-option v-for="item in table_value_options" :key="item" :label="item" :value="item" size="mini">
               </el-option>
@@ -249,13 +250,12 @@ export default {
       getRequest("stastic/getdiseaserate").then(
         (res) => {
           if (res.code == 200) {
-            for (let key in res.data.data) {
+            for (let key in res.data) {
               let pie_obj = {}
-              pie_obj.value = res.data.data[key];
+              pie_obj.value = res.data[key];
               pie_obj.name = key;
               this.pieObject.push(pie_obj);
             }
-
           }
           else {
             this.$message.error("获取数据失败");
