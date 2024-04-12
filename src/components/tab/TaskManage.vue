@@ -249,7 +249,7 @@ export default {
 .main {
   display: grid;
   grid-template-columns: 18% 82%;
-  height:900px
+  height:820px
 }
 
 .left_tree {
@@ -331,10 +331,10 @@ h3 {
 }
 
 .cardGroup {
-  width: 90%;
+  /* width: 90%; */
   margin-left: 3%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, 380px);
+  grid-template-columns: repeat(auto-fill, 350px);
   grid-row-gap: 40px;
   grid-column-gap: 60px;
 }

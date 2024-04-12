@@ -3,24 +3,43 @@
     <div class="topStatistic">
       <el-card class="top_statistic_card">
         <el-card class="statistic_item">
-          <div class="text_place">
+          <div class="titleArea" ><i class="el-icon-s-grid"></i>专病集个数</div>
+          <div class="dataArea" >
+            <span class="num" >{{ statistic.specialityCount }}</span>
+            <span class="unit" >个</span>
+          </div>
+          <!-- <div class="text_place">
             <i class="el-icon-s-grid"></i> 专病集个数:{{ statistic.specialityCount }}
-          </div>
+          </div> -->
         </el-card>
         <el-card class="statistic_item">
-          <div class="text_place">
+          <div class="titleArea" ><i class="el-icon-s-data"></i>样本总量</div>
+          <div class="dataArea" >
+            <span class="num" >{{ statistic.sampleCount }}</span>
+            <span class="unit" >个</span>
+          </div>
+          <!-- <div class="text_place">
             <i class="el-icon-s-data"></i> 样本总量:{{ statistic.sampleCount }}
-          </div>
+          </div> -->
         </el-card>
         <el-card class="statistic_item">
-          <div class="text_place">
-            <i class="el-icon-time"></i> 起始时间:<p></p>{{ statistic.startAndEndTime }}
+          <div class="titleArea" ><i class="el-icon-s-claim"></i>任务总数</div>
+          <div class="dataArea" >
+            <span class="num" >{{ statistic.taskCount }}</span>
+            <span class="unit" >个</span>
           </div>
-        </el-card>
-        <el-card class="statistic_item">
-          <div class="text_place">
+          <!-- <div class="text_place">
             <i class="el-icon-s-claim"></i> 任务总数:{{ statistic.taskCount }}
+          </div> -->
+        </el-card>
+        <el-card class="statistic_item">
+          <div class="titleArea" ><i class="el-icon-time"></i>起始时间</div>
+          <div class="dataArea" >
+            <span class="text" >{{ statistic.startAndEndTime }}</span>
           </div>
+          <!-- <div class="text_place">
+            <i class="el-icon-time"></i> 起始时间:<p></p>{{ statistic.startAndEndTime }}
+          </div> -->
         </el-card>
       </el-card>
     </div>
@@ -240,7 +259,7 @@ export default {
             this.statistic.sampleCount = res.data.itemNumber;
             this.statistic.taskCount = res.data.taskNumber;
             this.statistic.specialityCount = res.data.specialDiseaseNumber;
-            this.statistic.startAndEndTime = res.data.startTime + "至" + res.data.endTime;
+            this.statistic.startAndEndTime = res.data.startTime + " 至 " + res.data.endTime;
           }
           else {
             this.$message.error("获取数据失败");
@@ -420,7 +439,10 @@ export default {
   width: 100%;
   height: 33%;
 
-  .el-card {
+  
+}
+
+.top_statistic_card .el-card {
     display: inline-block;
     width: 21%;
     height: 100px;
@@ -431,7 +453,6 @@ export default {
     box-shadow: 0 2px 12px 0 rgba;
     background: rgba(255, 255, 255, 0.1);
 
-  }
 }
 
 .midStatistic {
@@ -445,7 +466,10 @@ export default {
   width: 100%;
   height: 100%;
 
-  .el-card {
+  
+}
+
+.mid_statistic_card .el-card {
     display: inline-block;
     width: 31%;
     height: 100%;
@@ -455,7 +479,6 @@ export default {
     box-shadow: 0 2px 12px 0 rgba;
     background: rgba(255, 255, 255, 0.1);
 
-  }
 }
 
 .bottomStatistic {
@@ -477,6 +500,36 @@ export default {
 
 .statistic_item {
   position: relative;
+}
+
+.titleArea {
+  position: absolute;
+  left: 20px;
+  top: 15px;
+}
+
+.dataArea {
+  /* width: 100%; */
+  position: relative;
+}
+
+.dataArea .num{
+  font-size: 3.5em;
+  color: #132d83;
+}
+
+.dataArea .text{
+  position: absolute;
+  font-size: 1.5em;
+  color: #132d83;
+  left: 10px;
+  top: 20px;
+}
+
+.dataArea .unit{
+  position: absolute;
+  right: 0px;
+  bottom: -10px;
 }
 
 .statistic_item .text_place {
