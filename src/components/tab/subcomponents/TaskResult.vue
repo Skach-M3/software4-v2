@@ -58,12 +58,11 @@
             <i class="el-icon-cpu" style="font-size: 25px"></i
             ><span class="featureTitle">所用算法：</span>
             <span>{{ res.model }} </span>
-            <span
-              v-if="res.para.length !== 0"
-              v-for="(item, index) in res.para"
-            >
-              {{ item }}:{{ res.paraValue[index] }};</span
-            >
+            <span v-if="res.para[0] !== ''">
+              <span v-for="(item, index) in res.para" :key="index">
+                {{ item }}:{{ res.paraValue[index] }};</span
+              >
+            </span>
           </div>
 
           <div class="taskInfo_box_card_item">
@@ -91,12 +90,11 @@
               <i class="el-icon-cpu" style="font-size: 25px"></i
               ><span class="featureTitle">所用算法：</span>
               <span>{{ res.model }} </span>
-              <span
-                v-if="res.para.length !== 0"
-                v-for="(item, index) in res.para"
-              >
+              <span v-if="res.para[0] !== ''">
+              <span v-for="(item, index) in res.para" :key="index">
                 {{ item }}:{{ res.paraValue[index] }};</span
               >
+            </span>
             </div>
           </div>
 
@@ -314,7 +312,6 @@ export default {
       tableName: this.res.dataset,
     }).then((res) => {
       if (res.code == 200) {
-        console.log(res.data[0]);
         var result_str = res.data[0].replace(/NaN/g, "null");
         this.distribution = JSON.parse(result_str);
       }

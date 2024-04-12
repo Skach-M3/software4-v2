@@ -109,8 +109,13 @@ router.beforeEach(function(to, from, next) {
   //获取token
   const uid = window.sessionStorage.getItem('userid');
   if (!uid) return next('/');
-  store.commit("SetSideBarPath",to.path);
-  // console.log(store.state.sideBarPath);
+  // 查看任务结果页面需要高亮历史任务侧栏
+  console.log(to.path);
+  if(to.path === "/sideBar/TaskResult"){
+    store.commit("SetSideBarPath","/sideBar/taskManage");
+  }else{
+    store.commit("SetSideBarPath",to.path);
+  }
   next();
 });
 export default router
