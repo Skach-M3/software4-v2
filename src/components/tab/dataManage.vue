@@ -63,20 +63,30 @@
         </span>
       </el-dialog>
     </div>
-    <el-dialog title="新增数据集" :visible.sync="dialogDataVisible" width="60%">
+    <el-dialog title="新增数据集" :visible.sync="dialogDataVisible" width="1150px">
       <div class="addDataClass">
-        <i style="margin-left: 10px" class="el-icon-s-data"></i>&nbsp;&nbsp;&nbsp;数据集：<el-input
+        <div class="addDataBaseInfo">
+          <i class="el-icon-s-data"></i>
+          <span class="titleText">数据集：</span>
+          <el-input
           v-model="addDataForm.dataName" placeholder="请输入数据集名称"></el-input>
-        <span class="addDataBaseInfo">
-          <i class="el-icon-user-solid"></i>&nbsp;&nbsp;&nbsp;创建人：<el-input v-model="addDataForm.createUser"
+        </div>
+        <div class="addDataBaseInfo">
+          <i class="el-icon-user-solid"></i>
+          <span class="titleText">创建人：</span>
+          <el-input v-model="addDataForm.createUser"
             placeholder="请输入创建人姓名" disabled></el-input>
-        </span>
-        <span class="addDataBaseInfo">
-          <i class="el-icon-time"></i>&nbsp;&nbsp;&nbsp;创建时间：<span>{{ showFeatureDataForm.createTime }}</span>
-        </span>
-        <span class="addDataBaseInfo">
-          <i class="el-icon-pie-chart"></i>&nbsp;&nbsp;&nbsp;所属类别：<span>{{ showFeatureDataForm.classPath }}</span>
-        </span>
+        </div>
+        <div class="addDataBaseInfo createTimeArea">
+          <i class="el-icon-time"></i>
+          <span class="titleText">创建时间：</span>
+          <span>{{ showFeatureDataForm.createTime }}</span>
+        </div>
+        <div class="addDataBaseInfo">
+          <i class="el-icon-pie-chart"></i>
+          <span class="titleText">所属类别：</span>
+          <span class="belongType">{{ showFeatureDataForm.classPath }}</span>
+        </div>
       </div>
       <div class="addDataClass" style="margin-top: 20px">
         <div class="addDataTitle"><i class="el-icon-connection"></i>&nbsp;&nbsp;特征选择</div>
@@ -84,7 +94,7 @@
           <el-button type="primary" plain icon="el-icon-plus" style="margin-right: 8px"
             @click="putToAddDataForm">添加新条件</el-button>
           <el-button @click="chooseCharacter(addDataForm.characterList[0])"
-            style="width: 130px;margin-right: 8px;margin-left: 0px">{{ addDataForm.characterList[0].button
+            style="margin-right: 8px;margin-left: 0px">{{ addDataForm.characterList[0].button
             }}</el-button>
           <span v-if="addDataForm.characterList[0].type === 'discrete'">
             <el-select :value="'='" slot="prepend" placeholder="运算符" style="width: 90px;margin-right: 8px" disabled>
@@ -104,8 +114,8 @@
             </el-select>
             <el-input v-model="addDataForm.characterList[0].value" placeholder="请输入特征取值"
               style="width: 300px"></el-input>
-            <el-button disabled style="width: 200px;background-color:#f5f7fa;">单位：{{ addDataForm.characterList[0].unit
-              }}</el-button>
+            <span  style="width: 200px;color:#858585;"> 单位：{{ addDataForm.characterList[0].unit
+              }}</span>
           </span>
         </div>
         <div style="margin-top: 20px;" v-for="(characterItem, index) in addDataForm.characterList.slice(1)"
@@ -135,7 +145,7 @@
               <el-option label="=" value="="></el-option>
             </el-select>
             <el-input v-model="characterItem.value" placeholder="请输入特征取值" style="width: 300px"></el-input>
-            <el-button disabled style="width: 115px;background-color:#f5f7fa;">单位：{{ characterItem.unit }}</el-button>
+            <span  style="width: 200px;color:#858585;"> 单位：{{ characterItem.unit }}</span>
           </span>
           <el-button type="primary" plain icon="el-icon-delete" style="margin-left: 10px"
             @click="deleteToAddDataForm(characterItem)">删除</el-button>
@@ -177,9 +187,9 @@
             </el-menu>
           </el-aside>
           <el-main>
-            <el-radio-group v-model="characterId">
+            <el-radio-group v-model="characterId" class="charactersGroup">
               <el-radio v-for="optItem in characterOptList" :key="optItem.characterId" :label="optItem.characterId"
-                border style="margin-bottom: 10px">{{ optItem.chName }}</el-radio>
+                border style="margin-bottom: 10px;margin-left:0px; margin-right:10px">{{ optItem.chName }}</el-radio>
             </el-radio-group>
           </el-main>
         </el-container>
@@ -273,7 +283,7 @@
           </div>
           <div ref="list">
             <el-table v-if="tableData.length > 0" :data="tableData" stripe style="width: 100%" class="custom-table"
-            max-height="800" ref="scrollTable" :header-cell-style="{ background: '#eee', color: '#606266' }">
+            max-height="720" ref="scrollTable" :header-cell-style="{ background: '#eee', color: '#606266' }">
             <el-table-column v-for="(value, key) in tableData[0]" :key="key" :prop="key" :label="key" :width="colWidth"
               sortable>
               <template slot-scope="{ row }">
@@ -342,7 +352,7 @@ export default {
     }
   },
   mounted(){
-    this.$refs.listWrap.style.height = '800px' // 设置可视区域的高度
+    this.$refs.listWrap.style.height = '720px' // 设置可视区域的高度
   },
   watch: {
     "dialogForm.tableName"() {
@@ -359,7 +369,7 @@ export default {
       this.selectAll = newValue.length === this.fields.length;
     },
     length(val){
-      this.$refs.listWrap.style.height = '800px';
+      this.$refs.listWrap.style.height = '720px';
         // // 超过10行数据，就按照最大40*10 400px高度的列表就行
         // if (val >= 10) {
         //   this.$refs.listWrap.style.height = '800px';
@@ -1182,7 +1192,7 @@ export default {
 .content {
   position: relative;
   width: 100%;
-  height: 900px;
+  height: 820px;
 }
 
 #top_buttons>* {
@@ -1258,7 +1268,7 @@ h3 {
 
 .left_tree {
   display: inline-block;
-  height: 900px;
+  height: 820px;
   width: 18%;
   border-radius: 3px;
   border: 1px solid #e6e6e6;
@@ -1275,7 +1285,7 @@ h3 {
 
 .right_table {
   display: inline-block;
-  height: 900px;
+  height: 820px;
   width: 82%;
   position: absolute;
   /* border: none; */
@@ -1284,7 +1294,7 @@ h3 {
 
 .right_table_topCard {
   padding: 0;
-  height: 900px;
+  height: 820px;
   width: 95%;
   border-radius: 3px;
   border-bottom: 1px solid #e6e6e6;
@@ -1317,19 +1327,42 @@ h3 {
 }
 
 .addDataClass {
+  width: calc(1150px*0.94);
   border-radius: 10px;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
   padding: 10px;
   font-size: 16px;
 }
 
+.addDataClass:first-child {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  justify-items: start;
+  row-gap: 10px;
+}
+
+.addDataClass .addDataBaseInfo .titleText{
+  font-weight: 600;
+  margin-left: 5px;
+}
+
+.addDataClass .addDataBaseInfo:last-child {
+  grid-column-start: 1;
+  grid-column-end: 4;
+}
+
+.addDataBaseInfo.createTimeArea{
+  line-height: 40px;
+  vertical-align: text-bottom;
+}
+
 .addDataClass .el-input {
   width: 160px;
 }
 
-.addDataClass .addDataBaseInfo {
+/* .addDataClass .addDataBaseInfo {
   margin-left: 50px;
-}
+} */
 
 .addDataClass .addDataTitle {
   margin-top: 10px;
@@ -1401,5 +1434,13 @@ h3 {
   position: absolute;
   right: 5%;
   top: 5%;
+}
+
+.charactersGroup{
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  align-content: flex-start;
+  height: 500px;
+  overflow: auto;
 }
 </style>
