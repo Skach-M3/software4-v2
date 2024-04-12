@@ -11,13 +11,32 @@
         <div class="select_feature_var_top">
           <h3 class="title">选择参与运算的特征(因变量)</h3>
           <div class="searchButton">
-            <el-input style="width:200px"  v-model="feature_input" placeholder="请输入搜索特征名称" clearable></el-input>
-            <el-button icon="el-icon-search" circle size="mini" style="margin-left: 1%;" type="success" @click="search_feature"></el-button>
-            <el-button icon="el-icon-delete" circle size="mini" style="margin-left: 1%;" type="info" @click="clear_feature"></el-button>
+            <el-input
+              style="width: 200px"
+              v-model="feature_input"
+              placeholder="请输入搜索特征名称"
+              clearable
+            ></el-input>
+            <el-button
+              icon="el-icon-search"
+              circle
+              size="mini"
+              style="margin-left: 1%"
+              type="success"
+              @click="search_feature"
+            ></el-button>
+            <el-button
+              icon="el-icon-delete"
+              circle
+              size="mini"
+              style="margin-left: 1%"
+              type="info"
+              @click="clear_feature"
+            ></el-button>
           </div>
         </div>
         <div class="select_feature_check_boxs">
-          <el-skeleton :row="6" animated :loading="all_features.length < 1"/>
+          <el-skeleton :row="6" animated :loading="all_features.length < 1" />
           <el-checkbox-group v-model="checked_dependent_variables">
             <div v-for="item in show_features" :key="item.id">
               <el-checkbox
@@ -50,7 +69,7 @@
           <h3 class="title">选择参与运算的疾病(自变量)</h3>
         </div>
         <div class="select_feature_check_boxs">
-          <el-skeleton :row="6" animated :loading="label_list.length < 1"/>
+          <el-skeleton :row="6" animated :loading="label_list.length < 1" />
           <el-checkbox-group v-model="checked_independent_variables">
             <div v-for="item in show_labels" :key="item.id">
               <el-checkbox
@@ -155,7 +174,7 @@
           </el-popover>
         </div>
         <div class="select_feature_check_boxs">
-          <el-skeleton :row="6" animated :loading="all_features.length < 1"/>
+          <el-skeleton :row="6" animated :loading="all_features.length < 1" />
           <el-checkbox-group v-model="know_variables">
             <div v-for="item in all_features" :key="item.index">
               <el-checkbox :label="item">{{ item.label }} </el-checkbox>
@@ -222,7 +241,7 @@ export default {
       currentPage: 1,
       dataTotal: 10,
       value: "",
-      feature_input: ""
+      feature_input: "",
     };
   },
 
@@ -414,15 +433,17 @@ export default {
         item.status = item.status == 1 ? 0 : 1;
       }
     },
-    search_feature(){
+    search_feature() {
       console.log(this.feature_input);
-      const filterFeature = this.all_features.filter(feature => feature.label.toLowerCase().includes(this.feature_input.toLowerCase()));
+      const filterFeature = this.all_features.filter((feature) =>
+        feature.label.toLowerCase().includes(this.feature_input.toLowerCase())
+      );
       this.show_features = filterFeature;
     },
-    clear_feature(){
-      this.feature_input = '';
+    clear_feature() {
+      this.feature_input = "";
       this.show_features = this.all_features;
-    }
+    },
   },
 };
 </script>
@@ -463,7 +484,7 @@ export default {
   text-overflow: ellipsis; /* 显示省略号 */
 }
 
-.el-checkbox-group>>>.el-checkbox__label:hover {
+.el-checkbox-group >>> .el-checkbox__label:hover {
   overflow: visible;
 }
 

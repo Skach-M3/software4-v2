@@ -7,25 +7,28 @@
         </div>
         <div class="taskInfo_box_card_group">
           <div class="taskInfo_box_card_item">
-            <i class="el-icon-data-board" style="font-size: 25px;"></i><span class="featureTitle">任务名称：</span>
+            <i class="el-icon-data-board" style="font-size: 25px"></i
+            ><span class="featureTitle">任务名称：</span>
             <span>{{ m_taskName }}</span>
           </div>
 
           <div class="taskInfo_box_card_item">
-            <i class="el-icon-user" style="font-size: 25px;"></i><span class="featureTitle">任务负责人：</span>
+            <i class="el-icon-user" style="font-size: 25px"></i
+            ><span class="featureTitle">任务负责人：</span>
             <span>{{ m_principal }}</span>
           </div>
 
           <div class="taskInfo_box_card_item">
-            <i class="el-icon-info" style="font-size: 25px;"></i><span class="featureTitle">参与人：</span>
+            <i class="el-icon-info" style="font-size: 25px"></i
+            ><span class="featureTitle">参与人：</span>
             <span>{{ m_participants }}</span>
           </div>
 
           <div class="taskInfo_box_card_item">
-            <i class="el-icon-collection-tag" style="font-size: 25px;"></i><span class="featureTitle">任务备注：</span>
+            <i class="el-icon-collection-tag" style="font-size: 25px"></i
+            ><span class="featureTitle">任务备注：</span>
             <span>{{ m_tips }}</span>
           </div>
-
         </div>
       </el-card>
 
@@ -35,31 +38,39 @@
         </div>
         <div class="taskInfo_box_card_group">
           <div class="taskInfo_box_card_item">
-            <i class="el-icon-takeaway-box" style="font-size: 25px;"></i><span class="featureTitle">研究病种：</span>
+            <i class="el-icon-takeaway-box" style="font-size: 25px"></i
+            ><span class="featureTitle">研究病种：</span>
             <span>{{ m_disease }}</span>
           </div>
 
           <div class="taskInfo_box_card_item">
-            <i class="el-icon-folder" style="font-size: 25px;"></i><span class="featureTitle">所用数据：</span>
+            <i class="el-icon-folder" style="font-size: 25px"></i
+            ><span class="featureTitle">所用数据：</span>
             <span>{{ m_dataset }}</span>
           </div>
 
           <div class="taskInfo_box_card_item">
-            <i class="el-icon-cpu" style="font-size: 25px;"></i><span class="featureTitle">所用算法：</span>
+            <i class="el-icon-cpu" style="font-size: 25px"></i
+            ><span class="featureTitle">所用算法：</span>
             <span>{{ m_algorithm }}</span>
           </div>
 
           <div class="taskInfo_box_card_item">
-            <i class="el-icon-star-off" style="font-size: 25px;"></i><span class="featureTitle">所用特征：</span>
+            <i class="el-icon-star-off" style="font-size: 25px"></i
+            ><span class="featureTitle">所用特征：</span>
             <span>{{ m_caculate_use_features.toString() }}</span>
           </div>
-
         </div>
-        <div class="table_statistic" style="margin-top: 1.5%;">
+        <div class="table_statistic" style="margin-top: 1.5%">
           <div class="taskInfoBox result">
-            <i class="el-icon-data-line" style="font-size: 25px;"></i><span class="featureTitle">特征分布：</span>
-            <el-button type="success" style="float:right;margin-right:50px;margin-buttom:20px"
-              @click="exportRes">导出特征信息表</el-button>
+            <i class="el-icon-data-line" style="font-size: 25px"></i
+            ><span class="featureTitle">特征分布：</span>
+            <el-button
+              type="success"
+              style="float: right; margin-right: 50px; margin-buttom: 20px"
+              @click="exportRes"
+              >导出特征信息表</el-button
+            >
           </div>
           <div id="table">
             <!-- <div id="creatorFilter">
@@ -70,10 +81,18 @@
                 <el-option key="行为学" label="行为学" value="行为学"> </el-option>
               </el-select>
             </div> -->
-            <el-table :data="distribution.filter((data) => !type || data.type.includes(type))"
-              style="width: 100%; margin-top: 20px; margin-bottom: 50px" stripe max-height="800"
-              :header-cell-style="{ background: '#eef1f6', color: '#606266' }" id="out_table">
-              <el-table-column label="特征名" prop="column_name"> </el-table-column>
+            <el-table
+              :data="
+                distribution.filter((data) => !type || data.type.includes(type))
+              "
+              style="width: 100%; margin-top: 20px; margin-bottom: 50px"
+              stripe
+              max-height="800"
+              :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
+              id="out_table"
+            >
+              <el-table-column label="特征名" prop="column_name">
+              </el-table-column>
               <!-- <el-table-column label="样本量" prop="num"> </el-table-column> -->
               <!-- <el-table-column label="特征类型" prop="type"> </el-table-column> -->
               <el-table-column label="平均值" prop="mean"> </el-table-column>
@@ -81,12 +100,16 @@
               <el-table-column label="偏度" prop="skew"> </el-table-column>
               <el-table-column label="峰度" prop="kur"> </el-table-column>
               <el-table-column label="Shapiro-Wilk">
-                <el-table-column label="统计量D值" prop="Shapiro_Wilk_D"> </el-table-column>
-                <el-table-column label="P值" prop="Shapiro_Wilk_p"> </el-table-column>
+                <el-table-column label="统计量D值" prop="Shapiro_Wilk_D">
+                </el-table-column>
+                <el-table-column label="P值" prop="Shapiro_Wilk_p">
+                </el-table-column>
               </el-table-column>
               <el-table-column label="Kolmogorov-Smirnov">
-                <el-table-column label="统计量D值" prop="Kolmogorov_Smirnov_D"> </el-table-column>
-                <el-table-column label="P值" prop="Kolmogorov_Smirnov_p"> </el-table-column>
+                <el-table-column label="统计量D值" prop="Kolmogorov_Smirnov_D">
+                </el-table-column>
+                <el-table-column label="P值" prop="Kolmogorov_Smirnov_p">
+                </el-table-column>
               </el-table-column>
             </el-table>
           </div>
@@ -105,7 +128,12 @@
             <div class="graphPlaceHolder" v-if="!haveResult">
               未挖掘出相关关系
             </div>
-            <GraphVue v-if="initFlag && haveResult" :title_text="graphTitile" :node="node" :links="links"></GraphVue>
+            <GraphVue
+              v-if="initFlag && haveResult"
+              :title_text="graphTitile"
+              :node="node"
+              :links="links"
+            ></GraphVue>
           </div>
         </el-card>
         <!-- <el-card style="margin-top: 0.8%;">
@@ -113,7 +141,6 @@
             <Tree v-if="initFlag" :title_text="graphTitile" :data="data"></Tree>
           </div>
         </el-card> -->
-
       </el-card>
     </div>
 
@@ -126,7 +153,6 @@
 </template>
 
 <script>
-
 // import FileSaver from "file-saver";
 // import XLSX from "xlsx";
 // import jsPDF from 'jspdf';
@@ -365,7 +391,6 @@ export default {
       }
     });
     this.initFlag = true;
-
   },
 
   methods: {
@@ -387,7 +412,7 @@ export default {
         res: this.m_result?.res,
         dataset: this.m_dataset,
         uid: sessionStorage.getItem("userid") - 0,
-        tasktype: this.moduleName
+        tasktype: this.moduleName,
       };
       let alghName = "m_" + this.m_algorithm;
       let para = [];
@@ -414,28 +439,28 @@ export default {
           this.m_changeStep(1);
           let defaultValue = {
             step: 1,
-      taskName: "",
-      principal: "",
-      participants: "",
-      disease: "",
-      tips:"",
-      dataset: "",
-      use_features: [],
-      known_features: [],
-      target_feature: [],
-      all_featrues:[],
-      caculate_use_features:[],
-      caculate_known_features:[],
-      caculate_target_feature:[],
-      algorithm:'',
-      SF_DRMB: {
-        K_OR: 0.15,
-        K_and_PC: 0.3,
-        K_and_SP: 0.75,
-      },
-      result: [],
-      is_common:false,
-      node_data:''
+            taskName: "",
+            principal: "",
+            participants: "",
+            disease: "",
+            tips: "",
+            dataset: "",
+            use_features: [],
+            known_features: [],
+            target_feature: [],
+            all_featrues: [],
+            caculate_use_features: [],
+            caculate_known_features: [],
+            caculate_target_feature: [],
+            algorithm: "",
+            SF_DRMB: {
+              K_OR: 0.15,
+              K_and_PC: 0.3,
+              K_and_SP: 0.75,
+            },
+            result: [],
+            is_common: false,
+            node_data: "",
           };
           // TODO:这个改不了深层参数，需要写一个深拷贝通用方法
           this.m_changeTaskInfo(defaultValue);
@@ -458,17 +483,17 @@ export default {
       const csvContent = this.convertArrayOfObjectsToCSV(this.distribution);
       console.log(csvContent);
       // 创建 Blob 对象
-      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const blob = new Blob([csvContent], { type: "text/csv" });
 
       // 创建 URL
       const url = window.URL.createObjectURL(blob);
 
       // 创建 a 标签
-      const link = document.createElement('a');
+      const link = document.createElement("a");
 
       // 设置下载属性
       link.href = url;
-      link.download = this.m_dataset + '.csv';
+      link.download = this.m_dataset + ".csv";
 
       // 模拟点击下载
       link.click();
@@ -481,25 +506,24 @@ export default {
       const headers = Object.keys(data[0]);
 
       // 添加表头
-      csvRows.push(headers.join(','));
+      csvRows.push(headers.join(","));
 
       // 添加表格数据
-      data.forEach(row => {
-        const values = headers.map(header => {
-          const escaped = ('' + row[header]).replace(/"/g, '\\"');
+      data.forEach((row) => {
+        const values = headers.map((header) => {
+          const escaped = ("" + row[header]).replace(/"/g, '\\"');
           return `"${escaped}"`;
         });
-        csvRows.push(values.join(','));
+        csvRows.push(values.join(","));
       });
 
       // 将 CSV 行组合成 CSV 文本
-      const csvText = csvRows.join('\n');
+      const csvText = csvRows.join("\n");
       return csvText;
     },
 
     async exportRes() {
-
-      this.exportToCSV()
+      this.exportToCSV();
       // const divsToExport = ['pdf_graph'];
       // const pdf_positions = [
       //   { x: 5, y: 10 }
@@ -569,7 +593,7 @@ export default {
   vertical-align: top;
 }
 
-.taskInfo_box_card_item span{
+.taskInfo_box_card_item span {
   line-height: 30px;
   vertical-align: top;
 }
@@ -608,7 +632,7 @@ span {
   margin: 1%;
 }
 
-.taskInfo_box_card h2{
+.taskInfo_box_card h2 {
   font-size: 20px;
 }
 
@@ -618,7 +642,7 @@ span {
   align-items: center;
 }
 
-.graphPlaceHolder{
+.graphPlaceHolder {
   width: 100%;
   height: 380px;
   text-align: center;
@@ -626,6 +650,6 @@ span {
   /* background-color: rgba(179, 178, 178, 0.144); */
   font-weight: bold;
   color: rgba(58, 57, 57, 0.651);
-  user-select:none;
+  user-select: none;
 }
 </style>

@@ -33,8 +33,14 @@
           <span class="lineStyle">▍</span>
           <span>备注</span>
         </template>
-        <el-input type="textarea" :autosize="{ minRows: 10, maxRows: 10 }" maxlength="200" show-word-limit placeholder="请输入内容"
-          v-model="taskInfoForm.tips"></el-input>
+        <el-input
+          type="textarea"
+          :autosize="{ minRows: 10, maxRows: 10 }"
+          maxlength="200"
+          show-word-limit
+          placeholder="请输入内容"
+          v-model="taskInfoForm.tips"
+        ></el-input>
       </el-form-item>
 
       <!-- 原来的疾病选择 -->
@@ -71,7 +77,7 @@
 // import { disOptions } from "@/components/tab/constData.js";
 import { resetForm } from "@/components/mixins/mixin.js";
 import vuex_mixin from "@/components/mixins/vuex_mixin";
-import { mapGetters, mapMutations, mapState, mapActions } from "vuex";
+import { mapMutations } from "vuex";
 export default {
   name: "TaskInfo",
   mixins: [resetForm, vuex_mixin],
@@ -91,7 +97,7 @@ export default {
         principal: "",
         participants: "",
         // disease: "",
-        tips: ""
+        tips: "",
       },
     };
   },
@@ -109,7 +115,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations("disFactor",["ChangeStep","ChangeTaskInfo"]),
+    ...mapMutations("disFactor", ["ChangeStep", "ChangeTaskInfo"]),
     init() {
       //和vuex内数据同步
       console.log("当前模块名👉", this.moduleName);

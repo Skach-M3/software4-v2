@@ -4,23 +4,32 @@
       <div class="left_tree">
         <div class="tipInfo">
           <h3>可选数据</h3>
-          <span class="statistic">
-            一级病种: {{ diseaseNum }} 个 
-          </span>
-          <span class="statistic"> 
-            数据表: {{ datasetNum }} 个
-          </span>
+          <span class="statistic"> 一级病种: {{ diseaseNum }} 个 </span>
+          <span class="statistic"> 数据表: {{ datasetNum }} 个 </span>
         </div>
-        <hr class="hr-dashed">
-        <el-tree ref="tree" :data="treeData" :show-checkbox="false" node-key="id" default-expand-all
-          :expand-on-click-node="false" :check-on-click-node="true" :highlight-current="true" @node-click="changeData"
-          @check="changeData" @check-change="handleCheckChange">
-          <span class="custom-tree-node" slot-scope="{ node,data }">
-            <span v-if="data.catLevel == 1" style="font-weight:bold;font-size:15px;color:#252525">{{ node.label }}</span>
+        <hr class="hr-dashed" />
+        <el-tree
+          ref="tree"
+          :data="treeData"
+          :show-checkbox="false"
+          node-key="id"
+          default-expand-all
+          :expand-on-click-node="false"
+          :check-on-click-node="true"
+          :highlight-current="true"
+          @node-click="changeData"
+          @check="changeData"
+          @check-change="handleCheckChange"
+        >
+          <span class="custom-tree-node" slot-scope="{ node, data }">
+            <span
+              v-if="data.catLevel == 1"
+              style="font-weight: bold; font-size: 15px; color: #252525"
+              >{{ node.label }}</span
+            >
             <span v-else>{{ node.label }}</span>
           </span>
         </el-tree>
-
       </div>
       <div class="right_table">
         <el-card class="right_table_topCard">
@@ -29,41 +38,81 @@
           </div>
           <div class="describe_content">
             <p>
-              <i class="el-icon-folder"></i> 数据集名称:<span style="font-weight:bold;font-size:18px;color:#252525">{{ showDataForm.tablename }}</span>
-              <i class="el-icon-user"></i> 创建人:<span>{{ showDataForm.createUser }}</span>
-              <i class="el-icon-time"></i> 创建时间:<span>{{ showDataForm.createTime }}</span>
-              <i class="el-icon-finished"></i> 样本个数:<span>{{ showDataForm.sampleNum }}</span>
-              <i class="el-icon-finished"></i> 特征个数:<span>{{ showDataForm.featureNum }}</span>
+              <i class="el-icon-folder"></i> 数据集名称:<span
+                style="font-weight: bold; font-size: 18px; color: #252525"
+                >{{ showDataForm.tablename }}</span
+              >
+              <i class="el-icon-user"></i> 创建人:<span>{{
+                showDataForm.createUser
+              }}</span>
+              <i class="el-icon-time"></i> 创建时间:<span>{{
+                showDataForm.createTime
+              }}</span>
+              <i class="el-icon-finished"></i> 样本个数:<span>{{
+                showDataForm.sampleNum
+              }}</span>
+              <i class="el-icon-finished"></i> 特征个数:<span>{{
+                showDataForm.featureNum
+              }}</span>
               <!-- <i class="el-icon-folder-opened"></i> 所属类别:<span>{{ showDataForm.classPath }}</span> -->
             </p>
           </div>
-          
-          <div class="tableDataCSS" v-loading="table_loading" element-loading-text="数据量较大，拼命加载中"
-          element-loading-spinner="el-icon-loading"
-          element-loading-background="rgba(0, 0, 0, 0.05)" ref="listWrap" @scroll="scrollListener">
-            <div class="tablePlaceholder" v-if="tableData.length <1 && !table_loading">请在左侧选择数据
+
+          <div
+            class="tableDataCSS"
+            v-loading="table_loading"
+            element-loading-text="数据量较大，拼命加载中"
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.05)"
+            ref="listWrap"
+            @scroll="scrollListener"
+          >
+            <div
+              class="tablePlaceholder"
+              v-if="tableData.length < 1 && !table_loading"
+            >
+              请在左侧选择数据
             </div>
             <div v-else ref="list">
-              <el-table :data="tableData" stripe class="custom-table" max-height="550" :fit="false" v-if="tableData.length>0" :header-cell-style="{background:'#eee',color:'#606266'}" ref="scrollTable">
-                <el-table-column v-for="(value, key) in tableData[0]" :key="key" :prop="key" :label="key" :width="colWidth" sortable>
+              <el-table
+                :data="tableData"
+                stripe
+                class="custom-table"
+                max-height="550"
+                :fit="false"
+                v-if="tableData.length > 0"
+                :header-cell-style="{ background: '#eee', color: '#606266' }"
+                ref="scrollTable"
+              >
+                <el-table-column
+                  v-for="(value, key) in tableData[0]"
+                  :key="key"
+                  :prop="key"
+                  :label="key"
+                  :width="colWidth"
+                  sortable
+                >
                   <template slot-scope="{ row }">
-                    <div class="truncate-text">{{ row[key] }}
-                    </div>
+                    <div class="truncate-text">{{ row[key] }}</div>
                   </template>
                 </el-table-column>
               </el-table>
             </div>
           </div>
-          
         </el-card>
 
         <div class="buttonGroup">
           <el-button @click="backStep()" round>上一步</el-button>
-          <el-button type=primary round :disabled="tableData.length < 1" @click="next(showDataForm.classPath, showDataForm.tablename)">下一步</el-button>
+          <el-button
+            type="primary"
+            round
+            :disabled="tableData.length < 1"
+            @click="next(showDataForm.classPath, showDataForm.tablename)"
+            >下一步</el-button
+          >
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -73,7 +122,7 @@
 import { getCategory } from "@/api/category";
 import { getTableDes, getTableData } from "@/api/tableDescribe.js";
 import vuex_mixin from "@/components/mixins/vuex_mixin";
-import {getRequest} from "@/api/user"
+import { getRequest } from "@/api/user";
 export default {
   name: "DataSelect",
   mixins: [vuex_mixin],
@@ -85,17 +134,16 @@ export default {
   },
   computed: {
     colWidth() {
-      let arr = Object.keys(this.tableData[0])
+      let arr = Object.keys(this.tableData[0]);
       if (arr.length <= 15) {
         return 90;
-      }
-      else {
+      } else {
         return 65;
       }
     },
     length() {
-      return this.tableData.length || 0
-    }
+      return this.tableData.length || 0;
+    },
   },
 
   data() {
@@ -108,17 +156,17 @@ export default {
       start: 0, // 开始索引
       end: 9, // 结束索引
       showDataForm: {
-        createUser: '',
-        createTime: '',
-        classPath: '',
-        tablename: '',
-        sampleNum: '',
-        featureNum: ''
+        createUser: "",
+        createTime: "",
+        classPath: "",
+        tablename: "",
+        sampleNum: "",
+        featureNum: "",
       },
-      diseaseNum:0,
-      datasetNum:0,
-      table_loading:false,
-      tempNode:{}
+      diseaseNum: 0,
+      datasetNum: 0,
+      table_loading: false,
+      tempNode: {},
     };
   },
 
@@ -126,48 +174,59 @@ export default {
     this.init();
     this.getCatgory();
     this.$notify.success({
-      title: '提示',
-      message: '请选择数据集进行下一步操作！',
-      showClose: false
+      title: "提示",
+      message: "请选择数据集进行下一步操作！",
+      showClose: false,
     });
   },
-  mounted(){
-    this.$refs.listWrap.style.height = '550px' // 设置可视区域的高度
+  mounted() {
+    this.$refs.listWrap.style.height = "550px"; // 设置可视区域的高度
   },
   watch: {
-    length(val){
-        // 超过10行数据，就按照最大40*10 400px高度的列表就行
-        if (val >= 10) {
-          this.$refs.listWrap.style.height = '550px';
-        } else {
+    length(val) {
+      // 超过10行数据，就按照最大40*10 400px高度的列表就行
+      if (val >= 10) {
+        this.$refs.listWrap.style.height = "550px";
+      } else {
         // 不足10行数据，这边 加57是因为表头的高度，具体情况，你们加不加无所谓
-          this.$refs.listWrap.style.height = '550px'
-        }
-    }
+        this.$refs.listWrap.style.height = "550px";
+      }
+    },
   },
   methods: {
-    init(){
-      if(this.m_node_data !== ''){
-        var node  = JSON.parse(this.m_node_data);
+    init() {
+      if (this.m_node_data !== "") {
+        var node = JSON.parse(this.m_node_data);
         this.changeData(node);
       }
     },
     scrollListener() {
       // 获取滚动高度
-      const scrollTop = this.$refs.listWrap.scrollTop
+      const scrollTop = this.$refs.listWrap.scrollTop;
       // 开始的数组索引
-      this.start = Math.floor(scrollTop / this.itemHeight)
+      this.start = Math.floor(scrollTop / this.itemHeight);
       // 结束索引
-      this.end = this.start + this.num
-      this.$refs.list.style.transform = `translateY(${this.start * this.itemHeight}px)`// 对列表项y轴偏移
+      this.end = this.start + this.num;
+      this.$refs.list.style.transform = `translateY(${
+        this.start * this.itemHeight
+      }px)`; // 对列表项y轴偏移
     },
     next(classPath, name) {
       let path = classPath.split("/");
       if (path[0] != "公共数据集") {
-        this.m_changeTaskInfo({ disease: path[0], dataset: name ,is_common: false ,node_data:JSON.stringify(this.tempNode)});
-      }
-      else {
-        this.m_changeTaskInfo({ disease: path[path.length - 1], dataset: name, is_common: true ,node_data:JSON.stringify(this.tempNode)});
+        this.m_changeTaskInfo({
+          disease: path[0],
+          dataset: name,
+          is_common: false,
+          node_data: JSON.stringify(this.tempNode),
+        });
+      } else {
+        this.m_changeTaskInfo({
+          disease: path[path.length - 1],
+          dataset: name,
+          is_common: true,
+          node_data: JSON.stringify(this.tempNode),
+        });
       }
       this.m_changeStep(3);
     },
@@ -176,61 +235,62 @@ export default {
       this.m_changeStep(this.m_step - 1);
     },
 
-
     handleCheckChange(data, checked) {
       if (checked) {
-        this.$refs.tree.setCheckedKeys([data.id])
+        this.$refs.tree.setCheckedKeys([data.id]);
       }
     },
-
 
     changeData(data) {
       if (data.isLeafs == 1) {
         this.tempNode = data;
-        this.showDataForm.featureNum = ''
-        this.showDataForm.sampleNum = ''
+        this.showDataForm.featureNum = "";
+        this.showDataForm.sampleNum = "";
         this.table_loading = true;
-        this.tableData=[];
+        this.tableData = [];
         //获取描述信息
-        let that=this;
-        that.getTableDescribe(data.id)
+        let that = this;
+        that.getTableDescribe(data.id);
         //获取数据信息
-        that.getTableData(data.id, data.label)
+        that.getTableData(data.id, data.label);
       }
     },
     getTableDescribe(id) {
-      getTableDes("/api/tableDescribe", id).then(response => {
-        if (response.data != null) {
-          let res = JSON.parse(response.data);
-          this.showDataForm.createUser = res.createUser;
-          this.showDataForm.createTime = res.createTime;
-          this.showDataForm.classPath = res.classPath;
-          this.showDataForm.tablename = res.tableName;
-        }
-      })
-        .catch(error => {
-          console.log("错误", error)
+      getTableDes("/api/tableDescribe", id)
+        .then((response) => {
+          if (response.data != null) {
+            let res = JSON.parse(response.data);
+            this.showDataForm.createUser = res.createUser;
+            this.showDataForm.createTime = res.createTime;
+            this.showDataForm.classPath = res.classPath;
+            this.showDataForm.tablename = res.tableName;
+          }
+        })
+        .catch((error) => {
+          console.log("错误", error);
         });
     },
     getTableData(tableId, tableName) {
-      getTableData("/api/getTableData", tableId, tableName).then(response => {   // 获取表数据
-        this.tableData = response.data;
-        console.log(this.tableData);
-        const fields = Object.keys(this.tableData[0]);
-        this.showDataForm.sampleNum = this.tableData.length;
-        this.showDataForm.featureNum = fields.length;
-        this.table_loading = false;
-      })
-        .catch(error => {
-          console.log(error);
+      getTableData("/api/getTableData", tableId, tableName)
+        .then((response) => {
+          // 获取表数据
+          this.tableData = response.data;
+          console.log(this.tableData);
+          const fields = Object.keys(this.tableData[0]);
+          this.showDataForm.sampleNum = this.tableData.length;
+          this.showDataForm.featureNum = fields.length;
+          this.table_loading = false;
         })
+        .catch((error) => {
+          console.log(error);
+        });
     },
 
     getCatgory() {
       getCategory("/api/category").then((response) => {
         console.log(response.data);
         // 如果是多疾病任务，只能选择公共数据集
-        if(this.moduleName == "factorDis"){
+        if (this.moduleName == "factorDis") {
           const tempData = this.filterCommonAndMutiData(response.data);
           // console.log(tempData);
           this.treeData = tempData;
@@ -238,34 +298,32 @@ export default {
           // const publicNode = response.data.find((node)=>{
           //   node.id == '1010';
           // })
-          // console.log(publicNode); 
+          // console.log(publicNode);
           // this.treeData = this.filterTree(publicNode)
-        }
-        else{
+        } else {
           this.treeData = this.filterTree(response.data);
         }
         console.log(this.treeData);
         // 获取病种和数据集总数
-        this.diseaseNum = response.data[0].children.length + response.data[1].children.length;
-        getRequest("/api/getTableNumber").then((res)=>{
-          if(res.code == 200)
-            this.datasetNum = res.data;
-        })
-        if(this.treeData.length<1){
+        this.diseaseNum =
+          response.data[0].children.length + response.data[1].children.length;
+        getRequest("/api/getTableNumber").then((res) => {
+          if (res.code == 200) this.datasetNum = res.data;
+        });
+        if (this.treeData.length < 1) {
           this.$message({
             showClose: true,
             type: "warning",
             message: "暂无可用数据",
           });
         }
-
-      })
+      });
     },
 
     // 递归过滤树结构
     filterTree(nodes) {
-      if(nodes.length < 1) return;
-      return nodes.filter(node => {
+      if (nodes.length < 1) return;
+      return nodes.filter((node) => {
         if (node.isLeafs === 1) {
           return true;
         } else if (node.children && node.children.length > 0) {
@@ -277,17 +335,13 @@ export default {
     },
 
     filterCommonAndMutiData(data) {
-    // 过滤出"公共数据集下的多疾病"
-    const publicDatasets = data.filter(item => item.id === "1010");
-    const publicDatasets2 = publicDatasets[0].children.filter( item => item.id == "1775096840182611969")
-    return this.filterTree(publicDatasets2);
-
-}
-
-
-
-
-
+      // 过滤出"公共数据集下的多疾病"
+      const publicDatasets = data.filter((item) => item.id === "1010");
+      const publicDatasets2 = publicDatasets[0].children.filter(
+        (item) => item.id == "1775096840182611969"
+      );
+      return this.filterTree(publicDatasets2);
+    },
   },
 };
 </script>
@@ -315,12 +369,12 @@ export default {
   border: 1px solid #e6e6e6;
 }
 
-.tipInfo{
+.tipInfo {
   background-color: rgba(124, 124, 124, 0.1);
   height: 50px;
   text-align: center;
 }
-.tipInfo .statistic{
+.tipInfo .statistic {
   font-size: 13px;
   color: #585858;
 }
@@ -328,10 +382,10 @@ export default {
   border: 0;
   border-top: 1px dashed #899bbb;
 }
-  
-h3{
+
+h3 {
   color: #3d3d3d;
-  text-align:center
+  text-align: center;
 }
 
 .right_table {
@@ -342,19 +396,19 @@ h3{
   height: 100%;
 }
 
-.custom-table{
+.custom-table {
   /* margin:0 auto; */
   /* width: 100%; */
 }
 
-.tablePlaceholder{
+.tablePlaceholder {
   height: 550px;
   text-align: center;
   line-height: 550px;
   background-color: rgba(179, 178, 178, 0.144);
   font-weight: bold;
   color: rgba(58, 57, 57, 0.651);
-  user-select:none;
+  user-select: none;
 }
 
 .tableDataCSS {
